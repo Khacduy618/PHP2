@@ -1,0 +1,2 @@
+2025-02-09 08:21:13 - SQLSTATE[42S02]: Base table or view not found: 1146 Table 'cuahangdienthoai.users' doesn't exist
+2025-02-09 11:19:13 - SQLSTATE[42S22]: Column not found: 1054 Unknown column 'user_image' in 'field list'

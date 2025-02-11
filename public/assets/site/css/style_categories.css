@@ -1,0 +1,27 @@
+/* .menu-vertical ul.submenu {
+    display: none;
+    position: absolute;
+    background-color: #fff;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border: 1px solid #ddd;
+} */
+/* 
+.menu-vertical li.item-lead:hover > ul.submenu {
+    display: block;
+}
+
+.subcategory-item ul {
+    display: none;
+}
+
+.subcategory-item:hover > ul {
+    display: block;
+}
+.header-bottom {
+    position: relative;
+    z-index: 10; 
+}
+ */
+
