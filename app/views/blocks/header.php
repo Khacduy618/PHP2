@@ -59,7 +59,7 @@
                                 </div>
                             </li>
                             <?php } else { ?>
-                            <li><a href="?act=taikhoan">Sign in / Sign up</a></li>
+                            <li><a href="<?php echo _WEB_ROOT ?>/dang-nhap">Sign in / Sign up</a></li>
                             <?php } ?>
                         </ul>
                     </li>

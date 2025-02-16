@@ -34,12 +34,12 @@
                 
                 // Kiểm tra file
                 if ($file['error'] === 0) {
-                    $allowed = ['jpg', 'jpeg', 'png', 'gif'];
+                    $allowed = ['jpg', 'jpeg', 'png'];
                     $filename = $file['name'];
                     $tmp_name = $file['tmp_name'];
                     $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
                     
-                    if (in_array($ext, $allowed)) {
+                    if (in_array($ext, $allowed) && $file["size"] < 2 * 1024 * 1024) {
                         // Tạo tên file mới
                         $new_filename = uniqid() . '.' . $ext;
                         
@@ -47,19 +47,8 @@
                         $base_path = str_replace('\\', '/', dirname(dirname(dirname(__FILE__))));
                         $upload_path = $base_path . '/public/uploads/avatar/';
                         
-                        // Tạo các thư mục nếu chưa tồn tại
-                        if (!file_exists($base_path . '/public')) {
-                            mkdir($base_path . '/public', 0777, true);
-                        }
-                        if (!file_exists($base_path . '/public/uploads')) {
-                            mkdir($base_path . '/public/uploads', 0777, true);
-                        }
-                        if (!file_exists($upload_path)) {
-                            mkdir($upload_path, 0777, true);
-                        }
-                        
                         // Upload file
-                        if (move_uploaded_file($tmp_name, $upload_path . $new_filename)) {
+                        if ($this->handleUpload($base_path, $upload_path, $tmp_name, $new_filename)) {
                             // Lấy và xóa ảnh cũ trước khi cập nhật DB
                             $old_image = $this->profile_model->get_old_avatar($user_email);
                             
@@ -82,7 +71,7 @@
                             setcookie('msg1', 'Không thể upload ảnh', time() + 5);
                         }
                     } else {
-                        setcookie('msg1', 'Định dạng file không hợp lệ (chỉ chấp nhận: jpg, jpeg, png, gif)', time() + 5);
+                        setcookie('msg1', 'Định dạng file không hợp lệ (chỉ chấp nhận: jpg, jpeg, png - Dung lượng dưới 2MB: 1920px x 1080px)', time() + 5);
                     }
                 } else {
                     setcookie('msg1', 'Có lỗi xảy ra khi upload file', time() + 5);

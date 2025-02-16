@@ -4,8 +4,8 @@ $routes['default_controller'] = 'home';
 /*
 *   duong dan ao => duong dan that
 */
+//frontend
 //home
-$routes['dash-board'] = 'dashboard';
 $routes['trang-chu'] = 'home';
 //product
 $routes['san-pham'] = 'product/list_product';
@@ -14,13 +14,24 @@ $routes['product-detail'] = 'product/detail';
 $routes['dang-nhap'] = 'account/login';
 $routes['log-out'] = 'account/logout';
 //pass
+//forgot_pass
+$routes['forgot_password'] = 'account/check_email_form';
+//reset_pass
 $routes['reset_form'] = 'account/reset_password_form';
 $routes['reset_password'] = 'account/reset_password';
 $routes['check_email'] = 'account/check_email';
-$routes['forgot_password'] = 'account/forgot_password';
+$routes['edit-password'] = 'account/check_email_reset';
 //profiles
 $routes['profile_user'] = 'profile/showProfile';
 $routes['update_avatar'] = 'profile/update_avatar';
-//anothers
-$routes['tin-tuc/.+-(\d+).html'] = 'news/category/$1';
+
+//backend
+//dashboard
+$routes['dash-board'] = 'dashboard';
+//product
+$routes['add-new-product'] = 'product/add_new';
+$routes['store-product'] = 'product/store';
+$routes['delete-product'] = 'product/delete';
+$routes['edit-product'] = 'product/edit';
+$routes['update-product'] = 'product/update';
 ?>

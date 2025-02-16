@@ -85,8 +85,11 @@
                     </div>
 
                     <div class="text-center mt-4">
-                        <a href="<?php echo _WEB_ROOT; ?>/profile/edit" class="btn btn-primary">
+                        <a href="<?php echo _WEB_ROOT; ?>/edit-profile" class="btn btn-primary">
                             Chỉnh sửa thông tin
+                        </a>
+                        <a href="<?php echo _WEB_ROOT; ?>/edit-password" class="btn btn-primary">
+                            Đổi mật khẩu
                         </a>
                     </div>
                 </div>

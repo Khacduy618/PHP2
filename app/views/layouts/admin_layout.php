@@ -23,7 +23,7 @@
 
     <link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/44.0.0/ckeditor5.css">
 
-    <title>TedeShop Admin</title>
+    <title><?php echo (!empty($page_title))?$page_title:'Shop-PHP2'?></title>
 </head>
 
 <body>

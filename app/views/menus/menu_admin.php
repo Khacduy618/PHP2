@@ -29,7 +29,7 @@
     </li>
     
     <li class="nav-item">
-        <a class="nav-link" href="?mod=product">
+        <a class="nav-link" href="<?= _WEB_ROOT?>/san-pham">
             <span class="icon">
                 <i class="fa-solid fa-box fa-xl"></i>
             </span>

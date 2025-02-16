@@ -24,7 +24,16 @@ class Account extends Controller
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $user_email = filter_var($_POST['user_email'], FILTER_SANITIZE_EMAIL);
             $user_password = md5($_POST['user_password']);
-
+            if (($this->account_model->check_account($user_email)) == false) {
+                setcookie('msg1', 'Email không chính xác', time() + 5, '/');
+                header('Location: ' . _WEB_ROOT . '/dang-nhap');
+                exit();
+            }
+            if(strlen($_POST['user_password']) < 8){
+                setcookie('msg1', 'Mật khẩu tối thiểu 8 kí tự', time() + 5, '/');
+                header('Location: ' . _WEB_ROOT . '/dang-nhap');
+                exit();
+            }
             $login = $this->account_model->login_action($user_email, $user_password);
 
             if ($login) {
@@ -111,13 +120,13 @@ class Account extends Controller
         header('Location: ' . _WEB_ROOT . '/dang-nhap');
         exit();
     }
-
-    public function forgot_password()
+    //doimatkhau
+    public function check_email_reset()
     {
-        $title = 'Quên mật khẩu';
+        $title = 'Kiểm tra email';
         $this->data['sub_content']['title'] = $title;
         $this->data['page_title'] = $title;
-        $this->data['content'] = 'frontend/login/forgot_password';
+        $this->data['content'] = 'frontend/account/reset_password/check_email_reset';
         $this->render('layouts/client_layout', $this->data);
     }
 
@@ -135,7 +144,7 @@ class Account extends Controller
                 header('Location: ' . _WEB_ROOT . '/reset_form');
             } else {
                 setcookie('msg1', 'Email không tồn tại trong hệ thống', time() + 5);
-                header('Location: ' . _WEB_ROOT . '/forgot_password');
+                header('Location: ' . _WEB_ROOT . '/check_email_reset');
             }
             exit();
         }
@@ -145,14 +154,14 @@ class Account extends Controller
     {
         // Kiểm tra xem đã check email chưa
         if (!isset($_SESSION['reset_email'])) {
-            header('Location: ' . _WEB_ROOT . '/forgot_password');
+            header('Location: ' . _WEB_ROOT . '/check_email_reset');
             exit();
         }
 
         $title = 'Đặt lại mật khẩu';
         $this->data['sub_content']['title'] = $title;
         $this->data['page_title'] = $title;
-        $this->data['content'] = 'frontend/login/reset_password_form';
+        $this->data['content'] = 'frontend/account/reset_password/reset_password_form';
         $this->render('layouts/client_layout', $this->data);
     }
 
@@ -160,7 +169,7 @@ class Account extends Controller
     {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if (!isset($_SESSION['reset_email'])) {
-                header('Location: ' . _WEB_ROOT . '/forgot_password');
+                header('Location: ' . _WEB_ROOT . '/check_email_reset');
                 exit();
             }
 
@@ -174,12 +183,21 @@ class Account extends Controller
                 // Xóa session
                 unset($_SESSION['reset_email']);
                 setcookie('msg', 'Đổi mật khẩu thành công', time() + 5);
-                header('Location: ' . _WEB_ROOT . '/dang-nhap');
+                header('Location: ' . _WEB_ROOT . '/check_email_reset');
             } else {
                 setcookie('msg1', 'Mật khẩu xác nhận không khớp', time() + 5);
                 header('Location: ' . _WEB_ROOT . '/account/reset_password_form');
             }
             exit();
         }
+    }
+
+    //quenmatkhau
+    public function check_email_form() {
+        $title = 'Kiểm tra email';
+        $this->data['sub_content']['title'] = $title;
+        $this->data['page_title'] = $title;
+        $this->data['content'] = 'frontend/account/forgot_password/check_email_form';
+        $this->render('layouts/client_layout', $this->data);
     }
 }
