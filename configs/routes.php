@@ -34,4 +34,8 @@ $routes['store-product'] = 'product/store';
 $routes['delete-product'] = 'product/delete';
 $routes['edit-product'] = 'product/edit';
 $routes['update-product'] = 'product/update';
+//category
+$routes['category'] = 'category/list_category';
+$routes['add-new-category'] = 'category/add_new';
+$routes['store-category'] = 'category/store';
 ?>
