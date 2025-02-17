@@ -11,7 +11,7 @@
         </a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="?mod=login">
+        <a class="nav-link" href="<?= _WEB_ROOT?>/dash-board">
             <span class="icon">
                 <i class="fa-solid fa-house fa-xl"></i>
             </span>
@@ -20,7 +20,7 @@
     </li>
     
     <li class="nav-item">
-        <a class="nav-link" href="?mod=category">
+        <a class="nav-link" href="<?= _WEB_ROOT?>/category">
             <span class="icon">
                 <i class="fa-solid fa-list fa-xl"></i>
             </span>
@@ -29,7 +29,7 @@
     </li>
     
     <li class="nav-item">
-        <a class="nav-link" href="<?= _WEB_ROOT?>/san-pham">
+        <a class="nav-link" href="<?= _WEB_ROOT?>/product">
             <span class="icon">
                 <i class="fa-solid fa-box fa-xl"></i>
             </span>

@@ -8,7 +8,7 @@ $routes['default_controller'] = 'home';
 //home
 $routes['trang-chu'] = 'home';
 //product
-$routes['san-pham'] = 'product/list_product';
+$routes['product'] = 'product/list_product';
 $routes['product-detail'] = 'product/detail';
 //login
 $routes['dang-nhap'] = 'account/login';

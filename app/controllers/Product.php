@@ -10,38 +10,6 @@ class Product extends Controller
         $this->product_model = $this->model('ProductModel');
         $this->category_model = $this->model('CategoryModel');
     }
-    public function list_product() {
-        $dataProduct = $this->product_model->getProductLists($_SESSION['isLogin_Admin']);
-        $title = 'Product List';
-        $this->data['sub_content']['category_list'] = $this->category_model->getCategoryLists();
-        $this->data['sub_content']['product_list'] = $dataProduct;
-        $this->data['sub_content']['title'] = $title;
-        $this->data['page_title'] = 'Product';
-        if($_SESSION['isLogin_Admin'] = true){
-            $this->data['content'] = 'backend/products/list';
-            $this->render('layouts/admin_layout', $this->data);
-        }else {
-            $this->data['content'] = 'frontend/products/list';
-            $this->render('layouts/client_layout', $this->data);
-        }
-       
-    }
-
-    public function detail($id=0) {
-        $title = 'Detail';
-        $this->data['sub_content']['title'] = $title;
-        $this->data['page_title'] = $title;
-        if($_SESSION['isLogin_Admin'] = true){
-            $this->data['sub_content']['info'] = $this->product_model->getDetail($id);
-            $this->data['content'] = 'backend/products/list';
-            $this->render('layouts/admin_layout', $this->data);
-        }else {
-            $this->data['sub_content']['item'] =  $this->product_model->findbyId($id);
-            $this->data['content'] = 'frontend/products/detail';
-            $this->render('layouts/client_layout', $this->data);
-        }
-        
-    }
 
     public function add_new() {
         $title = 'Add new a product';
@@ -132,6 +100,43 @@ class Product extends Controller
                 exit();
             
         }
+    }
+    
+    public function list_product() {
+        
+        $title = 'Product List';
+        $this->data['sub_content']['category_list'] = $this->category_model->getCategoryLists();
+        
+        $this->data['sub_content']['title'] = $title;
+        $this->data['page_title'] = 'Product';
+        if(isset($_SESSION['isLogin_Admin'])){
+            $dataProduct = $this->product_model->getProductLists($_SESSION['isLogin_Admin']);
+            $this->data['sub_content']['product_list'] = $dataProduct;
+            $this->data['content'] = 'backend/products/list';
+            $this->render('layouts/admin_layout', $this->data);
+        }else {
+            $dataProduct = $this->product_model->getProductLists();
+            $this->data['sub_content']['product_list'] = $dataProduct;
+            $this->data['content'] = 'frontend/products/list';
+            $this->render('layouts/client_layout', $this->data);
+        }
+       
+    }
+
+    public function detail($id=0) {
+        $title = 'Detail';
+        $this->data['sub_content']['title'] = $title;
+        $this->data['page_title'] = $title;
+        if(isset($_SESSION['isLogin_Admin'])){
+            $this->data['sub_content']['info'] = $this->product_model->getDetail($id);
+            $this->data['content'] = 'backend/products/list';
+            $this->render('layouts/admin_layout', $this->data);
+        }else {
+            $this->data['sub_content']['info'] =  $this->product_model->findbyId($id);
+            $this->data['content'] = 'frontend/products/detail';
+            $this->render('layouts/client_layout', $this->data);
+        }
+        
     }
 
     public function delete($id=0) {

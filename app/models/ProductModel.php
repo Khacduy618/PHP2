@@ -4,7 +4,21 @@ class ProductModel extends Model{
     
     protected $_table = 'products';
     
-    public function getProductLists($isAdmin) {
+    public function store($data) {
+        $f = "";
+        $v = "";
+        foreach ($data as $key => $value) {
+            $f .= $key . ",";
+            $v .= "'" . $value . "',";
+        }
+        $f = trim($f, ",");
+        $v = trim($v, ",");
+        $query = "INSERT INTO $this->_table($f) VALUES ($v);";
+
+        return $this->pdo_execute($query);
+    }
+
+    public function getProductLists($isAdmin = false) {
         if($isAdmin == true){
             $sql = "SELECT p.product_id, p.product_img, p.product_name, p.product_price, p.product_discount, p.product_count, p.product_status";
         }else{
@@ -23,20 +37,6 @@ class ProductModel extends Model{
     public function findbyId($id) {
         $sql = "SELECT * FROM $this->_table WHERE product_id = ?";
         return $this->pdo_query_one($sql, [$id]);
-    }
-
-    public function store($data) {
-        $f = "";
-        $v = "";
-        foreach ($data as $key => $value) {
-            $f .= $key . ",";
-            $v .= "'" . $value . "',";
-        }
-        $f = trim($f, ",");
-        $v = trim($v, ",");
-        $query = "INSERT INTO $this->_table($f) VALUES ($v);";
-
-        return $this->pdo_execute($query);
     }
 
     public function update($data, $id) {

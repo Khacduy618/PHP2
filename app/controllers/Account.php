@@ -113,9 +113,7 @@ class Account extends Controller
     function logout()
     {
         if (isset($_SESSION['user'])) {
-            unset($_SESSION['user']);
-            unset($_SESSION['isLogin']);
-            unset($_SESSION['isLogin_Admin']);
+            session_destroy();
         }
         header('Location: ' . _WEB_ROOT . '/dang-nhap');
         exit();

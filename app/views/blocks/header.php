@@ -48,11 +48,6 @@
                                     <div class="header-menu">
                                         <ul>
                                             <li><a href="<?php echo _WEB_ROOT?>/profile_user">My Account</a></li>
-                                            <?php
-                                                if(isset($_SESSION['isLogin_Admin']) || isset($_SESSION['isLogin_Nhanvien'])){
-                                                    echo '<li><a href="Admin/?mod=login">Admin Panel</a></li>';
-                                                }
-                                            ?>
                                             <li><a href="<?php echo _WEB_ROOT?>/log-out">Sign Out</a></li>
                                         </ul>
                                     </div>
@@ -238,7 +233,7 @@
                             
                         </li>
                         <li>
-                            <a href="<?php echo _WEB_ROOT?>/san-pham" class="sf-with-ul">Shop</a>
+                            <a href="<?php echo _WEB_ROOT?>/product" class="sf-with-ul">Shop</a>
 
                             
                         </li>
