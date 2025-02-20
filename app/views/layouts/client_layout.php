@@ -38,9 +38,9 @@
 <body>
     <div class="page-wrapper">
     <?php
-        $this->render('blocks/header');
+        $this->render('frontend/blocks/header');
         $this->render($content,$sub_content);
-        $this->render('blocks/footer');
+        $this->render('frontend/blocks/footer');
     ?>
  
     </div><!-- End .page-wrapper -->
@@ -257,6 +257,7 @@
     <script src="<?php echo _WEB_ROOT; ?>/public/assets/site/js/superfish.min.js"></script>
     <script src="<?php echo _WEB_ROOT; ?>/public/assets/site/js/owl.carousel.min.js"></script>
     <script src="<?php echo _WEB_ROOT; ?>/public/assets/site/js/bootstrap-input-spinner.js"></script>
+    <script src="<?php echo _WEB_ROOT; ?>/public/assets/site/js/jquery.elevateZoom.min.js"></script>
     <script src="<?php echo _WEB_ROOT; ?>/public/assets/site/js/jquery.plugin.min.js"></script>
     <script src="<?php echo _WEB_ROOT; ?>/public/assets/site/js/jquery.magnific-popup.min.js"></script>
     <script src="<?php echo _WEB_ROOT; ?>/public/assets/site/js/jquery.countdown.min.js"></script>

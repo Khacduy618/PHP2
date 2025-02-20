@@ -29,7 +29,7 @@
                 <div class="row gap-3">
                 <div class="col-5 mb-3">
                         <label for="product_img" class="form-label">Product Image</label>
-                        <input type="file" class="form-control" id="product_img" name="product_img" accept="image/*" required>
+                        <input type="file" class="form-control" id="product_img" name="product_img" accept="image/*" >
                         <div class="form-text">Recommended size: 800x800 pixels</div>
                     </div>
 
@@ -42,13 +42,13 @@
                     <!-- Product Name -->
                     <div class="col-md-5 mb-3">
                         <label for="product_name" class="form-label">Product Name</label>
-                        <input type="text" class="form-control" id="product_name" name="product_name" required>
+                        <input type="text" class="form-control" id="product_name" name="product_name" >
                     </div>
 
                     <!-- Product Price -->
                     <div class="col-md-5 mb-3">
                         <label for="product_price" class="form-label">Price (VND)</label>
-                        <input type="number" class="form-control" id="product_price" name="product_price" min="0" required>
+                        <input type="number" class="form-control" id="product_price" name="product_price" min="0" >
                     </div>
 
                     <!-- Product Discount -->
@@ -66,7 +66,7 @@
                     <!-- Product Category -->
                     <div class="col-md-5 mb-3">
                         <label for="product_cat" class="form-label">Category</label>
-                        <select class="form-select" id="product_cat" name="product_cat" required>
+                        <select class="form-select" id="product_cat" name="product_cat" >
                             <option value="">Select Category</option>
                             <?php foreach($category_list as $category):
                                 extract($category); ?>

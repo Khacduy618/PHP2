@@ -2,7 +2,7 @@
     <nav aria-label="breadcrumb" class="breadcrumb-nav mb-2">
         <div class="container">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="#">Home</a></li>
+                <li class="breadcrumb-item"><a href="<?= _WEB_ROOT; ?>/trang-chu">Home</a></li>
                 <li class="breadcrumb-item active" aria-current="page"">Shop</a></li>
             </ol>
         </div><!-- End .container -->
@@ -30,49 +30,7 @@
                                     </select>
                                 </div>
                             </div><!-- End .toolbox-sort -->
-                            <div class="toolbox-layout">
-                                <a href="category-list.html" class="btn-layout">
-                                    <svg width="16" height="10">
-                                        <rect x="0" y="0" width="4" height="4" />
-                                        <rect x="6" y="0" width="10" height="4" />
-                                        <rect x="0" y="6" width="4" height="4" />
-                                        <rect x="6" y="6" width="10" height="4" />
-                                    </svg>
-                                </a>
-
-                                <a href="category-2cols.html" class="btn-layout">
-                                    <svg width="10" height="10">
-                                        <rect x="0" y="0" width="4" height="4" />
-                                        <rect x="6" y="0" width="4" height="4" />
-                                        <rect x="0" y="6" width="4" height="4" />
-                                        <rect x="6" y="6" width="4" height="4" />
-                                    </svg>
-                                </a>
-
-                                <a href="category.html" class="btn-layout">
-                                    <svg width="16" height="10">
-                                        <rect x="0" y="0" width="4" height="4" />
-                                        <rect x="6" y="0" width="4" height="4" />
-                                        <rect x="12" y="0" width="4" height="4" />
-                                        <rect x="0" y="6" width="4" height="4" />
-                                        <rect x="6" y="6" width="4" height="4" />
-                                        <rect x="12" y="6" width="4" height="4" />
-                                    </svg>
-                                </a>
-
-                                <a href="category-4cols.html" class="btn-layout active">
-                                    <svg width="22" height="10">
-                                        <rect x="0" y="0" width="4" height="4" />
-                                        <rect x="6" y="0" width="4" height="4" />
-                                        <rect x="12" y="0" width="4" height="4" />
-                                        <rect x="18" y="0" width="4" height="4" />
-                                        <rect x="0" y="6" width="4" height="4" />
-                                        <rect x="6" y="6" width="4" height="4" />
-                                        <rect x="12" y="6" width="4" height="4" />
-                                        <rect x="18" y="6" width="4" height="4" />
-                                    </svg>
-                                </a>
-                            </div><!-- End .toolbox-layout -->
+                            
                         </div><!-- End .toolbox-right -->
                     </div><!-- End .toolbox -->
                     
@@ -118,7 +76,7 @@
 
                                     <div class="product-body">
                                         <div class="product-cat">
-                                            <a href="#">Women</a>
+                                            <a href="#"><?=$category_name?></a>
                                         </div><!-- End .product-cat -->
                                         <h3 class="product-title"><a href="product.html"><?=$product_name?></a></h3><!-- End .product-title -->
                                         <div class="product-price">
@@ -131,7 +89,7 @@
                                             <span class="ratings-text">( 2 Reviews )</span>
                                         </div><!-- End .rating-container -->
 
-                                        <div class="product-nav product-nav-thumbs">
+                                        <!-- <div class="product-nav product-nav-thumbs">
                                             <a href="#" class="active">
                                                 <img src="<?php echo _WEB_ROOT; ?>/public/assets/images/products/product-4-thumb.jpg" alt="product desc">
                                             </a>
@@ -142,7 +100,7 @@
                                             <a href="#">
                                                 <img src="<?php echo _WEB_ROOT; ?>/public/assets/images/products/product-4-3-thumb.jpg" alt="product desc">
                                             </a>
-                                        </div><!-- End .product-nav -->
+                                        </div> -->
                                     </div><!-- End .product-body -->
                                 </div><!-- End .product -->
                             </div><!-- End .col-sm-6 col-lg-4 col-xl-3 -->

@@ -15,7 +15,6 @@ class Product extends Controller
         
         $title = 'Product List';
         $this->data['sub_content']['category_list'] = $this->category_model->getCategoryLists();
-        
         $this->data['sub_content']['title'] = $title;
         $this->data['page_title'] = $title;
         if(isset($_SESSION['isLogin_Admin'])){
@@ -61,7 +60,7 @@ class Product extends Controller
                 $upload_path = $base_path . '/public/uploads/products/';
                 $this->handleUpload($base_path,$upload_path,$tmp_name,$new_filename);
             }else{
-                $_SESSION['msg'] = 'Định dạng file không hợp lệ (chỉ chấp nhận: jpg, jpeg, png - Dung lượng dưới 2MB: 1920px x 1080px)';
+                $_SESSION['msg'] = 'Định dạng file không hợp lệ (chỉ chấp nhận: jpg, jpeg, png - Dung lượng dưới 2MB)';
                 header('Location: ' . _WEB_ROOT . '/add-new-product');
                 exit;
             }
@@ -113,7 +112,7 @@ class Product extends Controller
             
                 if ($status) {
                     $_SESSION['msg'] = 'Product added successfully!';
-                    header('Location: '._WEB_ROOT.'/san-pham');
+                    header('Location: '._WEB_ROOT.'/product');
                 } else {
                     setcookie('msg1', 'Failed to add product!', time() + 5, '/');
                     header('Location: ' . _WEB_ROOT . '/add-new-product');

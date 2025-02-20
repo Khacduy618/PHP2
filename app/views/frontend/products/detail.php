@@ -7,7 +7,7 @@
     <nav aria-label="breadcrumb" class="breadcrumb-nav border-0 mb-0">
         <div class="container d-flex align-items-center">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                <li class="breadcrumb-item"><a href="<?=_WEB_ROOT?>/trang-chu">Home</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Product</li>
             </ol>
 
@@ -44,7 +44,7 @@
                                             ? _WEB_ROOT . '/public/uploads/products/' . $product_img
                                             : _WEB_ROOT . '/public/uploads/products/default-product.jpg';
                                     ?>
-                                    <img id="product-zoom" src="<?=$image?>" data-zoom-image="assets/images/products/single/1-big.jpg" alt="product image">
+                                    <img id="product-zoom" src="<?=$image?>" data-zoom-image="<?=$image?>" alt="product image">
 
                                     <a href="#" id="btn-product-gallery" class="btn-product-gallery">
                                         <i class="icon-arrows"></i>
@@ -52,7 +52,7 @@
                                 </figure><!-- End .product-main-image -->
 
                                 <div id="product-zoom-gallery" class="product-image-gallery">
-                                    <a class="product-gallery-item active" href="#" data-image="assets/images/products/single/1.jpg" data-zoom-image="assets/images/products/single/1-big.jpg">
+                                    <!-- <a class="product-gallery-item active" href="#" data-image="assets/images/products/single/1.jpg" data-zoom-image="assets/images/products/single/1-big.jpg">
                                         <img src="assets/images/products/single/1-small.jpg" alt="product side">
                                     </a>
 
@@ -66,7 +66,7 @@
 
                                     <a class="product-gallery-item" href="#" data-image="assets/images/products/single/4.jpg" data-zoom-image="assets/images/products/single/4-big.jpg">
                                         <img src="assets/images/products/single/4-small.jpg" alt="product back">
-                                    </a>
+                                    </a> -->
                                 </div><!-- End .product-image-gallery -->
                             </div><!-- End .row -->
                         </div><!-- End .product-gallery -->
@@ -87,9 +87,9 @@
                             <?=number_format($product_price,0,",",".")?> đ
                             </div><!-- End .product-price -->
 
-                            <div class="product-content">
+                            <!-- <div class="product-content">
                                 <p>Sed egestas, ante et vulputate volutpat, eros pede semper est, vitae luctus metus libero eu augue. Morbi purus libero, faucibus adipiscing. Sed lectus. </p>
-                            </div><!-- End .product-content -->
+                            </div>
 
                             <div class="details-filter-row details-row-size">
                                 <label>Color:</label>
@@ -101,10 +101,10 @@
                                     <a href="#">
                                         <img src="assets/images/products/single/2-thumb.jpg" alt="product desc">
                                     </a>
-                                </div><!-- End .product-nav -->
-                            </div><!-- End .details-filter-row -->
+                                </div>
+                            </div> -->
 
-                            <div class="details-filter-row details-row-size">
+                            <!-- <div class="details-filter-row details-row-size">
                                 <label for="size">Size:</label>
                                 <div class="select-custom">
                                     <select name="size" id="size" class="form-control">
@@ -114,10 +114,10 @@
                                         <option value="l">Large</option>
                                         <option value="xl">Extra Large</option>
                                     </select>
-                                </div><!-- End .select-custom -->
+                                </div>
 
                                 <a href="#" class="size-guide"><i class="icon-th-list"></i>size guide</a>
-                            </div><!-- End .details-filter-row -->
+                            </div> -->
 
                             <div class="details-filter-row details-row-size">
                                 <label for="qty">Qty:</label>
@@ -137,10 +137,10 @@
 
                             <div class="product-details-footer">
                                 <div class="product-cat">
-                                    <span>Category:</span>
+                                    <!-- <span>Category:</span>
                                     <a href="#">Women</a>,
                                     <a href="#">Dresses</a>,
-                                    <a href="#">Yellow</a>
+                                    <a href="#">Yellow</a> -->
                                 </div><!-- End .product-cat -->
 
                                 <div class="social-icons social-icons-sm">
