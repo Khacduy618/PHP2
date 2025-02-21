@@ -20,8 +20,8 @@
             if (isset($category) && is_array($category)) {
                 extract($category);
             ?>
-            <form action="?mod=category&act=update" method="POST" enctype="multipart/form-data">
-                <input type="hidden" name="id" value="<?=$category_id?>">
+            <form action="<?=_WEB_ROOT?>/update-category" method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="category_id" value="<?=$category_id?>">
                 <div class="row gap-5">
                     
                     <div class="col-md-5">
@@ -40,7 +40,7 @@
                                 <?php if($parent_id == NULL){ ?> 
                                     <option value="">No Parent Category</option> 
                                 <?php } ?>
-                                <?php foreach($parent_categories as $cate){ ?>
+                                <?php foreach($category_list as $cate){ ?>
                                     <option value="<?php echo $cate['category_id'] ?>" 
                                         <?php echo ($parent_id == $cate['category_id']) ? 'selected' : ''; ?>>
                                         <?php echo $cate['category_name'] ?>
@@ -60,7 +60,7 @@
                     <div class="form-group mb-3">
                         <div class="mt-2">
                         <div id="imagePreview" class="mt-2" style="max-width: 200px;">
-                                <img id="preview_imgCategory" src="<?php echo BASE_URL ?>/uploaded/<?=$category_img?>" class="img-thumbnail"  style="max-height: 150px;">
+                                <img id="preview_imgCategory" src="<?=_WEB_ROOT ?>/public/uploads/categories/<?=$category_img?>" class="img-thumbnail"  style="max-height: 150px;">
                             </div>
                                 </div>
                         </div>

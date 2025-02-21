@@ -2,20 +2,15 @@
 
 class ProductModel extends Model{
     
-    protected $_table = 'products';
-    
-    public function store($data) {
-        $f = "";
-        $v = "";
-        foreach ($data as $key => $value) {
-            $f .= $key . ",";
-            $v .= "'" . $value . "',";
-        }
-        $f = trim($f, ",");
-        $v = trim($v, ",");
-        $query = "INSERT INTO $this->_table($f) VALUES ($v);";
+    protected $table ;
+    protected $status ;
+    protected $contents ;
 
-        return $this->pdo_execute($query);
+    public function __construct(){
+        parent::__construct();
+        $this->table = "products";
+        $this->status = "product_status";
+        $this->contents = "product_id";
     }
 
     public function getProductLists($isAdmin = false) {
@@ -24,35 +19,15 @@ class ProductModel extends Model{
         }else{
             $sql = "SELECT p.*";
         }
-       $sql .= " , c.category_name FROM $this->_table p LEFT JOIN categories c ON p.product_cat = c.category_id WHERE 1";
+       $sql .= " , c.category_name FROM $this->table p LEFT JOIN categories c ON p.product_cat = c.category_id WHERE 1";
         return $this->pdo_query_all($sql);
     }
 
     
     public function getDetail($id){
-        $sql = "SELECT screen_cam, os, gpu, cpu, pin, colors, sizes, ram, rom, bluetooth FROM $this->_table WHERE product_id = ?";
+        $sql = "SELECT screen_cam, os, gpu, cpu, pin, colors, sizes, ram, rom, bluetooth FROM $this->table WHERE $this->contents = ?";
         return $this->pdo_query_one($sql, [$id]);
     }
 
-    public function findbyId($id) {
-        $sql = "SELECT * FROM $this->_table WHERE product_id = ?";
-        return $this->pdo_query_one($sql, [$id]);
-    }
-
-    public function update($data, $id) {
-        if (!empty($data)) {
-            $fields = "";
-            foreach ($data as $key => $value) {
-                $fields .= "$key = '$value',";
-            }
-            $fields = trim($fields, ",");
-            $sql = "UPDATE $this->_table SET $fields WHERE product_id = ?";
-            return $this->pdo_execute($sql, $id);
-        }
-    }
-
-    public function delete($id){
-        $sql = "UPDATE $this->_table SET product_status = 0 WHERE product_id = ?";
-        return $this->pdo_execute($sql, $id);
-    }
+    
 }

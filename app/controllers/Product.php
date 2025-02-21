@@ -37,6 +37,10 @@ class Product extends Controller
     }
 
     public function add_new() {
+        if (!isset($_SESSION['isLogin_Admin'])) {
+            header('Location: ' . _WEB_ROOT . '/dang-nhap');
+            exit();
+        }
         $title = 'Add new a product';
         $this->data['sub_content']['title'] = $title;
         $this->data['page_title'] = $title;
@@ -155,6 +159,10 @@ class Product extends Controller
     }
 
     public function edit($id=0) {
+        if (!isset($_SESSION['isLogin_Admin'])) {
+            header('Location: ' . _WEB_ROOT . '/dang-nhap');
+            exit();
+        }
         $title = 'Update a product';
         $this->data['sub_content']['title'] = $title;
         $this->data['page_title'] = $title;

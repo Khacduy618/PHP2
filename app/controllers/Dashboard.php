@@ -6,6 +6,11 @@ class Dashboard extends Controller
 
     public function __construct()
     {
+        //kiemtra admin
+        if (!isset($_SESSION['isLogin_Admin'])) {
+            header('Location: ' . _WEB_ROOT . '/dang-nhap');
+            exit();
+        }
         $this->dashboard_model = $this->model('DashboardModel');
     }
 

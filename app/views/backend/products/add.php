@@ -142,7 +142,7 @@
                     <button type="submit" class="btn btn-primary">
                         <i class="bi bi-check-circle me-2"></i>Save Product
                     </button>
-                    <a href="?mod=product&act=list" class="btn btn-secondary">
+                    <a href="<?=_WEB_ROOT?>/product" class="btn btn-secondary">
                         <i class="bi bi-x-circle me-2"></i>Cancel
                     </a>
                 </div>

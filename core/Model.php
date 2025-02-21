@@ -1,10 +1,14 @@
 <?php
 class Model extends Database{
     protected $db;
+    protected $table;
+    protected $status;
+    protected $contents;
     public function __construct() {
         parent::__construct();
         $this->db = $this->getConnection();
     }
+
     protected function pdo_query($sql, $params = []) {
         try {
             $stmt = $this->db->prepare($sql);
@@ -54,4 +58,42 @@ class Model extends Database{
             throw $e;
         }
     }
+
+    public function store($data) {
+        $f = "";
+        $v = "";
+        foreach ($data as $key => $value) {
+            $f .= $key . ",";
+            $v .= "'" . $value . "',";
+        }
+        $f = trim($f, ",");
+        $v = trim($v, ",");
+        $query = "INSERT INTO $this->table($f) VALUES ($v);";
+
+        return $this->pdo_execute($query);
+    }
+
+    public function findbyId($id) {
+        $sql = "SELECT * FROM $this->table WHERE $this->contents = ?";
+        return $this->pdo_query_one($sql, [$id]);
+    }
+
+    public function update($data, $id) {
+        if (!empty($data)) {
+            $fields = "";
+            foreach ($data as $key => $value) {
+                $fields .= "$key = '$value',";
+            }
+            $fields = trim($fields, ",");
+            $sql = "UPDATE $this->table SET $fields WHERE $this->contents = ?";
+            return $this->pdo_execute($sql, $id);
+        }
+    }
+    
+    public function delete($id){
+        $sql = "UPDATE $this->table SET $this->status = 0 WHERE $this->contents = ?";
+        return $this->pdo_execute($sql, $id);
+    }
+
+   
 }

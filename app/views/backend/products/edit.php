@@ -147,7 +147,7 @@
                         <button type="submit" class="btn btn-primary">
                             <i class="fas fa-save"></i> Update Product
                         </button>
-                        <a href="<?=_WEB_ROOT?>/san-pham" class="btn btn-secondary">
+                        <a href="<?=_WEB_ROOT?>/product" class="btn btn-secondary">
                             <i class="fas fa-arrow-left"></i> Back to List
                         </a>
                     </div>

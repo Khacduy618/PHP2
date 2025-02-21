@@ -1,7 +1,16 @@
 <?php
 class UserModel extends Model
 {
-    protected $table = 'user';
+    protected $table ;
+    protected $status ;
+    protected $contents ;
+
+    public function __construct(){
+        parent::__construct();
+        $this->table = "user";
+        $this->status = "user_status";
+        $this->contents = "user_email";
+    }
 
     public function getListUser()
     {
@@ -12,39 +21,5 @@ class UserModel extends Model
         return $this->pdo_query_all($sql);
     }
     
-    public function store($data) {
-        $f = "";
-        $v = "";
-        foreach ($data as $key => $value) {
-            $f .= $key . ",";
-            $v .= "'" . $value . "',";
-        }
-        $f = trim($f, ",");
-        $v = trim($v, ",");
-        $query = "INSERT INTO $this->table($f) VALUES ($v);";
-
-        return $this->pdo_execute($query);
-    }
-
-    public function findbyId($id) {
-        $sql = "SELECT * FROM $this->table WHERE user_email = ?";
-        return $this->pdo_query_one($sql, [$id]);
-    }
-
-    public function update($data, $id) {
-        if (!empty($data)) {
-            $fields = "";
-            foreach ($data as $key => $value) {
-                $fields .= "$key = '$value',";
-            }
-            $fields = trim($fields, ",");
-            $sql = "UPDATE $this->table SET $fields WHERE user_email = ?";
-            return $this->pdo_execute($sql, $id);
-        }
-    }
-
-    public function delete($id){
-        $sql = "UPDATE $this->table SET user_status = 0 WHERE user_email = ?";
-        return $this->pdo_execute($sql, $id);
-    }
+    
 }
