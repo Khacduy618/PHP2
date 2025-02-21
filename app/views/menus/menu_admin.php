@@ -38,7 +38,7 @@
     </li>
     
     <li class="nav-item">
-        <a class="nav-link" href="?mod=favorite">
+        <a class="nav-link" href="<?= _WEB_ROOT?>/favorite">
             <span class="icon">
                 <i class="fa-solid fa-heart fa-xl"></i>
             </span>
@@ -47,7 +47,7 @@
     </li>
    
     <li class="nav-item">
-        <a class="nav-link" href="?mod=coupon">
+        <a class="nav-link" href="<?= _WEB_ROOT?>/coupon">
             <span class="icon">
                 <i class="fa-solid fa-ticket fa-xl"></i>
             </span>
@@ -56,7 +56,7 @@
     </li>
    
     <li class="nav-item">
-        <a class="nav-link" href="?mod=blog">
+        <a class="nav-link" href="<?= _WEB_ROOT?>/blog">
             <span class="icon">
                 <i class="fa-solid fa-blog fa-xl"></i>
             </span>
@@ -65,7 +65,7 @@
     </li>
     
     <li class="nav-item">
-        <a class="nav-link" href="?mod=review">
+        <a class="nav-link" href="<?= _WEB_ROOT?>/review">
             <span class="icon">
                 <i class="fa-solid fa-star fa-xl"></i>
             </span>
@@ -74,7 +74,7 @@
     </li>
     
     <li class="nav-item">
-        <a class="nav-link" href="?mod=bill">
+        <a class="nav-link" href="<?= _WEB_ROOT?>/bill">
             <span class="icon">
                 <i class="fa-solid fa-receipt fa-xl"></i>
             </span>
@@ -83,7 +83,7 @@
     </li>
     
     <li class="nav-item">
-        <a class="nav-link" href="?mod=user">
+        <a class="nav-link" href="<?= _WEB_ROOT?>/user">
             <span class="icon">
                 <i class="fa-solid fa-users fa-xl"></i>
             </span>

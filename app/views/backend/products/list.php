@@ -1,7 +1,7 @@
 <div class="container-fluid py-4">
     <!-- Header Section -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="m-0 font-weight-bold"><?=$title?> Management</h2>
+        <h2 class="m-0 font-weight-bold"><?=$title?></h2>
     </div>
 
     <!-- Search and Filter Section -->

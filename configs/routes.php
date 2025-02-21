@@ -28,14 +28,24 @@ $routes['update_avatar'] = 'profile/update_avatar';
 //backend
 //dashboard
 $routes['dash-board'] = 'dashboard';
-//product
+//products
 $routes['add-new-product'] = 'product/add_new';
 $routes['store-product'] = 'product/store';
 $routes['delete-product'] = 'product/delete';
 $routes['edit-product'] = 'product/edit';
 $routes['update-product'] = 'product/update';
-//category
+//categories
 $routes['category'] = 'category/list_category';
 $routes['add-new-category'] = 'category/add_new';
 $routes['store-category'] = 'category/store';
+$routes['delete-category'] = 'category/delete';
+$routes['edit-category'] = 'category/edit';
+$routes['update-category'] = 'category/update';
+//users
+$routes['user'] = 'user/list_user';
+$routes['store-user'] = 'user/store';
+$routes['delete-user'] = 'user/delete';
+$routes['edit-user'] = 'user/edit';
+$routes['update-user'] = 'user/update';
+$routes['add-new-user'] = 'user/add_new';
 ?>

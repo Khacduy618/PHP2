@@ -13,16 +13,21 @@ class Product extends Controller
 
     public function list_product() {
         
-        $title = 'Product List';
+        
         $this->data['sub_content']['category_list'] = $this->category_model->getCategoryLists();
-        $this->data['sub_content']['title'] = $title;
-        $this->data['page_title'] = $title;
+        
         if(isset($_SESSION['isLogin_Admin'])){
+            $title = 'Product Management';
+            $this->data['sub_content']['title'] = $title;
+            $this->data['page_title'] = $title;
             $dataProduct = $this->product_model->getProductLists($_SESSION['isLogin_Admin']);
             $this->data['sub_content']['product_list'] = $dataProduct;
             $this->data['content'] = 'backend/products/list';
             $this->render('layouts/admin_layout', $this->data);
         }else {
+            $title = 'Product List';
+            $this->data['sub_content']['title'] = $title;
+            $this->data['page_title'] = $title;
             $dataProduct = $this->product_model->getProductLists();
             $this->data['sub_content']['product_list'] = $dataProduct;
             $this->data['content'] = 'frontend/products/list';
@@ -141,10 +146,10 @@ class Product extends Controller
     public function delete($id=0) {
         if($this->product_model->delete($id)){
             $_SESSION['msg'] = 'Product deleted successfully!';
-            header('Location: '._WEB_ROOT.'/san-pham');
+            header('Location: '._WEB_ROOT.'/product');
         }else{
             setcookie('msg1', 'Failed to delete product!', time() + 5, '/');
-            header('Location: ' . _WEB_ROOT . '/san-pham');
+            header('Location: ' . _WEB_ROOT . '/product');
         }
         exit();
     }
@@ -234,7 +239,7 @@ class Product extends Controller
             
         if ($status) {
             $_SESSION['msg'] = 'Product updated successfully!';
-            header('Location: '._WEB_ROOT.'/san-pham');
+            header('Location: '._WEB_ROOT.'/product');
         } else {
             setcookie('msg1', 'Failed to update product!', time() + 5, '/');
             header('Location: ' . _WEB_ROOT . '/edit-product');
