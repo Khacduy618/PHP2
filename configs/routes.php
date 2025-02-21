@@ -48,4 +48,11 @@ $routes['delete-user'] = 'user/delete';
 $routes['edit-user'] = 'user/edit';
 $routes['update-user'] = 'user/update';
 $routes['add-new-user'] = 'user/add_new';
+//address
+$routes['address'] = 'address/list_address';
+$routes['store-address'] = 'address/store';
+$routes['delete-address'] = 'address/delete';
+$routes['edit-address'] = 'address/edit';
+$routes['update-address'] = 'address/update';
+$routes['add-new-address'] = 'address/add_new';
 ?>
