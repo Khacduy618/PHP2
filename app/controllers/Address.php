@@ -12,7 +12,7 @@ class Address extends Controller
         $this->address_model = $this->model('AddressModel');
     }
 
-    public function list_address($user_email=''){
+    public function list_address($userEmail=''){
         $title = 'Address Management';
         $this->data['sub_content']['addresses'] = $this->address_model->getAllUserAddresses($userEmail);
         $this->data['sub_content']['title'] = $title;

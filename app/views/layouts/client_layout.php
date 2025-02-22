@@ -25,6 +25,8 @@
     <meta name="theme-color" content="#ffffff">
     <link rel="stylesheet" href="<?php echo _WEB_ROOT; ?>/public/assets/site/vendor/line-awesome/line-awesome/line-awesome/css/line-awesome.min.css">
     <!-- Plugins CSS File -->
+     <!-- Option 1: Include in HTML -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="<?php echo _WEB_ROOT; ?>/public/assets/site/css/bootstrap.min.css">
     <link rel="stylesheet" href="<?php echo _WEB_ROOT; ?>/public/assets/site/css/plugins/owl-carousel/owl.carousel.css">
     <link rel="stylesheet" href="<?php echo _WEB_ROOT; ?>/public/assets/site/css/plugins/magnific-popup/magnific-popup.css">
@@ -33,6 +35,7 @@
     <link rel="stylesheet" href="<?php echo _WEB_ROOT; ?>/public/assets/site/css/style.css">
     <link rel="stylesheet" href="<?php echo _WEB_ROOT; ?>/public/assets/site/css/skins/skin-demo-3.css">
     <link rel="stylesheet" href="<?php echo _WEB_ROOT; ?>/public/assets/site/css/demos/demo-3.css">
+    
 </head>
 
 <body>

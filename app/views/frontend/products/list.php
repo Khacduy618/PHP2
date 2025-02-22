@@ -70,7 +70,14 @@
                                         </div><!-- End .product-action-vertical -->
 
                                         <div class="product-action">
-                                            <a href="#" class="btn-product btn-cart"><span>add to cart</span></a>
+                                            <form action="<?=_WEB_ROOT?>/add-to-cart" method="post">
+                                                
+                                                <input type="hidden" name="product_id" value="<?php echo $product_id?>">
+                                                <input type="hidden" name="quantity" value="1">
+                                                
+                                                <button type="submit" class="btn-product btn-cart"><span>add to cart</span></button>
+                                                
+                                            </form>
                                         </div><!-- End .product-action -->
                                     </figure><!-- End .product-media -->
 

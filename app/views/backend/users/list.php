@@ -68,7 +68,7 @@
                                 ? _WEB_ROOT . '/public/uploads/avatar/' . $user_images
                                 : _WEB_ROOT . '/public/uploads/avatar/user.png';
                                 $images = "<img src='$user_images' alt='User Image' width='50'>";
-                                $url_email = "?mod=address&act=list&user_email=".$user_email;
+                                
                                 
                                 $user_status_display = ($user_status == 1) ? 'Active' : 'Inactive';
                                 $user_role_display = $user_role == 0 ? 'User' : ($user_role == 1 ? 'Admin' : 'Employee');
@@ -80,7 +80,7 @@
                                     <td><?= $user_phone ?></td>
                                     <td><?= $user_status_display ?></td>
                                     <td>
-                                            <a href="<?= $url_email ?>" class="btn btn-info" <?= !isset($_SESSION['privilege']['address']['list']) ? 'disabled' : ''?>>DETAIL</a>
+                                            <a href="<?= _WEB_ROOT ?>/address/<?=$user_email?>" class="btn btn-info">DETAIL</a>
                                     </td>
                                     <td>
                                         

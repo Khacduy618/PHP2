@@ -24,6 +24,13 @@ $routes['edit-password'] = 'account/check_email_reset';
 //profiles
 $routes['profile_user'] = 'profile/showProfile';
 $routes['update_avatar'] = 'profile/update_avatar';
+//cart
+
+$routes['cart'] = 'cart/list_cart';
+$routes['add-to-cart'] = 'cart/add_cart';
+$routes['update-cart'] = 'cart/update_cart';
+$routes['delete-cart-item'] = 'cart/delete_cart';
+$routes['delete-all-cart'] = 'cart/deleteall_cart';
 
 //backend
 //dashboard

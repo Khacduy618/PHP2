@@ -13,7 +13,7 @@
 <div class="container-fluid">
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <h2 class="m-0 font-weight-bold">Edit Category</h2>
+            <h2 class="m-0 font-weight-bold">Update Category</h2>
         </div>
         <div class="card-body">
             <?php
