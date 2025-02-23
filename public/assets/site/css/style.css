@@ -8187,14 +8187,24 @@ img{
     font-size: 1.4rem;
     letter-spacing: 0.1em;
     line-height: 1;
-    font-family: "molla"
+    height: 1.4rem;
+    width: 8rem;
+    font-family: 'Font Awesome 5 Free';
 }
+
 
 .ratings:before,
 .ratings-val:before {
-    content: "\f318" "\f318" "\f318" "\f318" "\f318"
+    content: "\f005" "\f005" "\f005" "\f005" "\f005"; /* Sử dụng mã Unicode của Font Awesome cho icon sao */
+    font-weight: 900; /* Thêm font-weight cho icon solid */
 }
-
+.ratings::before {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    color: #cccccc;
+}
 .ratings-val {
     position: absolute;
     top: 0;
@@ -8209,9 +8219,10 @@ img{
 }
 
 .ratings-text {
-    color: #cccccc;
-    letter-spacing: -.01em;
-    margin-left: .8rem
+    color: #666666;
+    font-size: 1.2rem;
+    letter-spacing: -0.01em;
+    margin-left: .5rem;
 }
 
 .ratings-text a {
