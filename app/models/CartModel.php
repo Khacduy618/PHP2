@@ -60,13 +60,13 @@ class CartModel extends Model
                 SET quantity = ? 
                 WHERE cart_id = (SELECT cart_id FROM cart WHERE cart_userEmail = ?) 
                 AND pro_id = ?";
-         $this->pdo_execute($sql, $quantity, $userEmail, $productId);
+         $this->pdo_execute($sql, [$quantity, $userEmail, $productId]);
     }
 
     public function removeFromCart($userEmail, $productId)
     {
         $sql = "DELETE FROM cart_item WHERE cart_id = (SELECT cart_id FROM cart WHERE cart_userEmail = ?) AND pro_id = ?";
-        $this->pdo_execute($sql, $userEmail, $productId);
+        $this->pdo_execute($sql, [$userEmail, $productId]);
     }
 
     public function clearCart($userEmail)
@@ -76,12 +76,12 @@ class CartModel extends Model
     }
     public function coupon($name){
         $sql = "SELECT * FROM coupons WHERE coupon_name = ? AND coupon_count > 0 AND coupon_expiredate >= NOW()";
-        return $this->pdo_query_one($sql, $name);
+        return $this->pdo_query_one($sql, [$name]);
        }
     
        public function coupon_update( $coupon_id){
           $sql = "UPDATE coupons SET coupon_count = coupon_count - 1 WHERE coupon_id =?";
-          return $this->pdo_execute($sql, $coupon_id);
+          return $this->pdo_execute($sql, [$coupon_id]);
        }   
 
     public function deleteCartItemById($cartItemId) {
@@ -108,6 +108,6 @@ class CartModel extends Model
 
     public function coupon_by_id($coupon_id) {
         $sql = "SELECT * FROM coupons WHERE coupon_id = ?";
-        return $this->pdo_query_one($sql, $coupon_id);
+        return $this->pdo_query_one($sql, [$coupon_id]);
     }
 }

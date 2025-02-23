@@ -29,8 +29,10 @@ $routes['update_avatar'] = 'profile/update_avatar';
 $routes['cart'] = 'cart/list_cart';
 $routes['add-to-cart'] = 'cart/add_cart';
 $routes['update-cart'] = 'cart/update_cart';
+$routes['update-quantity'] = 'cart/update_quantity';
 $routes['delete-cart-item'] = 'cart/delete_cart';
 $routes['delete-all-cart'] = 'cart/deleteall_cart';
+$routes['apply-coupon'] = 'cart/apply_coupon';
 
 //backend
 //dashboard

@@ -756,7 +756,7 @@ $(document).ready(function () {
         var form = $(this);
 
         $.ajax({
-            url: '?act=cart&xuli=update',
+            url: '/update',
             method: 'POST',
             data: form.serialize(),
             success: function (response) {
@@ -859,38 +859,38 @@ $(document).ready(function () {
     function updateTotals() {
         let tong = 0;
         const shipping = 20000;
+        const $checkedItems = $('.checkboxes:checked');
 
-        // Tính tổng các sản phẩm được chọn
-        $('.checkboxes:checked').each(function() {
-            const $row = $(this).closest('tr');
-            const price = parsePrice($row.find('.price-col label').text());
-            const quantity = parseInt($row.find('.quantity-input').val());
-            const lineTotal = price * quantity;
-            
-            $row.find('.total-col label').text(formatCurrency(lineTotal));
-            tong += lineTotal;
-        });
+        // Chỉ tính tổng khi có item được chọn
+        if ($checkedItems.length > 0) {
+            $checkedItems.each(function() {
+                const $row = $(this).closest('tr');
+                const price = parsePrice($row.find('.price-col label').text());
+                const quantity = parseInt($row.find('.quantity-input').val());
+                tong += price * quantity;
+            });
+        }
 
         // Cập nhật subtotal
         $('.summary-subtotal td:last').text(formatCurrency(tong));
 
-        // Tính shipping
-        const shippingAmount = tong > 0 ? shipping : 0;
+        // Tính shipping chỉ khi có item được chọn
+        const shippingAmount = $checkedItems.length > 0 ? shipping : 0;
         $('.summary-shipping td:last').text(formatCurrency(shippingAmount));
 
-        // Lấy giá trị discount từ PHP
+        // Tính discount chỉ khi có item được chọn
         let discount = 0;
-        const $couponInput = $('input[name="coupon"]');
-        if ($couponInput.length && tong > 0) {
-            // Lấy giá trị discount từ summary-coupon nếu có
-            const discountText = $('.summary-coupon .discount-amount').text();
-            if (discountText) {
-                discount = parsePrice(discountText);
+        const $couponRow = $('.summary-coupon');
+        if ($couponRow.length && $checkedItems.length > 0) {
+            const discountPercent = parseFloat($couponRow.data('discount-percent')) || 0;
+            if (discountPercent > 0) {
+                discount = Math.round(tong * (discountPercent / 100));
+                $('.summary-coupon .discount-amount').text(formatCurrency(discount));
             }
         }
 
-        // Hiển thị phần giảm giá
-        if (discount > 0) {
+        // Hiển thị/ẩn discount
+        if (discount > 0 && $checkedItems.length > 0) {
             $('.summary-coupon').show();
         } else {
             $('.summary-coupon').hide();
@@ -898,48 +898,207 @@ $(document).ready(function () {
 
         // Tính tổng cuối cùng
         const total = Math.max(0, tong + shippingAmount - discount);
-
-        // Cập nhật total
         $('.summary-total td:last').text(formatCurrency(total));
         $('input[name="total"]').val(total);
 
-        // Vô hiệu hóa nút checkout nếu không có sản phẩm được chọn
-        $('.btn-order').prop('disabled', tong === 0);
+        // Enable/disable nút checkout dựa trên items được chọn
+        $('.btn-order').prop('disabled', $checkedItems.length === 0);
     }
 
     // Xử lý sự kiện thay đổi số lượng
     $('.quantity-input').on('change', function() {
         const $input = $(this);
         const quantity = parseInt($input.val());
+        const $row = $input.closest('tr');
+        const productId = $row.find('.checkboxes').data('product-id');
+
+        console.log('Input changed:', {
+            productId: productId,
+            quantity: quantity,
+            $row: $row
+        });
 
         // Kiểm tra giới hạn số lượng
         if (quantity < 1) $input.val(1);
         if (quantity > 10) $input.val(10);
 
-        // Chỉ cập nhật nếu checkbox được chọn
-        if ($input.closest('tr').find('.checkboxes').is(':checked')) {
-            updateTotals();
-        }
+        const finalQuantity = parseInt($input.val());
+
+        console.log('Sending AJAX request:', {
+            url: _WEB_ROOT + '/update-quantity',
+            productId: productId,
+            finalQuantity: finalQuantity
+        });
+
+        // Gửi AJAX request để cập nhật quantity
+        $.ajax({
+            url: _WEB_ROOT + '/update-quantity',
+            method: 'POST',
+            data: {
+                product_id: productId,
+                quantity: finalQuantity
+            },
+            success: function(response) {
+                console.log('AJAX success response:', response);
+                try {
+                    const data = JSON.parse(response);
+                    console.log('Parsed response data:', data);
+                    
+                    if (data.success) {
+                        // Luôn cập nhật tổng tiền của sản phẩm
+                        const price = parsePrice($row.find('.price-col label').text());
+                        const newTotal = price * finalQuantity;
+                        console.log('Updating totals:', {
+                            price: price,
+                            newTotal: newTotal,
+                            finalQuantity: finalQuantity
+                        });
+                        
+                        $row.find('.total-col label').text(formatCurrency(newTotal));
+                        updateTotals();
+                    } else {
+                        console.error('AJAX request failed:', data.message);
+                        alert(data.message || 'Failed to update quantity');
+                        $input.val($input.data('previous-value'));
+                    }
+                } catch (e) {
+                    console.error('Error parsing response:', e);
+                    alert('Error processing response');
+                    $input.val($input.data('previous-value'));
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX error:', {
+                    status: status,
+                    error: error,
+                    response: xhr.responseText
+                });
+                alert('Error updating quantity');
+                $input.val($input.data('previous-value'));
+            }
+        });
+
+        // Store current value for potential rollback
+        $input.data('previous-value', finalQuantity);
     });
+
+    // Hàm xử lý select all checkboxes
+    function selectAllCheckboxes() {
+        const isChecked = $('.select-all-checkbox').is(':checked');
+        $('.checkboxes').prop('checked', isChecked);
+        updateTotals();
+    }
 
     // Xử lý sự kiện checkbox
     $('.checkboxes').on('change', function() {
         // Cập nhật trạng thái "select all"
         const allChecked = $('.checkboxes').length === $('.checkboxes:checked').length;
         $('.select-all-checkbox').prop('checked', allChecked);
-
         updateTotals();
     });
 
     // Xử lý nút "Select All"
     $('.select-all-checkbox').on('change', function() {
-        const isChecked = $(this).is(':checked');
-        $('.checkboxes').prop('checked', isChecked);
-        updateTotals();
+        selectAllCheckboxes();
     });
 
     // Khởi tạo ban đầu
     updateTotals();
+
+    // Handler cho nút delete item
+    $('.btn-remove').on('click', function(e) {
+        e.preventDefault();
+        const $row = $(this).closest('tr');
+        const deleteUrl = $(this).attr('href');
+
+        // Gọi AJAX để xóa item
+        $.ajax({
+            url: deleteUrl,
+            method: 'POST',
+            success: function(response) {
+                // Xóa row khỏi table
+                $row.fadeOut(300, function() {
+                    $(this).remove();
+                    // Cập nhật lại totals sau khi xóa
+                    updateTotals();
+                    
+                    // Kiểm tra nếu không còn item nào
+                    if ($('.checkboxes').length === 0) {
+                        // Thêm row "No products in the cart"
+                        $('tbody').append('<tr><td colspan="6" class="text-center">No products in the cart.</td></tr>');
+                    }
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error('Error:', error);
+                alert('Could not delete item. Please try again.');
+            }
+        });
+    });
+
+    // Xử lý form coupon
+    $('#coupon-form').on('submit', function(e) {
+        e.preventDefault();
+        const couponName = $('#checkout-discount-input').val().trim();
+        
+        console.log('Applying coupon:', couponName);
+
+        $.ajax({
+            url: _WEB_ROOT + '/apply-coupon',
+            method: 'POST',
+            data: { coupon_name: couponName },
+            success: function(response) {
+                console.log('Coupon response:', response);
+                try {
+                    const data = JSON.parse(response);
+                    
+                    if (data.success) {
+                        // Cập nhật label coupon
+                        $('#coupon-label').text(data.coupon.coupon_name);
+                        
+                        // Cập nhật row discount trong summary
+                        if (data.coupon.coupon_discount) {
+                            const $summaryTable = $('.table-summary');
+                            let $couponRow = $('.summary-coupon');
+                            
+                            // Tạo hoặc cập nhật row coupon
+                            if ($couponRow.length === 0) {
+                                $couponRow = $('<tr class="summary-coupon">')
+                                    .insertBefore('.summary-total');
+                            }
+                            
+                            $couponRow
+                                .data('discount-percent', data.coupon.coupon_discount)
+                                .html(`
+                                    <td>Coupon: ${data.coupon.coupon_name}</td>
+                                    <td colspan="2" class="discount-amount"></td>
+                                `);
+                        }
+                        
+                        // Cập nhật tổng tiền
+                        updateTotals();
+                    } else {
+                        alert(data.message || 'Invalid coupon code');
+                        // Reset form nếu coupon không hợp lệ
+                        $('#coupon-label').html('Have a coupon? <span>Click here to enter your code</span>');
+                        $('.summary-coupon').remove();
+                        updateTotals();
+                    }
+                } catch (e) {
+                    console.error('Error parsing coupon response:', e);
+                    alert('Error processing coupon');
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Coupon error:', {
+                    status: status,
+                    error: error,
+                    response: xhr.responseText
+                });
+                alert('Could not apply coupon. Please try again.');
+            }
+        });
+    });
 });
 
 

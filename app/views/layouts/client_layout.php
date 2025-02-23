@@ -36,6 +36,10 @@
     <link rel="stylesheet" href="<?php echo _WEB_ROOT; ?>/public/assets/site/css/skins/skin-demo-3.css">
     <link rel="stylesheet" href="<?php echo _WEB_ROOT; ?>/public/assets/site/css/demos/demo-3.css">
     
+    <!-- Add this before loading any JS files -->
+    <script>
+        const _WEB_ROOT = '<?= _WEB_ROOT ?>';
+    </script>
 </head>
 
 <body>

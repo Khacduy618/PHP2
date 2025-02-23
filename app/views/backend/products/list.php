@@ -47,7 +47,7 @@
     </div>
 
     <!-- Alert Messages -->
-    <div class="messages mb-4">
+    <div class="messages">
         <?php
         if(!empty($_GET['msg'])){
             $msg = unserialize(urldecode($_GET['msg']));

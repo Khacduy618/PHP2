@@ -10,11 +10,12 @@ class Home extends Controller{
     }
 
     public function index() {
-        $dataproduct = $this->home_model->getList();
-        $title = 'Product List';
-        $this->data['sub_content']['product_list'] = $dataproduct;
+        $title = 'Home';
+        $this->data['sub_content']['featured_products'] = $this->home_model->getFeaturedProducts(10);
+        $this->data['sub_content']['sale_products'] = $this->home_model->getOnSaleProducts(10);
+        $this->data['sub_content']['top_rated_products'] = $this->home_model->getTopRatedProducts(10);
         $this->data['sub_content']['title'] = $title;
-        $this->data['page_title'] = 'Home';
+        $this->data['page_title'] = $title;
         $this->data['content'] = 'frontend/home/index';
        $this->render('layouts/client_layout', $this->data);
     }

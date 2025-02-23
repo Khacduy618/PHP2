@@ -5,6 +5,24 @@
                 <li class="breadcrumb-item"><a href="<?= _WEB_ROOT; ?>/trang-chu">Home</a></li>
                 <li class="breadcrumb-item active" aria-current="page"">Shop</a></li>
             </ol>
+            <?php if(isset($_COOKIE['msg'])): ?>
+<div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+    <strong><?= $_COOKIE['msg'] ?></strong>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<?php endif; ?>
+
+<?php if(isset($_COOKIE['msg1'])): ?>
+<div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+    <strong><?= $_COOKIE['msg1'] ?></strong>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<?php endif; ?>
+
         </div><!-- End .container -->
     </nav><!-- End .breadcrumb-nav -->
 
@@ -70,12 +88,12 @@
                                         </div><!-- End .product-action-vertical -->
 
                                         <div class="product-action">
-                                            <form action="<?=_WEB_ROOT?>/add-to-cart" method="post">
+                                            <form action="<?=_WEB_ROOT?>/add-to-cart" class="w-100" method="post">
                                                 
                                                 <input type="hidden" name="product_id" value="<?php echo $product_id?>">
                                                 <input type="hidden" name="quantity" value="1">
                                                 
-                                                <button type="submit" class="btn-product btn-cart"><span>add to cart</span></button>
+                                                <button type="submit" class="btn-product btn-cart "><span>add to cart</span></button>
                                                 
                                             </form>
                                         </div><!-- End .product-action -->
