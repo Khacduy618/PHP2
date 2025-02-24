@@ -5,8 +5,14 @@ $routes['default_controller'] = 'home';
 *   duong dan ao => duong dan that
 */
 //frontend
+//profiles
+$routes['profile'] = 'profile';
+$routes['update_avatar'] = 'profile/update_avatar';
 //home
 $routes['trang-chu'] = 'home';
+$routes['trending'] = 'home/getProductsByCategory';
+$routes['topSell'] = 'home/getTopSellingProducts';
+
 //product
 $routes['product'] = 'product/list_product';
 $routes['product-detail'] = 'product/detail';
@@ -21,9 +27,7 @@ $routes['reset_form'] = 'account/reset_password_form';
 $routes['reset_password'] = 'account/reset_password';
 $routes['check_email'] = 'account/check_email';
 $routes['edit-password'] = 'account/check_email_reset';
-//profiles
-$routes['profile_user'] = 'profile/showProfile';
-$routes['update_avatar'] = 'profile/update_avatar';
+
 //cart
 
 $routes['cart'] = 'cart/list_cart';
@@ -33,6 +37,16 @@ $routes['update-quantity'] = 'cart/update_quantity';
 $routes['delete-cart-item'] = 'cart/delete_cart';
 $routes['delete-all-cart'] = 'cart/deleteall_cart';
 $routes['apply-coupon'] = 'cart/apply_coupon';
+
+
+//checkout
+$routes['check-info'] = 'bill/check_info';
+$routes['checkout'] = 'bill/checkout';
+
+
+
+
+
 
 //backend
 //dashboard

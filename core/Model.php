@@ -49,6 +49,19 @@ class Model extends Database{
         }
     }
 
+    protected function pdo_execute_id($sql, $params = []) {
+        try {
+            $stmt = $this->db->prepare($sql);
+            $params = is_array($params) ? $params : [$params];
+            $stmt->execute($params);
+            return $this->db->lastInsertId();
+        } catch (\PDOException $e) {
+            error_log('Query execution failed: ' . $e->getMessage());
+            file_put_contents('db_errors.log', date('Y-m-d H:i:s') . " - " . $e->getMessage() . PHP_EOL, FILE_APPEND);
+            throw $e;
+        }
+    }
+
     protected function pdo_execute($sql, $params = []) {
         try {
             $stmt = $this->db->prepare($sql);

@@ -18,8 +18,28 @@ class Cart extends Controller
     public function list_cart(){
         $title = 'Cart';
         
+        // Add debug
+        error_log('Session data: ' . print_r($_SESSION, true));
+        
+        $userEmail = $_SESSION['user']['user_email'];
+        $this->data['sub_content']['cart_list'] = $this->cart_model->getCartItems($userEmail);
+        
+        // Khởi tạo biến coupon mặc định
         $this->data['sub_content']['coupon'] = null;
-        $this->data['sub_content']['cart_list'] = $this->cart_model->getCartItems($_SESSION['user']['user_email']);
+        
+        // Kiểm tra coupon trong session và POST
+        if(isset($_SESSION['coupon'])) {
+            $this->data['sub_content']['coupon'] = $_SESSION['coupon'];
+            error_log('Coupon from session: ' . print_r($_SESSION['coupon'], true));
+        } elseif(isset($_POST['coupon_name'])) {
+            $coupon = $this->cart_model->coupon($_POST['coupon_name']);
+            if($coupon) {
+                $_SESSION['coupon'] = $coupon;
+                $this->data['sub_content']['coupon'] = $coupon;
+                error_log('Coupon from POST: ' . print_r($coupon, true));
+            }
+        }
+        
         $this->data['sub_content']['address'] = $this->address_model->getOneAddress($_SESSION['user']['user_email']);
         $this->data['sub_content']['addresses'] = $this->address_model->getAllUserAddresses($_SESSION['user']['user_email']);
         
@@ -124,25 +144,24 @@ class Cart extends Controller
     }
 
     public function apply_coupon() {
-        if ($this->isAjax() && $_SERVER['REQUEST_METHOD'] === 'POST') {
-            $coupon_name = isset($_POST['coupon_name']) ? $_POST['coupon_name'] : '';
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $coupon_name = $_POST['coupon_name'] ?? '';
+            
+            if (empty($coupon_name)) {
+                echo json_encode(['error' => 'Coupon code is required']);
+                return;
+            }
+
             $coupon = $this->cart_model->coupon($coupon_name);
             
-            if ($coupon && is_array($coupon)) {
-                echo json_encode([
-                    'success' => true,
-                    'coupon' => [
-                        'coupon_name' => $coupon['coupon_name'],
-                        'coupon_discount' => $coupon['coupon_discount']
-                    ]
-                ]);
+            if ($coupon) {
+                // Lưu vào session
+                $_SESSION['coupon'] = $coupon;
+                error_log('Applied coupon: ' . print_r($coupon, true));
+                echo json_encode(['success' => true, 'coupon' => $coupon]);
             } else {
-                echo json_encode([
-                    'success' => false,
-                    'message' => 'Invalid or expired coupon code'
-                ]);
+                echo json_encode(['error' => 'Invalid coupon code']);
             }
-            exit;
         }
     }
 }

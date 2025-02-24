@@ -47,7 +47,7 @@
                                     </a>
                                     <div class="header-menu">
                                         <ul>
-                                            <li><a href="<?php echo _WEB_ROOT?>/profile_user">My Account</a></li>
+                                            <li><a href="<?php echo _WEB_ROOT?>/profile">My Account</a></li>
                                             <li><a href="<?php echo _WEB_ROOT?>/log-out">Sign Out</a></li>
                                         </ul>
                                     </div>

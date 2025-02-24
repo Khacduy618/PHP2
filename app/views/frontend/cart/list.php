@@ -1,3 +1,9 @@
+<?php
+// Thêm debug này ở đầu file để xem dữ liệu
+echo '<pre style="display:none">';
+var_dump($coupon);
+echo '</pre>';
+?>
 
 <div class="page-header text-center">
     <div class="container">
@@ -37,7 +43,8 @@
                 <div class="col-lg-8">
 
                     <table class="table table-cart table-mobile">
-                        <form id="cartForm" action="<?=_WEB_ROOT?>/checkout" method="POST">
+                        <form id="cartForm" action="<?=_WEB_ROOT?>/check-info" method="POST">
+                            <!-- <input type="hidden" name="selected_items" value=""> -->
                             <thead>
                                 <tr>
                                     <th>
@@ -158,6 +165,8 @@
                                     <td colspan="2"><?= number_format($shipping,0,",",".") ?> đ</td>
                                 </tr>
                                 <?php
+                                // Tính toán discount
+                                $discount = 0;
                                 if (isset($coupon) && is_array($coupon) && isset($coupon['coupon_discount'])) {
                                     $discount = intval($tong * ($coupon['coupon_discount'] / 100));
                                 }
@@ -176,9 +185,10 @@
                                     </td>
                                 </tr><!-- End .summary-shipping-estimate -->
                                 <?php
+                                // Hiển thị discount nếu có
                                 if(is_array($coupon) && isset($coupon['coupon_discount'])): ?>
-                                <tr class="summary-coupon" data-discount-percent="<?= htmlspecialchars($coupon['coupon_discount']) ?>">
-                                    <td>Coupon: <?= htmlspecialchars($coupon['coupon_name']) ?></td>
+                                <tr class="summary-coupon" data-discount-percent="<?= $coupon['coupon_discount'] ?>">
+                                    <td>Coupon: <?= $coupon['coupon_name']?></td>
                                     <td colspan="2" class="discount-amount"><?= number_format($discount,0,",",".") ?> đ</td>
                                 </tr>
                                 <?php endif; ?>
@@ -188,11 +198,21 @@
                                 </tr><!-- End .summary-total -->
                             </tbody>
                         </table><!-- End .table table-summary -->
-                        <input type="hidden" name="coupon" value="<?= isset($coupon['coupon_name']) ? $coupon['coupon_name'] : '' ?>" >
+                        <?php
+                        // Trước khi render input hidden, kiểm tra và gán giá trị
+                        $couponName = '';
+                        if(is_array($coupon) && isset($coupon['coupon_name'])) {
+                            $couponName = htmlspecialchars($coupon['coupon_name']);
+                        }
+                        ?>
+                        <input type="hidden" name="coupon" value="<?= $couponName ?>" >
+                        <input type="hidden" name="selected_items" value='<?= json_encode($selectedItems) ?>'>
+                       
                         <input type="hidden" name="total" value="<?=$total?>">
                         <input type="hidden" name="shipping" value="<?=$shipping?>">
-                        <button type='submit' class="btn btn-outline-primary-2 btn-order btn-block">PROCEED TO
-                            CHECKOUT</button>
+                        <button type='submit' class="btn btn-outline-primary-2 btn-order btn-block">
+                            PROCEED TO CHECKOUT
+                        </button>
                         </form>
                        
                     </div><!-- End .summary -->

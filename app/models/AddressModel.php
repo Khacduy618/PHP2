@@ -26,4 +26,9 @@ class AddressModel extends Model
         $sql = "SELECT * FROM $this->table WHERE $this->contents = ? AND $this->status = 0";
         return $this->pdo_query_one($sql, $userEmail);
     }
+
+    public function getOneAddressById($addressId) {
+        $sql = "SELECT * FROM address WHERE address_id = ?";
+        return $this->pdo_query_one($sql, [$addressId]);
+    }
 }

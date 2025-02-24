@@ -14,7 +14,7 @@
             $this->profile_model = $this->model('ProfileModel');
         }
 
-        public function showProfile()
+        public function index()
         {   
             $user_email = $_SESSION['user']['user_email'];
             $dataProfile = $this->profile_model->getProfile($user_email);

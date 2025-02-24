@@ -986,14 +986,17 @@ $(document).ready(function () {
     function selectAllCheckboxes() {
         const isChecked = $('.select-all-checkbox').is(':checked');
         $('.checkboxes').prop('checked', isChecked);
+        updateSelectedItems();
         updateTotals();
     }
 
     // Xử lý sự kiện checkbox
     $('.checkboxes').on('change', function() {
+        updateSelectedItems();
         // Cập nhật trạng thái "select all"
         const allChecked = $('.checkboxes').length === $('.checkboxes:checked').length;
         $('.select-all-checkbox').prop('checked', allChecked);
+       
         updateTotals();
     });
 
@@ -1001,8 +1004,56 @@ $(document).ready(function () {
     $('.select-all-checkbox').on('change', function() {
         selectAllCheckboxes();
     });
+    function updateSelectedItems() {
+        let selectedItems = [];
+        
+        $('.checkboxes:checked').each(function() {
+            const $row = $(this).closest('tr');
+            const $priceLabel = $row.find('.price-col label');
+            const $quantityInput = $row.find('.quantity-input');
+            const $totalLabel = $row.find('.total-col label');
+            
+            selectedItems.push({
+                cart_item_id: $(this).val(),
+                product_id: $(this).data('product-id'),
+                product_name: $row.find('.product-title a').text(),
+                product_image: $row.find('.product-image img').attr('src'),
+                price: parsePrice($priceLabel.text()),
+                quantity: parseInt($quantityInput.val()),
+                total: parsePrice($totalLabel.text())
+            });
+        });
 
+        // Cập nhật input hidden với dữ liệu mới
+        $('input[name="selected_items"]').val(JSON.stringify(selectedItems));
+        
+        // Enable/disable nút checkout dựa trên số lượng item được chọn
+        $('.btn-order').prop('disabled', selectedItems.length === 0);
+        
+        // Cập nhật tổng tiền
+        updateTotals();
+    }
+    function updateCartSummary(subtotal) {
+        // Update subtotal
+        $('.subtotal-amount').text(formatCurrency(subtotal));
+        
+        // Tính discount nếu có
+        const discountPercent = $('.summary-coupon').data('discount-percent') || 0;
+        const discount = subtotal * (discountPercent / 100);
+        if(discountPercent > 0) {
+            $('.discount-amount').text(formatCurrency(discount));
+        }
+        
+        // Lấy shipping fee
+        const shipping = parseFloat($('input[name="shipping"]').val()) || 0;
+        
+        // Tính tổng
+        const total = subtotal + shipping - discount;
+        $('.total-amount').text(formatCurrency(total));
+        $('input[name="total"]').val(total);
+    }
     // Khởi tạo ban đầu
+    updateSelectedItems();
     updateTotals();
 
     // Handler cho nút delete item
@@ -1099,7 +1150,312 @@ $(document).ready(function () {
             }
         });
     });
+
+    });
+
+// Define functions outside of document.ready
+function initCategoryProducts() {
+    console.log('Initializing category products...');
+    
+    // Load products for first category by default
+    const $firstTab = $('.trending .nav-pills .nav-link.active');
+    console.log('First active tab:', $firstTab.length ? $firstTab.attr('id') : 'not found');
+    
+    if($firstTab.length > 0) {
+        const firstTabId = $firstTab.attr('id');
+        console.log('Loading first tab:', firstTabId);
+        loadProductsByCategory(firstTabId.replace('-link', ''));
+    }
+    
+    // Handle tab change
+    $('.trending .nav-pills .nav-link').on('click', function (e) {
+        e.preventDefault();
+        console.log('Tab clicked:', $(this).attr('id'));
+        
+        // Remove active class from all tabs and add to clicked tab
+        $('.trending .nav-pills .nav-link').removeClass('active');
+        $(this).addClass('active');
+        
+        const tabId = $(this).attr('id').replace('-link', '');
+        const targetPane = $(`#${tabId}-tab`);
+        
+        // Hide all panes and show target pane
+        $('.trending .tab-pane').removeClass('show active');
+        targetPane.addClass('show active');
+        
+        loadProductsByCategory(tabId);
+    });
+
+    // Debug info
+    console.log('Elements found:', {
+        'nav-pills': $('.trending .nav-pills').length,
+        'nav-links': $('.trending .nav-pills .nav-link').length,
+        'tab-content': $('.trending .tab-content').length,
+        'tab-panes': $('.trending .tab-pane').length
+    });
+}
+
+function loadProductsByCategory(tabId) {
+    console.log('Loading products for tab:', tabId);
+    
+    if (!tabId) {
+        console.error('No tab ID provided');
+        return;
+    }
+
+    const categoryId = tabId.replace('trending-', '');
+    const $container = $(`#trending-${categoryId}-tab .owl-carousel`);
+    
+    console.log('Making request for category:', {
+        categoryId: categoryId,
+        url: _WEB_ROOT + '/trending',
+        container: $container.length ? 'found' : 'not found'
+    });
+
+    // Show loading state
+    $container.html('<div class="loading">Loading products...</div>');
+
+    $.ajax({
+        url: _WEB_ROOT + '/trending',
+        type: 'POST',
+        data: {category_id: categoryId},
+        dataType: 'json',
+        success: function(response) {
+            console.log('Response received:', response);
+            
+            if (!response || response.length === 0) {
+                $container.html('<p>No products found for this category.</p>');
+                return;
+            }
+
+            const html = response.map(product => generateProductHtml(product)).join('');
+            console.log('Generated HTML length:', html.length);
+            
+            $container.html(html);
+
+            // Initialize owl carousel
+            if ($container.hasClass('owl-loaded')) {
+                $container.trigger('destroy.owl.carousel');
+            }
+            
+            $container.owlCarousel({
+                nav: true,
+                dots: false,
+                margin: 20,
+                loop: false,
+                responsive: {
+                    0: { items: 2 },
+                    480: { items: 2 },
+                    768: { items: 3 },
+                    992: { items: 4 }
+                }
+            });
+        },
+        error: function(xhr, status, error) {
+            console.error('AJAX Error:', {
+                status: xhr.status,
+                statusText: xhr.statusText,
+                responseText: xhr.responseText,
+                error: error
+            });
+            $container.html('<p>Error loading products. Please try again.</p>');
+        }
+    });
+}
+
+
+// Add new function for top selling products
+function initTopSellingProducts() {
+    console.log('Initializing top selling products...');
+    
+    // Load products for first category by default
+    const $firstTab = $('.top .nav-pills .nav-link.active');
+    console.log('First active tab:', $firstTab.length ? $firstTab.attr('id') : 'not found');
+    
+    if($firstTab.length > 0) {
+        const firstTabId = $firstTab.attr('id');
+        console.log('Loading first tab:', firstTabId);
+        loadTopSellingProducts(firstTabId);
+    }
+    
+    // Handle tab change
+    $('.top .nav-pills .nav-link').on('click', function (e) {
+        e.preventDefault();
+        const tabId = $(this).attr('id');
+        console.log('Tab clicked:', tabId);
+        
+        $('.top .nav-pills .nav-link').removeClass('active');
+        $(this).addClass('active');
+        
+        const targetId = tabId.replace('-link', '');
+        const targetPane = $(`#${targetId}-tab`);
+        
+        $('.top .tab-pane').removeClass('show active');
+        targetPane.addClass('show active');
+        
+        loadTopSellingProducts(tabId);
+    });
+}
+
+
+function loadTopSellingProducts(tabId) {
+    console.log('Loading top selling products for tab:', tabId);
+    
+    if (!tabId) {
+        console.error('No tab ID provided');
+        return;
+    }
+
+    // Không cần thay thế 'top-' nữa vì ID đã đúng format
+    const categoryId = tabId.replace('-link', '').replace('top-', '');
+    const $container = $(`#${tabId.replace('-link', '')}-tab .owl-carousel`);
+    
+    console.log('Making request for category:', {
+        tabId: tabId,
+        categoryId: categoryId,
+        url: _WEB_ROOT + '/topSell',
+        container: $container.length ? 'found' : 'not found',
+        selector: `#${tabId.replace('-link', '')}-tab .owl-carousel`
+    });
+
+    if (!$container.length) {
+        console.error('Container not found:', `#${tabId.replace('-link', '')}-tab .owl-carousel`);
+        return;
+    }
+
+    $container.html('<div class="loading">Loading products...</div>');
+
+    $.ajax({
+        url: _WEB_ROOT + '/topSell',
+        type: 'POST',
+        data: {category_id: categoryId},
+        dataType: 'json',
+        success: function(response) {
+            console.log('Response received:', response);
+            
+            if (!response || response.length === 0) {
+                $container.html('<p>No products found for this category.</p>');
+                return;
+            }
+
+            const html = response.map(product => generateProductHtml(product)).join('');
+            console.log('Generated HTML length:', html.length);
+            
+            $container.html(html);
+
+            if ($container.hasClass('owl-loaded')) {
+                $container.trigger('destroy.owl.carousel');
+            }
+            
+            $container.owlCarousel({
+                nav: true,
+                dots: false,
+                margin: 20,
+                loop: false,
+                responsive: {
+                    0: { items: 2 },
+                    480: { items: 2 },
+                    768: { items: 3 },
+                    992: { items: 4 },
+                    1200: { items: 5 }
+                }
+            });
+        },
+        error: function(xhr, status, error) {
+            console.error('AJAX Error:', {
+                status: xhr.status,
+                statusText: xhr.statusText,
+                responseText: xhr.responseText,
+                error: error,
+                url: this.url // Log URL being called
+            });
+            $container.html('<p>Error loading products. Please try again.</p>');
+        }
+    });
+}
+
+function generateProductHtml(product) {
+    console.log('Generating HTML for product:', product);
+    
+    const discountPrice = product.product_price * (1 - product.product_discount/100);
+    return `
+        <div class="product product-2">
+            <figure class="product-media">
+                ${product.product_discount > 0 ? 
+                    `<span class="product-label label-circle label-sale">-${product.product_discount}%</span>` 
+                    : ''}
+                <a href="${_WEB_ROOT}/product-detail/${product.product_id}">
+                    <img src="${_WEB_ROOT}/public/uploads/products/${product.product_img}" 
+                         alt="${product.product_name}" 
+                         class="product-image">
+                </a>
+
+                <div class="product-action-vertical">
+                    <a href="#" class="btn-product-icon btn-wishlist btn-expandable">
+                        <span>add to wishlist</span>
+                    </a>
+                </div>
+
+                <div class="product-action product-action-dark">
+                    <a href="#" class="btn-product btn-cart" title="Add to cart">
+                        <span>add to cart</span>
+                    </a>
+                    <a href="#" class="btn-product btn-quickview" title="Quick view">
+                        <span>quick view</span>
+                    </a>
+                </div>
+            </figure>
+
+            <div class="product-body">
+                <div class="product-cat">
+                    <a href="#">${product.category_name}</a>
+                </div>
+                <h3 class="product-title">
+                    <a href="${_WEB_ROOT}/product-detail/${product.product_id}">
+                        ${product.product_name}
+                    </a>
+                </h3>
+                <div class="product-price">
+                    ${product.product_discount > 0 ? 
+                        `<span class="new-price">${formatCurrency(discountPrice)}</span>
+                         <span class="old-price">${formatCurrency(product.product_price)}</span>` 
+                        : formatCurrency(product.product_price)}
+                </div>
+                <div class="ratings-container">
+                    <div class="ratings">
+                        <div class="ratings-val" style="width: ${(product.most_common_rating || 0) * 20}%"></div>
+                    </div>
+                    <span class="ratings-text">
+                        (${product.review_count || 0} Reviews )
+                    </span>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+
+function formatCurrency(amount) {
+    return new Intl.NumberFormat('vi-VN', {
+        style: 'currency',
+        currency: 'VND'
+    }).format(amount);
+}
+
+$(document).ready(function() {
+    initCategoryProducts();
+    initTopSellingProducts();
 });
 
 
+// Backup initialization
+window.addEventListener('load', function() {
+console.log('Window loaded');
+if (!window.categoryProductsInitialized) {
+    initCategoryProducts();
+    initTopSellingProducts();
+    window.categoryProductsInitialized = true;
+}
+}
+);
 

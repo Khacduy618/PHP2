@@ -80,7 +80,7 @@
         {
             $sql = "SELECT user_images FROM $this->table WHERE user_email = ?";
             $result = $this->pdo_query_one($sql, [$user_email]);
-            return $result['user_image'] ?? null;
+            return $result['user_images'] ?? null;
         }
     }
     

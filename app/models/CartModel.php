@@ -2,6 +2,8 @@
 
 class CartModel extends Model
 {
+
+        
     public function getCartItems($userEmail) {
         $sql = "SELECT ci.*, p.product_name, p.product_price, p.product_img, p.product_discount 
                 FROM cart_item ci
@@ -74,10 +76,20 @@ class CartModel extends Model
         $sql = "DELETE FROM cart_item WHERE cart_id = (SELECT cart_id FROM cart WHERE cart_userEmail = ?)";
         $this->pdo_execute($sql, $userEmail);
     }
-    public function coupon($name){
-        $sql = "SELECT * FROM coupons WHERE coupon_name = ? AND coupon_count > 0 AND coupon_expiredate >= NOW()";
-        return $this->pdo_query_one($sql, [$name]);
-       }
+    public function coupon($name) {
+        try {
+            $sql = "SELECT * FROM coupons WHERE coupon_name = ? AND coupon_count > 0 AND coupon_expiredate >= NOW()";
+            $result = $this->pdo_query_one($sql, [$name]);
+            
+            // Add debug
+            error_log('Coupon query result: ' . print_r($result, true));
+            
+            return $result;
+        } catch (Exception $e) {
+            error_log('Error in coupon method: ' . $e->getMessage());
+            return null;
+        }
+    }
     
        public function coupon_update( $coupon_id){
           $sql = "UPDATE coupons SET coupon_count = coupon_count - 1 WHERE coupon_id =?";

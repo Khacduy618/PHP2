@@ -12,3 +12,69 @@
 2025-02-23 06:02:23 - SQLSTATE[42S02]: Base table or view not found: 1146 Table 'cuahangdienthoai.order_details' doesn't exist
 2025-02-23 06:04:21 - SQLSTATE[42S02]: Base table or view not found: 1146 Table 'cuahangdienthoai.bill' doesn't exist
 2025-02-23 06:04:28 - SQLSTATE[42S22]: Column not found: 1054 Unknown column 'f.favorite_pro' in 'on clause'
+2025-02-23 14:23:25 - SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '(SELECT review_category 
+                        FROM reviews r2 
+         ...' at line 6
+2025-02-23 14:23:25 - SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '(SELECT review_category 
+                        FROM reviews r2 
+         ...' at line 6
+2025-02-23 14:23:27 - SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '(SELECT review_category 
+                        FROM reviews r2 
+         ...' at line 6
+2025-02-23 14:23:27 - SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '(SELECT review_category 
+                        FROM reviews r2 
+         ...' at line 6
+2025-02-23 14:23:28 - SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '(SELECT review_category 
+                        FROM reviews r2 
+         ...' at line 6
+2025-02-23 14:23:28 - SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '(SELECT review_category 
+                        FROM reviews r2 
+         ...' at line 6
+2025-02-23 14:23:28 - SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '(SELECT review_category 
+                        FROM reviews r2 
+         ...' at line 6
+2025-02-23 14:23:28 - SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '(SELECT review_category 
+                        FROM reviews r2 
+         ...' at line 6
+2025-02-23 14:36:09 - SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '(SELECT review_category 
+                        FROM reviews r2 
+         ...' at line 6
+2025-02-23 14:36:09 - SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '(SELECT review_category 
+                        FROM reviews r2 
+         ...' at line 6
+2025-02-23 14:36:16 - SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '(SELECT review_category 
+                        FROM reviews r2 
+         ...' at line 6
+2025-02-23 14:36:16 - SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '(SELECT review_category 
+                        FROM reviews r2 
+         ...' at line 6
+2025-02-23 14:36:48 - SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '(SELECT review_category 
+                        FROM reviews r2 
+         ...' at line 6
+2025-02-23 14:36:48 - SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '(SELECT review_category 
+                        FROM reviews r2 
+         ...' at line 6
+2025-02-23 14:37:12 - SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '(SELECT review_category 
+                        FROM reviews r2 
+         ...' at line 6
+2025-02-23 14:37:12 - SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '(SELECT review_category 
+                        FROM reviews r2 
+         ...' at line 6
+2025-02-23 14:37:15 - SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '(SELECT review_category 
+                        FROM reviews r2 
+         ...' at line 6
+2025-02-23 14:37:15 - SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '(SELECT review_category 
+                        FROM reviews r2 
+         ...' at line 6
+2025-02-23 14:37:17 - SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '(SELECT review_category 
+                        FROM reviews r2 
+         ...' at line 6
+2025-02-23 14:37:17 - SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '(SELECT review_category 
+                        FROM reviews r2 
+         ...' at line 6
+2025-02-23 14:37:36 - SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '(SELECT review_category 
+                        FROM reviews r2 
+         ...' at line 6
+2025-02-23 14:37:36 - SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '(SELECT review_category 
+                        FROM reviews r2 
+         ...' at line 6
