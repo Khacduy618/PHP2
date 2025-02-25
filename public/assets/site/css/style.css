@@ -853,7 +853,7 @@ blockquote.text-white cite span {
 
 .logo {
     display: block;
-    width: 90px;
+    /* width: 90px; */
     margin-top: 2.55rem;
     margin-bottom: 2.95rem;
     flex-shrink: 0;

@@ -73,7 +73,7 @@
                 </button>
                 
                 <a href="index.html" class="logo">
-                    <img src="assets/images/demos/demo-3/logo.png" alt="Molla Logo" width="105" height="25">
+                    <img src="<?php echo _WEB_ROOT; ?>/public/assets/site/images/demos/demo-3/logo.png" alt="Molla Logo" width="105" height="25">
                 </a>
             </div><!-- End .header-left -->
 
@@ -101,19 +101,19 @@
 
                     <div class="dropdown-menu dropdown-menu-right">
                         <ul class="compare-products">
-                            <li class="compare-product">
+                            <!-- <li class="compare-product">
                                 <a href="#" class="btn-remove" title="Remove Product"><i class="icon-close"></i></a>
                                 <h4 class="compare-product-title"><a href="product.html">Blue Night Dress</a></h4>
                             </li>
                             <li class="compare-product">
                                 <a href="#" class="btn-remove" title="Remove Product"><i class="icon-close"></i></a>
                                 <h4 class="compare-product-title"><a href="product.html">White Long Skirt</a></h4>
-                            </li>
+                            </li> -->
                         </ul>
 
                         <div class="compare-actions">
-                            <a href="#" class="action-link">Clear All</a>
-                            <a href="#" class="btn btn-outline-primary-2"><span>Compare</span><i class="icon-long-arrow-right"></i></a>
+                            <!-- <a href="#" class="action-link">Clear All</a>
+                            <a href="#" class="btn btn-outline-primary-2"><span>Compare</span><i class="icon-long-arrow-right"></i></a> -->
                         </div>
                     </div><!-- End .dropdown-menu -->
                 </div><!-- End .compare-dropdown -->
@@ -141,40 +141,40 @@
                         <div class="dropdown-cart-products">
                             <div class="product">
                                 <div class="product-cart-details">
-                                    <h4 class="product-title">
+                                    <!-- <h4 class="product-title">
                                         <a href="product.html">Beige knitted elastic runner shoes</a>
                                     </h4>
 
                                     <span class="cart-product-info">
                                         <span class="cart-product-qty">1</span>
                                         x $84.00
-                                    </span>
+                                    </span> -->
                                 </div><!-- End .product-cart-details -->
 
                                 <figure class="product-image-container">
-                                    <a href="product.html" class="product-image">
-                                        <img src="assets/images/products/cart/product-1.jpg" alt="product">
-                                    </a>
+                                    <!-- <a href="product.html" class="product-image">
+                                        <img src="<?php echo _WEB_ROOT; ?>/public/assets/site/images/products/cart/product-1.jpg" alt="product">
+                                    </a> -->
                                 </figure>
                                 <a href="#" class="btn-remove" title="Remove Product"><i class="icon-close"></i></a>
                             </div><!-- End .product -->
 
                             <div class="product">
                                 <div class="product-cart-details">
-                                    <h4 class="product-title">
+                                    <!-- <h4 class="product-title">
                                         <a href="product.html">Blue utility pinafore denim dress</a>
                                     </h4>
 
                                     <span class="cart-product-info">
                                         <span class="cart-product-qty">1</span>
                                         x $76.00
-                                    </span>
+                                    </span> -->
                                 </div><!-- End .product-cart-details -->
 
                                 <figure class="product-image-container">
-                                    <a href="product.html" class="product-image">
-                                        <img src="assets/images/products/cart/product-2.jpg" alt="product">
-                                    </a>
+                                    <!-- <a href="product.html" class="product-image">
+                                        <img src="<?php echo _WEB_ROOT; ?>/public/assets/site/images/products/cart/product-2.jpg" alt="product">
+                                    </a> -->
                                 </figure>
                                 <a href="#" class="btn-remove" title="Remove Product"><i class="icon-close"></i></a>
                             </div><!-- End .product -->

@@ -1397,9 +1397,14 @@ function generateProductHtml(product) {
                 </div>
 
                 <div class="product-action product-action-dark">
-                    <a href="#" class="btn-product btn-cart" title="Add to cart">
-                        <span>add to cart</span>
-                    </a>
+                    <form action="${_WEB_ROOT}/add-to-cart" class="w-50" method="post">
+                        
+                        <input type="hidden" name="product_id" value="${product.product_id}">
+                        <input type="hidden" name="quantity" value="1">
+                        
+                        <button type="submit" class="btn-product btn-cart "><span>add to cart</span></button>
+                        
+                    </form>
                     <a href="#" class="btn-product btn-quickview" title="Quick view">
                         <span>quick view</span>
                     </a>

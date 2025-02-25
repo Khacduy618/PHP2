@@ -38,6 +38,7 @@
                     <div class="col-md-6">
                         <div class="product-gallery product-gallery-vertical">
                             <div class="row">
+                                
                                 <figure class="product-main-image">
                                     <?php 
                                         $image = !empty($product_img) 
@@ -120,15 +121,19 @@
                             </div> -->
 
                             <div class="details-filter-row details-row-size">
+                                <form action="<?=_WEB_ROOT?>/add-to-cart" class="w-100" method="post">
                                 <label for="qty">Qty:</label>
                                 <div class="product-details-quantity">
-                                    <input type="number" id="qty" class="form-control" value="1" min="1" max="10" step="1" data-decimals="0" required>
+                                    <input type="number" id="qty" name="quantity" class="form-control" value="1" min="1" max="10" step="1" data-decimals="0" required>
                                 </div><!-- End .product-details-quantity -->
                             </div><!-- End .details-filter-row -->
 
                             <div class="product-details-action">
-                                <a href="#" class="btn-product btn-cart"><span>add to cart</span></a>
-
+                                                
+                                    <input type="hidden" name="product_id" value="<?php echo $product_id?>">
+                                    <button type="submit" class="btn-product btn-cart "><span>add to cart</span></button>
+                                    
+                                </form>
                                 <div class="details-action-wrapper">
                                     <a href="#" class="btn-product btn-wishlist" title="Wishlist"><span>Add to Wishlist</span></a>
                                     <a href="#" class="btn-product btn-compare" title="Compare"><span>Add to Compare</span></a>

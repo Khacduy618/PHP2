@@ -168,7 +168,7 @@ echo '</pre>';
                                 // Tính toán discount
                                 $discount = 0;
                                 if (isset($coupon) && is_array($coupon) && isset($coupon['coupon_discount'])) {
-                                    $discount = intval($tong * ($coupon['coupon_discount'] / 100));
+                                    $discount = $tong * ($coupon['coupon_discount'] / 100);
                                 }
                                 $total = $tong + $shipping - $discount;
                                 ?>
@@ -207,7 +207,6 @@ echo '</pre>';
                         ?>
                         <input type="hidden" name="coupon" value="<?= $couponName ?>" >
                         <input type="hidden" name="selected_items" value='<?= json_encode($selectedItems) ?>'>
-                       
                         <input type="hidden" name="total" value="<?=$total?>">
                         <input type="hidden" name="shipping" value="<?=$shipping?>">
                         <button type='submit' class="btn btn-outline-primary-2 btn-order btn-block">
