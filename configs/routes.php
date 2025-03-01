@@ -22,9 +22,10 @@ $routes['log-out'] = 'account/logout';
 //pass
 //forgot_pass
 $routes['forgot_password'] = 'account/check_email_form';
+$routes['send_email'] = 'account/send_email';
+$routes['change_password_form'] = 'account/change_password_form';
+$routes['change_password'] = 'account/change_password';
 //reset_pass
-$routes['reset_form'] = 'account/reset_password_form';
-$routes['reset_password'] = 'account/reset_password';
 $routes['check_email'] = 'account/check_email';
 $routes['edit-password'] = 'account/check_email_reset';
 
@@ -42,9 +43,6 @@ $routes['apply-coupon'] = 'cart/apply_coupon';
 //checkout
 $routes['check-info'] = 'bill/check_info';
 $routes['checkout'] = 'bill/checkout';
-
-
-
 
 
 

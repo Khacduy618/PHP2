@@ -28,18 +28,14 @@
     
 <div class="container login-form">
     <h3><?=$title?></h3>
-    <form action="<?php echo _WEB_ROOT; ?>/check_email_form" method="POST">
+    <form action="<?php echo _WEB_ROOT; ?>/send_email" method="POST">
         <div class="form-group">
             <label for="email">Email *</label>
             <input type="email" class="form-control" id="email" name="email" placeholder="Nhập email của bạn để đặt lại mật khẩu" required>
         </div>
-        <div class="form-group">
-            <label for="pass">Email Password *</label>
-            <input type="password" class="form-control" id="pass" name="pass" placeholder="Nhập mật khẩu email của bạn để đặt lại mật khẩu" required>
-        </div>
         <div class="form-footer">
             <button type="submit" class="btn btn-outline-primary-2">
-                <span>Tiếp tục</span>
+                <span>Gửi yêu cầu</span>
                 <i class="icon-long-arrow-right"></i>
             </button>
         </div>

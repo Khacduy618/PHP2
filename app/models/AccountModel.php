@@ -3,14 +3,10 @@
     {
         protected $table = 'user';
 
-        public function login_action($email, $password)
+        public function login_action($user_email, $user_password)
         {
             $sql = "SELECT * FROM $this->table WHERE user_email = ? AND user_password = ? LIMIT 1";
-            $stmt = $this->pdo_query($sql, [$email, $password]);
-            if ($stmt) {
-                return $stmt->fetch(PDO::FETCH_ASSOC);
-            }
-            return false;
+            return $this->pdo_query_one($sql, [$user_email, $user_password]);
         }
        
         function check_account($email)
@@ -43,15 +39,6 @@
             return $this->pdo_query_one($query, $user_email);
         }
 
-        public function checkEmail($email)
-        {
-            $sql = "SELECT * FROM $this->table WHERE user_email = ? LIMIT 1";
-            $stmt = $this->pdo_query($sql, [$email]);
-            if ($stmt) {
-                return $stmt->fetch(PDO::FETCH_ASSOC);
-            }
-            return false;
-        }
 
         public function dangky_google($google_id, $user_name, $user_full_name, $user_email, $user_images, $user_password)
         {
@@ -61,16 +48,24 @@
         }
         
 
-        public function updatePassword($email, $new_password)
+        public function updatePassword($access_token, $new_password)
         {
-            $sql = "UPDATE $this->table SET user_password = ? WHERE user_email = ?";
-            return $this->pdo_query($sql, [md5($new_password), $email]);
+            $sql = "UPDATE $this->table SET user_password = ? WHERE access_token = ?";
+            return $this->pdo_query($sql, [$new_password, $access_token]);
         }
 
-        public function accessToken($token, $email) {
+        public function accessToken($access_token = '', $email) {
             $sql = "UPDATE $this->table SET access_token = ? WHERE user_email = ?";
-            $this->pdo_execute($sql, [$token, $email]);
+            return $this->pdo_execute($sql, [$access_token, $email]);
         }
+
+        public function getAccessToken($access_token) {
+            $sql = "SELECT user_email FROM $this->table WHERE access_token = ?";
+            $result = $this->pdo_query_one($sql, [$access_token]);
+            return $result ? $result['user_email'] : false;
+        }
+
+    
     }
     
 ?>

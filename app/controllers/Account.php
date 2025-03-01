@@ -1,5 +1,9 @@
 <?php
 
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
+
 class Account extends Controller
 {
     public $data =[];
@@ -34,6 +38,7 @@ class Account extends Controller
                 header('Location: ' . _WEB_ROOT . '/dang-nhap');
                 exit();
             }
+            // die($user_password);
             $login = $this->account_model->login_action($user_email, $user_password);
 
             if ($login) {
@@ -134,7 +139,7 @@ class Account extends Controller
             $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
             
             // Kiểm tra email có tồn tại
-            $user = $this->account_model->checkEmail($email);
+            $user = $this->account_model->check_account($email);
             
             if ($user) {
                 // Lưu email vào session để dùng ở bước tiếp theo
@@ -148,48 +153,6 @@ class Account extends Controller
         }
     }
 
-    public function reset_password_form()
-    {
-        // Kiểm tra xem đã check email chưa
-        if (!isset($_SESSION['reset_email'])) {
-            header('Location: ' . _WEB_ROOT . '/check_email_reset');
-            exit();
-        }
-
-        $title = 'Đặt lại mật khẩu';
-        $this->data['sub_content']['title'] = $title;
-        $this->data['page_title'] = $title;
-        $this->data['content'] = 'frontend/account/reset_password/reset_password_form';
-        $this->render('layouts/client_layout', $this->data);
-    }
-
-    public function reset_password()
-    {
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            if (!isset($_SESSION['reset_email'])) {
-                header('Location: ' . _WEB_ROOT . '/check_email_reset');
-                exit();
-            }
-
-            $email = $_SESSION['reset_email'];
-            $new_password = $_POST['new_password'];
-            $confirm_password = $_POST['confirm_password'];
-            
-            if ($new_password === $confirm_password) {
-                // Cập nhật mật khẩu mới
-                $this->account_model->updatePassword($email, $new_password);
-                // Xóa session
-                unset($_SESSION['reset_email']);
-                setcookie('msg', 'Đổi mật khẩu thành công', time() + 5);
-                header('Location: ' . _WEB_ROOT . '/check_email_reset');
-            } else {
-                setcookie('msg1', 'Mật khẩu xác nhận không khớp', time() + 5);
-                header('Location: ' . _WEB_ROOT . '/account/reset_password_form');
-            }
-            exit();
-        }
-    }
-
     //quenmatkhau
     public function check_email_form() {
         $title = 'Kiểm tra email';
@@ -197,5 +160,125 @@ class Account extends Controller
         $this->data['page_title'] = $title;
         $this->data['content'] = 'frontend/account/forgot_password/check_email_form';
         $this->render('layouts/client_layout', $this->data);
+    }
+
+    public function send_email() {
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            try {
+                $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
+                
+                
+                // Kiểm tra email có tồn tại
+                $user = $this->account_model->check_account($email);
+                if (!$user) {
+                    setcookie('msg1', 'Email không tồn tại trong hệ thống', time() + 5, '/');
+                    header('Location: ' . _WEB_ROOT . '/check_email_form');
+                    exit();
+                }
+
+                // Tạo access token
+                $access_token = md5($email . time());
+                $this->account_model->accessToken($access_token, $email);
+
+                // Cấu hình PHPMailer
+                $mail = new PHPMailer(true);
+                
+                try {
+                    //Server settings
+                    $mail->SMTPDebug = SMTP::DEBUG_SERVER;                    
+                    $mail->isSMTP();                                         
+                    $mail->Host       = 'smtp.gmail.com';                    
+                    $mail->SMTPAuth   = true;                               
+                    $mail->Username   = 'khacduy54.55@gmail.com';                             
+                    $mail->Password   = 'jbkw seit ixju fvmz';                          
+                    $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;       
+                    $mail->Port       = 465;                                
+                    $mail->CharSet    = 'UTF-8';
+
+                    //Recipients
+                    $mail->setFrom('khacduy54.55@gmail.com', 'Password Reset');
+                    $mail->addAddress($email);     
+
+                    //Content
+                    $mail->isHTML(true);                                  
+                    $mail->Subject = 'Đặt lại mật khẩu';
+                    $mail->Body    = '
+                        <h2>Xin chào,</h2>
+                        <p>Chúng tôi nhận được yêu cầu đặt lại mật khẩu của bạn.</p>
+                        <p>Vui lòng click vào link bên dưới để đặt lại mật khẩu:</p>
+                        <p><a href="' . _WEB_ROOT . '/change_password_form' . '/' . $access_token . '">Đặt lại mật khẩu</a></p>
+                        <p>Nếu bạn không yêu cầu đặt lại mật khẩu, vui lòng bỏ qua email này.</p>
+                    ';
+
+                    $mail->send();
+                    setcookie('msg', 'Email đã được gửi thành công', time() + 5, '/');
+                    header('Location: ' . _WEB_ROOT . '/dang-nhap');
+                    exit();
+
+                } catch (Exception $e) {
+                    error_log("Mail Error: " . $mail->ErrorInfo);
+                    setcookie('msg1', 'Không thể gửi email: ' . $mail->ErrorInfo, time() + 5, '/');
+                    header('Location: ' . _WEB_ROOT . '/check_email_form');
+                    exit();
+                }
+
+            } catch (Exception $e) {
+                error_log("General Error: " . $e->getMessage());
+                setcookie('msg1', 'Có lỗi xảy ra, vui lòng thử lại', time() + 5, '/');
+                header('Location: ' . _WEB_ROOT . '/check_email_form');
+                exit();
+            }
+        }
+    }
+
+    public function change_password_form($access_token = '')
+    {   
+        $title = 'Đặt lại mật khẩu';
+        $this->data['sub_content']['title'] = $title;
+        $this->data['page_title'] = $title;
+        $this->data['sub_content']['access_token'] = $access_token;
+        $this->data['content'] = 'frontend/account/forgot_password/change_pass_form';
+        $this->render('layouts/client_layout', $this->data);
+    }
+
+    public function change_password($access_token = '')
+    {
+       
+        // Kiểm tra access token
+        if (!$access_token || !$this->account_model->getAccessToken($access_token)) {
+            setcookie('msg1', 'Link đặt lại mật khẩu không hợp lệ hoặc đã hết hạn', time() + 5, '/');
+            header('Location: ' . _WEB_ROOT . '/check_email_form');
+            exit();
+        }
+
+        $new_password = $_POST['new_password'];
+        $confirm_password = $_POST['confirm_password'];
+        $email = $this->account_model->getAccessToken($access_token);
+        // Kiểm tra độ dài mật khẩu
+        if (strlen($new_password) < 8) {
+            setcookie('msg1', 'Mật khẩu phải có ít nhất 8 ký tự', time() + 5, '/');
+            header('Location: ' . _WEB_ROOT . '/change_password_form/' . $access_token);
+            exit();
+        }
+        
+        if ($new_password !== $confirm_password) {
+            setcookie('msg1', 'Mật khẩu xác nhận không khớp', time() + 5, '/');
+            header('Location: ' . _WEB_ROOT . '/change_password_form/' . $access_token);
+            exit();
+        }
+
+        // Cập nhật mật khẩu mới
+        if ($this->account_model->updatePassword($access_token, md5($new_password))) {
+            // Xóa access token
+            $access_token = NULL;
+            $this->account_model->accessToken($access_token, $email);
+            
+            setcookie('msg', 'Đổi mật khẩu thành công', time() + 5, '/');
+            header('Location: ' . _WEB_ROOT . '/dang-nhap');
+        } else {
+            setcookie('msg1', 'Có lỗi xảy ra, vui lòng thử lại', time() + 5, '/');
+            header('Location: ' . _WEB_ROOT . '/change_password_form/' . $access_token);
+        }
+        exit();
     }
 }

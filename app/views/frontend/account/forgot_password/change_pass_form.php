@@ -28,7 +28,7 @@
     
     <div class="container login-form">
     <h3><?=$title?></h3>
-    <form action="<?php echo _WEB_ROOT; ?>/reset_password" method="POST">
+    <form action="<?php echo _WEB_ROOT; ?>/change_password/<?php echo $access_token; ?>" method="POST">
         <div class="form-group">
             <label for="new_password">Mật khẩu mới *</label>
             <input type="password" class="form-control" id="new_password" name="new_password" required>
@@ -38,6 +38,8 @@
             <label for="confirm_password">Xác nhận mật khẩu *</label>
             <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
         </div>
+
+        
 
         <div class="form-footer">
             <button type="submit" class="btn btn-outline-primary-2">
