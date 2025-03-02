@@ -27,14 +27,10 @@ echo '</pre>';
         <div class="container">
             <div class="checkout-discount">
                 <form id="coupon-form" action="javascript:void(0)">
-                    <input type="text" class="form-control" name="coupon_name" required id="checkout-discount-input"
+                    <input type="text" class="form-control" name="coupon_name" readonly id="checkout-discount-input"
                         value="<?= isset($_POST['coupon_name']) ? $_POST['coupon_name'] : '' ?>">
                     <label for="checkout-discount-input" class="text-truncate" id="coupon-label">
-                        <?php if(isset($coupon) && is_array($coupon) && isset($coupon['coupon_name'])): ?>
-                            <?= $coupon['coupon_name'] ?>
-                        <?php else: ?>
-                            Have a coupon? <span>Click here to enter your code</span>
-                        <?php endif; ?>
+                       
                     </label>
                 </form>
             </div>
@@ -165,12 +161,8 @@ echo '</pre>';
                                     <td colspan="2"><?= number_format($shipping,0,",",".") ?> đ</td>
                                 </tr>
                                 <?php
-                                // Tính toán discount
-                                $discount = 0;
-                                if (isset($coupon) && is_array($coupon) && isset($coupon['coupon_discount'])) {
-                                    $discount = $tong * ($coupon['coupon_discount'] / 100);
-                                }
-                                $total = $tong + $shipping - $discount;
+                                
+                                $total = $tong + $shipping;
                                 ?>
                                 <tr class="summary-shipping-estimate">
                                     <td><label for="address_id">Select Shipping Address: </label></td>
@@ -184,14 +176,7 @@ echo '</pre>';
                                         </select>
                                     </td>
                                 </tr><!-- End .summary-shipping-estimate -->
-                                <?php
-                                // Hiển thị discount nếu có
-                                if(is_array($coupon) && isset($coupon['coupon_discount'])): ?>
-                                <tr class="summary-coupon" data-discount-percent="<?= $coupon['coupon_discount'] ?>">
-                                    <td>Coupon: <?= $coupon['coupon_name']?></td>
-                                    <td colspan="2" class="discount-amount"><?= number_format($discount,0,",",".") ?> đ</td>
-                                </tr>
-                                <?php endif; ?>
+                                
                                 <tr class="summary-total">
                                     <td>Total:</td>
                                     <td colspan="2" class="total-amount"><?=number_format($total,0,",",".")?> đ</td>

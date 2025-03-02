@@ -88,6 +88,7 @@
                                         </div><!-- End .product-action-vertical -->
 
                                         <div class="product-action">
+                                            <?php if ($product_status!= 0 && $product_count != 0) { ?>
                                             <form action="<?=_WEB_ROOT?>/add-to-cart" class="w-100" method="post">
                                                 
                                                 <input type="hidden" name="product_id" value="<?php echo $product_id?>">
@@ -96,6 +97,7 @@
                                                 <button type="submit" class="btn-product btn-cart "><span>add to cart</span></button>
                                                 
                                             </form>
+                                            <?php } ?>
                                         </div><!-- End .product-action -->
                                     </figure><!-- End .product-media -->
 

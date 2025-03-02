@@ -25,6 +25,19 @@ echo '</pre>';
 <div class="page-content">
     <div class="checkout">
         <div class="container">
+        <div class="checkout-discount">
+        <form id="coupon-form" action="javascript:void(0)">
+            <input type="text" class="form-control" name="coupon_name" required id="checkout-discount-input"
+                value="<?= isset($_POST['coupon_name']) ? $_POST['coupon_name'] : '' ?>">
+            <label for="checkout-discount-input" class="text-truncate" id="coupon-label">
+                <?php if(isset($coupon) && is_array($coupon) && isset($coupon['coupon_name'])): ?>
+                    <?= $coupon['coupon_name'] ?>
+                <?php else: ?>
+                    Have a coupon? <span>Click here to enter your code</span>
+                <?php endif; ?>
+            </label>
+        </form>
+        </div>
             <form action="<?= _WEB_ROOT ?> '/checkout" id='form_thanhtoan' method="POST">
                 
                 <div class="row">
@@ -108,8 +121,11 @@ echo '</pre>';
                                     }
                                     ?>
                                     <?php
-                                    $discount = $tong * (isset($coupon['coupon_discount']) ? $coupon['coupon_discount'] : 0) / 100;
-                                    $total = $tong - $discount + $shipping;
+                                    $discount = 0;
+                                    if (isset($coupon) && is_array($coupon) && isset($coupon['coupon_discount'])) {
+                                        $discount = $tong * ($coupon['coupon_discount'] / 100);
+                                    }
+                                    $total = $tong + $shipping - $discount;
                                     ?>
                                     <tr class="summary-subtotal">
                                         <td>Subtotal:</td>
@@ -122,17 +138,16 @@ echo '</pre>';
                                         <td><?=number_format($shipping,0,",",".")?>
                                             đ</td>
                                     </tr>
-                                    <?php
-                                    if(isset($coupon)){
-                                ?>
+                                    <?php if(is_array($coupon) && isset($coupon['coupon_discount'])){?>
                                     <tr class="summary-coupon">
                                         <td>Coupon:</td>
                                         <td class="discount-name"><?=$coupon['coupon_name']?></td>
                                         <td class="discount-amount"><?=number_format($discount,0,",",".")?>
                                             đ</td>
+                                
                                     </tr>
-                                    <?php }
-                                ?>
+                                        <?php }
+                                    ?>
                                     <tr class=" summary-total">
                                         <td>Total:</td>
                                         <td></td>

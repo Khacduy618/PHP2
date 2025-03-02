@@ -847,12 +847,18 @@ $(document).ready(function () {
     });
 
     function formatCurrency(number) {
-        return new Intl.NumberFormat('vi-VN').format(number) + ' đ';
+        return new Intl.NumberFormat('vi-VN', {
+            style: 'decimal',
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+        }).format(number) + ' đ';
     }
 
     // Hàm chuyển đổi chuỗi tiền về số
     function parsePrice(priceString) {
-        return parseInt(priceString.replace(/\./g, '').replace(' đ', ''));
+        if (!priceString) return 0;
+        // Loại bỏ tất cả ký tự không phải số
+        return parseInt(priceString.replace(/[^\d]/g, '')) || 0;
     }
 
     // Hàm cập nhật tất cả các tổng tiền
@@ -1087,71 +1093,172 @@ $(document).ready(function () {
         });
     });
 
-    // Xử lý form coupon
+    // Thêm hàm mới để cập nhật bảng summary
+    function updateSummaryTable(coupon) {
+        // Tính subtotal từ các sản phẩm được chọn
+        let subtotal = 0;
+        $('.table-summary tbody tr').each(function() {
+            // Bỏ qua các hàng tổng
+            if (!$(this).hasClass('summary-subtotal') && 
+                !$(this).hasClass('summary-total') && 
+                !$(this).hasClass('summary-coupon')) {
+                const quantity = parseInt($(this).find('td:nth-child(2)').text().replace('x ', '')) || 0;
+                const price = parsePrice($(this).find('td:last').text());
+                subtotal += price;
+            }
+        });
+
+        // Lấy shipping fee
+        const shipping = 20000; // Giá shipping cố định
+
+        // Tính discount nếu có coupon
+        let discount = 0;
+        if (coupon && coupon.coupon_discount) {
+            discount = Math.round(subtotal * (coupon.coupon_discount / 100));
+            
+            // Cập nhật hoặc thêm row coupon
+            let $couponRow = $('.summary-coupon');
+            if ($couponRow.length === 0) {
+                $couponRow = $('<tr class="summary-coupon">')
+                    .html(`
+                        <td>Coupon:</td>
+                        <td class="discount-name">${coupon.coupon_name}</td>
+                        <td class="discount-amount"></td>
+                    `)
+                    .insertBefore('.summary-total');
+            }
+            
+            // Cập nhật thông tin coupon
+            $couponRow.find('.discount-name').text(coupon.coupon_name);
+            $couponRow.find('.discount-amount').text(formatCurrency(discount));
+            $couponRow.attr('data-discount-percent', coupon.coupon_discount);
+            $couponRow.show();
+        } else {
+            $('.summary-coupon').hide();
+        }
+
+        // Tính total
+        const total = subtotal + shipping - discount;
+
+        // Cập nhật hiển thị
+        $('.summary-subtotal td:last').text(formatCurrency(subtotal));
+        $('.summary-total td:last').text(formatCurrency(total));
+
+        // Cập nhật hidden inputs
+        $('input[name="total"]').val(total);
+        $('input[name="tong"]').val(subtotal);
+        $('input[name="coupon_id"]').val(coupon ? coupon.coupon_id : 0);
+
+        console.log('Summary updated:', {
+            subtotal: subtotal,
+            shipping: shipping,
+            discount: discount,
+            total: total,
+            coupon: coupon
+        });
+    }
+
+    // Sửa lại xử lý form coupon
     $('#coupon-form').on('submit', function(e) {
         e.preventDefault();
         const couponName = $('#checkout-discount-input').val().trim();
         
-        console.log('Applying coupon:', couponName);
+        if (!couponName) {
+            alert('Please enter a coupon code');
+            return;
+        }
 
         $.ajax({
             url: _WEB_ROOT + '/apply-coupon',
             method: 'POST',
             data: { coupon_name: couponName },
+            dataType: 'json',
             success: function(response) {
-                console.log('Coupon response:', response);
-                try {
-                    const data = JSON.parse(response);
+                if (response.success) {
+                    // Cập nhật label coupon
+                    $('#coupon-label').text(response.coupon.coupon_name);
                     
-                    if (data.success) {
-                        // Cập nhật label coupon
-                        $('#coupon-label').text(data.coupon.coupon_name);
-                        
-                        // Cập nhật row discount trong summary
-                        if (data.coupon.coupon_discount) {
-                            const $summaryTable = $('.table-summary');
-                            let $couponRow = $('.summary-coupon');
-                            
-                            // Tạo hoặc cập nhật row coupon
-                            if ($couponRow.length === 0) {
-                                $couponRow = $('<tr class="summary-coupon">')
-                                    .insertBefore('.summary-total');
-                            }
-                            
-                            $couponRow
-                                .data('discount-percent', data.coupon.coupon_discount)
-                                .html(`
-                                    <td>Coupon: ${data.coupon.coupon_name}</td>
-                                    <td colspan="2" class="discount-amount"></td>
-                                `);
-                        }
-                        
-                        // Cập nhật tổng tiền
-                        updateTotals();
-                    } else {
-                        alert(data.message || 'Invalid coupon code');
-                        // Reset form nếu coupon không hợp lệ
-                        $('#coupon-label').html('Have a coupon? <span>Click here to enter your code</span>');
-                        $('.summary-coupon').remove();
-                        updateTotals();
-                    }
-                } catch (e) {
-                    console.error('Error parsing coupon response:', e);
-                    alert('Error processing coupon');
+                    // Cập nhật bảng summary với coupon mới
+                    updateSummaryTable(response.coupon);
+                    
+                    // Thông báo thành công
+                    alert('Coupon applied successfully!');
+                } else {
+                    alert(response.error || 'Invalid coupon code');
+                    // Reset form nếu coupon không hợp lệ
+                    $('#coupon-label').html('Have a coupon? <span>Click here to enter your code</span>');
+                    updateSummaryTable(null);
                 }
             },
             error: function(xhr, status, error) {
-                console.error('Coupon error:', {
-                    status: status,
-                    error: error,
-                    response: xhr.responseText
-                });
+                console.error('Coupon application failed:', error);
                 alert('Could not apply coupon. Please try again.');
             }
         });
     });
 
+    // Thêm hàm mới để tính toán giá trị ban đầu
+    function initializeSummaryTable() {
+        let subtotal = 0;
+        $('.table-summary tbody tr').each(function() {
+            // Bỏ qua các hàng tổng
+            if (!$(this).hasClass('summary-subtotal') && 
+                !$(this).hasClass('summary-total') && 
+                !$(this).hasClass('summary-coupon')) {
+                const quantity = parseInt($(this).find('td:nth-child(2)').text().replace('x ', '')) || 0;
+                const price = parsePrice($(this).find('td:last').text());
+                subtotal += price;
+            }
+        });
+
+        const shipping = 20000; // Giá shipping cố định
+        let discount = 0;
+
+        // Kiểm tra nếu đã có coupon
+        const $couponRow = $('.summary-coupon');
+        if ($couponRow.length > 0) {
+            const discountPercent = parseFloat($couponRow.data('discount-percent')) || 0;
+            if (discountPercent > 0) {
+                discount = Math.round(subtotal * (discountPercent / 100));
+            }
+        }
+
+        // Tính total
+        const total = subtotal + shipping - discount;
+
+        // Cập nhật hiển thị
+        $('.summary-subtotal td:last').text(formatCurrency(subtotal));
+        $('.summary-total td:last').text(formatCurrency(total));
+
+        // Cập nhật hidden inputs
+        $('input[name="total"]').val(total);
+        $('input[name="tong"]').val(subtotal);
+
+        console.log('Initial summary values:', {
+            subtotal: subtotal,
+            shipping: shipping,
+            discount: discount,
+            total: total
+        });
+    }
+
+    // Sửa lại phần khởi tạo trong document.ready
+    $(document).ready(function() {
+        // Khởi tạo giá trị ban đầu
+        initializeSummaryTable();
+
+        // Kiểm tra nếu đã có coupon trong session
+        const existingCoupon = $('.summary-coupon').data('discount-percent');
+        if (existingCoupon) {
+            const couponData = {
+                coupon_name: $('.summary-coupon .discount-name').text(),
+                coupon_discount: existingCoupon,
+                coupon_id: $('input[name="coupon_id"]').val()
+            };
+            updateSummaryTable(couponData);
+        }
     });
+});
 
 // Define functions outside of document.ready
 function initCategoryProducts() {
