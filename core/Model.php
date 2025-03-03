@@ -22,12 +22,26 @@ class Model extends Database{
         }
     }
 
-    protected function pdo_query_all($sql, $params = []) {
+    protected function pdo_query_all($sql, $params = array()) {
         try {
-            $stmt = $this->pdo_query($sql, $params);
-            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\PDOException $e) {
-            throw $e;
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
+            
+            // Debug PDO errors if any
+            if ($stmt->errorCode() !== '00000') {
+                echo "<pre>";
+                echo "PDO Error Info:\n";
+                print_r($stmt->errorInfo());
+                echo "</pre>";
+            }
+            
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch(PDOException $e) {
+            echo "<pre>";
+            echo "PDO Exception:\n";
+            echo $e->getMessage();
+            echo "</pre>";
+            return array();
         }
     }
 

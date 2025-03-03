@@ -191,7 +191,7 @@
 
                         <div class="product-body">
                             <div class="product-cat">
-                                <a href="#"><?=$category_name?></a>
+                                <a href="<?=_WEB_ROOT?>/product/<?=$product['product_cat']?>"><?=$category_name?></a>
                             </div><!-- End .product-cat -->
                             <h3 class="product-title"><a href="<?=_WEB_ROOT?>/product-detail/<?=$product['product_id']?>"><?=$product_name?></a></h3><!-- End .product-title -->
                             <div class="product-price">
@@ -288,7 +288,7 @@
 
                         <div class="product-body">
                             <div class="product-cat">
-                                <a href="#"><?=$category_name?></a>
+                                <a href="<?=_WEB_ROOT?>/product/<?=$product['product_cat']?>"><?=$category_name?></a>
                             </div><!-- End .product-cat -->
                             <h3 class="product-title"><a href="<?=_WEB_ROOT?>/product-detail/<?=$product['product_id']?>"><?=$product_name?></a></h3><!-- End .product-title -->
                             <div class="product-price">
@@ -385,7 +385,7 @@
 
                         <div class="product-body">
                             <div class="product-cat">
-                                <a href="#"><?=$category_name?></a>
+                                <a href="<?=_WEB_ROOT?>/product/<?=$product['product_cat']?>"><?=$category_name?></a>
                             </div><!-- End .product-cat -->
                             <h3 class="product-title"><a href="<?=_WEB_ROOT?>/product-detail/<?=$product['product_id']?>"><?=$product_name?></a></h3><!-- End .product-title -->
                             <div class="product-price">
@@ -520,7 +520,7 @@
 
                                     <div class="product-body">
                                         <div class="product-cat">
-                                            <a href="#"><?=$category_name?></a>
+                                            <a href="<?=_WEB_ROOT?>/product/<?=$product['product_cat']?>"><?=$category_name?></a>
                                         </div><!-- End .product-cat -->
                                         <h3 class="product-title"><a href="<?=_WEB_ROOT?>/product-detail/<?=$product['product_id']?>"><?=$product_name?></a></h3><!-- End .product-title -->
                                         <div class="product-price">

@@ -908,7 +908,7 @@ $(document).ready(function () {
         $('input[name="total"]').val(total);
 
         // Enable/disable nút checkout dựa trên items được chọn
-        $('.btn-order').prop('disabled', $checkedItems.length === 0);
+        $('#btn-order').prop('disabled', $checkedItems.length === 0);
     }
 
     // Xử lý sự kiện thay đổi số lượng
@@ -1034,7 +1034,7 @@ $(document).ready(function () {
         $('input[name="selected_items"]').val(JSON.stringify(selectedItems));
         
         // Enable/disable nút checkout dựa trên số lượng item được chọn
-        $('.btn-order').prop('disabled', selectedItems.length === 0);
+        $('#btn-order').prop('disabled', selectedItems.length === 0);
         
         // Cập nhật tổng tiền
         updateTotals();
@@ -1520,7 +1520,7 @@ function generateProductHtml(product) {
 
             <div class="product-body">
                 <div class="product-cat">
-                    <a href="#">${product.category_name}</a>
+                    <a href="${_WEB_ROOT}/product/${product.product_cat}">${product.category_name}</a>
                 </div>
                 <h3 class="product-title">
                     <a href="${_WEB_ROOT}/product-detail/${product.product_id}">

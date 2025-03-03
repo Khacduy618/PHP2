@@ -30,10 +30,10 @@ class BillModel extends Model
                 FROM $this->table b 
                 WHERE b.bill_userEmail = ?
                 ORDER BY b.bill_time DESC";
-        $result = $this->pdo_query_all($sql, $bill_userEmail);
+        $result = $this->pdo_query_all($sql, [$bill_userEmail]);
         
         if (empty($result)) {
-            return []; // Trả về mảng rỗng thay vì ném exception
+            return []; 
         }
         
         return $result;
@@ -48,10 +48,10 @@ class BillModel extends Model
                 FROM bill_details bd 
                 LEFT JOIN products p ON bd.pro_id = p.product_id 
                 WHERE bd.id_bill = ?";
-        $result = $this->pdo_query_all($sql, $id_bill);
+        $result = $this->pdo_query_all($sql, [$id_bill]);
         
         if (empty($result)) {
-            return []; // Trả về mảng rỗng thay vì ném exception
+            return []; 
         }
         
         return $result;
@@ -76,34 +76,35 @@ class BillModel extends Model
         return true;
     }
 
-    public function bill_insert_id($bill_var_id, $bill_userEmail, $bill_phone, $bill_address, 
-                                 $bill_priceDelivery, $bill_price, $bill_totalPrice, 
-                                 $bill_coupon, $bill_payment, $bill_status) 
-    {
-        // Kiểm tra dữ liệu đầu vào
-        $sql = "INSERT INTO bills (bill_var_id, bill_userEmail, bill_phone, bill_address, 
-                                 bill_priceDelivery, bill_price, bill_totalPrice, 
-                                 bill_coupon, bill_payment, bill_status) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-                
-        $result = $this->pdo_execute_id($sql, 
-            $bill_var_id, 
-            $bill_userEmail, 
-            $bill_phone, 
-            $bill_address,
-            $bill_priceDelivery, 
-            $bill_price, 
-            $bill_totalPrice,
-            $bill_coupon, 
-            $bill_payment, 
-            $bill_status
-        );
+    public function bill_insert_id($data) {
+        try {
+            // Tạo câu SQL với các placeholder
+            $sql = "INSERT INTO bills (bill_var_id, bill_userEmail, bill_phone, bill_address, 
+                                     bill_priceDelivery, bill_price, bill_totalPrice, 
+                                     bill_coupon, bill_payment, bill_status) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            
+            // Tạo mảng params theo thứ tự của các fields
+            $params = [
+                $data['bill_var_id'],
+                $data['bill_userEmail'],
+                $data['bill_phone'],
+                $data['bill_address'],
+                $data['bill_priceDelivery'],
+                $data['bill_price'],
+                $data['bill_totalPrice'],
+                $data['bill_coupon'],
+                $data['bill_payment'],
+                $data['bill_status']
+            ];
 
-        if (!$result) {
-            throw new Exception("Không thể tạo hóa đơn mới");
+            // Thực hiện insert và lấy ID
+            return $this->pdo_execute_id($sql, $params);
+
+        } catch (Exception $e) {
+            error_log("Error in bill_insert_id: " . $e->getMessage());
+            throw new Exception("Không thể tạo hóa đơn mới: " . $e->getMessage());
         }
-
-        return $result;
     }
 
     public function insert_bill_detail($values_string) {
@@ -112,56 +113,36 @@ class BillModel extends Model
         }
 
         try {
-            // Bắt đầu transaction
             $this->db->beginTransaction();
 
-            // 1. Thêm chi tiết đơn hàng
-            $sql = "INSERT INTO bill_details (id_bill, bill_id, pro_id, pro_price, pro_count) 
-                    VALUES $values_string";
-            $this->pdo_execute($sql);
-
-            // 2. Lấy thông tin pro_id và quantity từ values_string
-            // Sửa lại regex để lấy chính xác pro_id và quantity
-            preg_match_all('/\((\d+),\s*\'[^\']+\',\s*(\d+),\s*\d+,\s*(\d+)\)/', $values_string, $matches);
+            preg_match_all('/\((\d+),\s*\'([^\']+)\',\s*(\d+),\s*(\d+),\s*(\d+)\)/', $values_string, $matches);
             
-            // Debug để kiểm tra giá trị
-            error_log("Values string: " . $values_string);
-            error_log("Matches: " . print_r($matches, true));
-
-            if (isset($matches[2]) && isset($matches[3])) {
-                $pro_ids = $matches[2];    // Index 2 chứa pro_id
-                $quantities = $matches[3];  // Index 3 chứa quantity
-
-                // Debug thông tin sản phẩm và số lượng
-                error_log("Pro IDs: " . print_r($pro_ids, true));
-                error_log("Quantities: " . print_r($quantities, true));
-
-                // 3. Cập nhật số lượng sản phẩm
-                foreach ($pro_ids as $index => $pro_id) {
-                    $quantity = $quantities[$index];
-                    
-                    // Kiểm tra số lượng hiện tại
-                    $check_sql = "SELECT product_count FROM products WHERE product_id = ?";
-                    $current_count = $this->pdo_query_one($check_sql, $pro_id);
-                    
-                    error_log("Updating product ID: $pro_id, Quantity: $quantity, Current count: " . print_r($current_count, true));
-
-                    if ($current_count && $current_count['product_count'] >= $quantity) {
-                        $update_sql = "UPDATE products 
-                                     SET product_count = product_count - ? 
-                                     WHERE product_id = ?";
-                        $update_result = $this->pdo_execute($update_sql, $quantity, $pro_id);
-                        
-                        error_log("Update result for product $pro_id: " . ($update_result ? "success" : "failed"));
-                    } else {
-                        throw new Exception("Sản phẩm ID $pro_id không đủ số lượng trong kho");
-                    }
-                }
-            } else {
-                throw new Exception("Không thể phân tích dữ liệu sản phẩm");
+            if (empty($matches[0])) {
+                throw new Exception("Không thể phân tích dữ liệu đơn hàng");
             }
 
-            // Commit transaction nếu mọi thứ OK
+            $sql = "INSERT INTO bill_details (id_bill, bill_id, pro_id, pro_price, pro_count) VALUES (?, ?, ?, ?, ?)";
+            $stmt = $this->db->prepare($sql);
+
+            for ($i = 0; $i < count($matches[1]); $i++) {
+                $params = [
+                    $matches[1][$i], 
+                    $matches[2][$i], 
+                    $matches[3][$i],
+                    $matches[4][$i], 
+                    $matches[5][$i]   
+                ];
+                $stmt->execute($params);
+                
+                $pro_id = $matches[3][$i];
+                $quantity = $matches[5][$i];
+                
+                $update_sql = "UPDATE products SET product_count = product_count - ? WHERE product_id = ?";
+                $this->pdo_execute($update_sql, [$quantity, $pro_id]);
+                
+                error_log("Updating product $pro_id with quantity $quantity");
+            }
+
             $this->db->commit();
             return true;
 
@@ -176,13 +157,82 @@ class BillModel extends Model
     // Thêm hàm kiểm tra số lượng sản phẩm trước khi đặt hàng
     public function checkProductQuantity($pro_id, $quantity) {
         $sql = "SELECT product_count FROM products WHERE product_id = ?";
-        $result = $this->pdo_query_one($sql, $pro_id);
+        $result = $this->pdo_query_one($sql, [$pro_id]);
         
-        if (!$result) {
-            throw new Exception("Không tìm thấy sản phẩm");
-        }
-        
-        return $result['product_count'] >= $quantity;
+        if ($result) {
+            return $result['product_count'] >= $quantity;
+        }else{ throw new Exception("Không tìm thấy sản phẩm");}
+       
+       
+    }
+ 
+    public function getAll(): array
+    {
+        $query = "SELECT b.bill_id, 
+                         b.bill_var_id,
+                         b.bill_userEmail,  
+                         b.bill_totalPrice AS total_price, 
+                         b.bill_status, 
+                         b.bill_time
+                  FROM bills b
+                  LEFT JOIN user u ON b.bill_userEmail = u.user_email
+                  WHERE b.bill_status != 8
+                  ORDER BY b.bill_time DESC";
+
+        return $this->pdo_query_all($query);
     }
 
+    public function details($id)
+    {
+        $query = "SELECT b.bill_id, b.bill_var_id, b.bill_userEmail, u.user_name, u.user_phone ,
+                     b.bill_totalPrice as total_price, b.bill_price, b.bill_priceDelivery, 
+                     IFNULL(c.coupon_name, 'Không có') as coupon_name, b.bill_status, 
+                     b.bill_time, b.bill_address,
+                     a.*,
+                     GROUP_CONCAT(p.product_name SEPARATOR ', ') as products, 
+                     GROUP_CONCAT(bd.pro_count SEPARATOR ', ') as quantities, 
+                     GROUP_CONCAT(bd.pro_price SEPARATOR ', ') as prices 
+              FROM bills b 
+              LEFT JOIN user u ON b.bill_userEmail = u.user_email 
+              LEFT JOIN bill_details bd ON b.bill_id = bd.id_bill 
+              LEFT JOIN products p ON bd.pro_id = p.product_id 
+              LEFT JOIN coupons c ON b.bill_coupon = c.coupon_id 
+              LEFT JOIN address a ON b.bill_address = a.address_id
+              WHERE b.bill_id = ? 
+              GROUP BY b.bill_id";
+
+        return $this->pdo_query_one($query, $id);
+    }
+
+    public function getArchivedBills()
+    {
+        $query = "SELECT b.bill_id, 
+                         b.bill_var_id,
+                         b.bill_userEmail, 
+                         b.bill_totalPrice AS total_price, 
+                         b.bill_time
+                  FROM bills b
+                  LEFT JOIN user u ON b.bill_userEmail = u.user_email
+                  WHERE b.bill_status = 8
+                  ORDER BY b.bill_time DESC";
+        return $this->pdo_query_all($query);
+    }
+
+    public function softDelete($id)
+    {
+        $query = "UPDATE $this->table SET deleted = 1 WHERE bill_id = ?";
+        $this->pdo_execute($query, $id);
+    }
+
+    public function updateStatus($id, $newStatus)
+    {
+        $query = "UPDATE $this->table SET bill_status = ? WHERE bill_id = ?";
+        $this->pdo_execute($query, [$newStatus, $id]);
+    }
+
+    public function updateStatus_ajax($id, $newStatus)
+    {
+        $query = "UPDATE $this->table SET bill_status = $newStatus WHERE bill_id = ?";
+        $this->pdo_execute($query, $id);
+    }
 }

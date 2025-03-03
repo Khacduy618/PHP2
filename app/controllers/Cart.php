@@ -7,7 +7,7 @@ class Cart extends Controller
 
     public function __construct()
     {
-        if (!isset($_SESSION['isLogin'])) {
+        if (!isset($_SESSION['user'])) {
             header('Location: ' . _WEB_ROOT . '/dang-nhap');
             exit();
         }

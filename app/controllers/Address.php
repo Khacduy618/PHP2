@@ -36,13 +36,11 @@ class Address extends Controller
         $address_street = $_POST['address_street'];
         $address_city = $_POST['address_city'];
         $address_province = $_POST['address_province'];
-        $address_country = $_POST['address_country'];
         $data = array(
             'address_userEmail' => $address_userEmail,
             'address_street' => $address_street,
             'address_city' => $address_city,
-            'address_province' => $address_province,
-            'address_country' => $address_country
+            'address_province' => $address_province
         );
         
         // Xử lý ký tự đặc biệt

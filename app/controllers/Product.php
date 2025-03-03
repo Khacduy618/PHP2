@@ -11,29 +11,88 @@ class Product extends Controller
         $this->category_model = $this->model('CategoryModel');
     }
 
-    public function list_product() {
+    public function list_product($category_id = 0, $search = '', $sort = 'popularity', $perpage = 12) {
+        // Valid sort options
+        $valid_sorts = ['price-high', 'price-low', 'popularity', 'rating', 'date'];
+
+        // Get the full URL path
+        $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+        $path_parts = explode('/', trim($path, '/'));
         
+        // Remove the first part (usually 'php2' and 'product')
+        array_shift($path_parts); // remove 'php2'
+        array_shift($path_parts); // remove 'product'
         
-        $this->data['sub_content']['category_list'] = $this->category_model->getCategoryLists();
+        // Step 1: Handle category_id (first parameter)
+        $category_id = (empty($path_parts[0]) || $path_parts[0] === '0') ? 0 : intval($path_parts[0]);
         
-        if(isset($_SESSION['isLogin_Admin'])){
+        // Step 2: Check for double slash and handle parameters
+        if (strpos($path, '//') !== false) {
+            // If URL has double slash, search should be empty
+            $search = '';
+            
+            // Look for sort parameter in remaining parts
+            foreach ($path_parts as $part) {
+                if (!empty($part) && in_array($part, $valid_sorts)) {
+                    $sort = $part;
+                    break;
+                }
+            }
+        } else {
+            // Normal URL case
+            $search = isset($path_parts[1]) ? $path_parts[1] : '';
+            
+            // Check if third parameter exists and is a valid sort option
+            if (isset($path_parts[2]) && in_array($path_parts[2], $valid_sorts)) {
+                $sort = $path_parts[2];
+            }
+        }
+
+        // Step 3: Handle perpage (last numeric value)
+        $perpage = 12; // default value
+        foreach (array_reverse($path_parts) as $part) {
+            if (is_numeric($part)) {
+                $perpage = intval($part);
+                break;
+            }
+        }
+
+        // Ensure sort is valid
+        if (!in_array($sort, $valid_sorts)) {
+            $sort = 'popularity';
+        }
+
+        // Debug output
+        // echo "Final parameters:\n";
+        // echo "category_id: $category_id\n";
+        // echo "search: " . ($search === '' ? '(empty)' : $search) . "\n";
+        // echo "sort: $sort\n";
+        // echo "perpage: $perpage\n";
+
+        if(isset($_SESSION['isLogin_Admin'])) {
             $title = 'Product Management';
             $this->data['sub_content']['title'] = $title;
             $this->data['page_title'] = $title;
-            $dataProduct = $this->product_model->getProductLists($_SESSION['isLogin_Admin']);
+            $dataProduct = $this->product_model->getProductLists($search, $category_id, $sort, $perpage);
             $this->data['sub_content']['product_list'] = $dataProduct;
             $this->data['content'] = 'backend/products/list';
             $this->render('layouts/admin_layout', $this->data);
-        }else {
+        } else {
             $title = 'Product List';
             $this->data['sub_content']['title'] = $title;
             $this->data['page_title'] = $title;
-            $dataProduct = $this->product_model->getProductLists();
+            
+            // Get products with filters
+            $dataProduct = $this->product_model->getProductLists($search, $category_id, $sort, $perpage);
             $this->data['sub_content']['product_list'] = $dataProduct;
+            
+            // Get total products for pagination
+            $total_products = $this->product_model->getTotalProducts($search, $category_id);
+            $this->data['sub_content']['total_products'] = $total_products;
+            
             $this->data['content'] = 'frontend/products/list';
             $this->render('layouts/client_layout', $this->data);
         }
-       
     }
 
     public function add_new() {
@@ -140,7 +199,10 @@ class Product extends Controller
             $this->data['content'] = 'backend/products/list';
             $this->render('layouts/admin_layout', $this->data);
         }else {
-            $this->data['sub_content']['info'] =  $this->product_model->findbyId($id);
+            $this->data['sub_content']['specifications'] = $this->product_model->getDetail($id);
+            $product = $this->data['sub_content']['info'] =  $this->product_model->findbyId($id);
+            $cat = $product['product_cat'];
+            $this->data['sub_content']['related_product'] = $this->product_model->related_product($cat, $id);
             $this->data['content'] = 'frontend/products/detail';
             $this->render('layouts/client_layout', $this->data);
         }

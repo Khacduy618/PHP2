@@ -33,7 +33,7 @@
                     <div class="toolbox">
                         <div class="toolbox-left">
                             <div class="toolbox-info">
-                                Showing <span>9 of 56</span> Products
+                                Showing <span><?= count($product_list) ?> of <?= $total_products ?></span> Products
                             </div><!-- End .toolbox-info -->
                         </div><!-- End .toolbox-left -->
 
@@ -41,14 +41,33 @@
                             <div class="toolbox-sort">
                                 <label for="sortby">Sort by:</label>
                                 <div class="select-custom">
-                                    <select name="sortby" id="sortby" class="form-control">
-                                        <option value="popularity" selected="selected">Most Popular</option>
-                                        <option value="rating">Most Rated</option>
-                                        <option value="date">Date</option>
+                                    <?php
+                                    $current_url = $_SERVER['REQUEST_URI'];
+                                    $url_parts = explode('/', trim($current_url, '/'));
+                                    
+                                    // Remove 'php2' from parts if it exists
+                                    if(isset($url_parts[0]) && $url_parts[0] == 'php2') {
+                                        array_shift($url_parts);
+                                    }
+                                    
+                                    // Get current parameters or set defaults
+                                    $category_id = isset($url_parts[1]) ? $url_parts[1] : '0';
+                                    $search = isset($url_parts[2]) ? $url_parts[2] : '';
+                                    $perpage = isset($url_parts[4]) ? $url_parts[4] : '12';
+                                    
+                                    // Current sort value is in position 3
+                                    $current_sort = isset($url_parts[3]) ? $url_parts[3] : 'popularity';
+                                    ?>
+                                    <select name="sortby" id="sortby" class="form-control" 
+                                            onchange="window.location.href='<?= _WEB_ROOT ?>/product/<?= $category_id ?>/<?= $search ? $search : ''?>/' + this.value + '/<?= $perpage ?>'">
+                                        <option value="popularity" <?= $current_sort == 'popularity' ? 'selected' : '' ?>>Most Popular</option>
+                                        <option value="rating" <?= $current_sort == 'rating' ? 'selected' : '' ?>>Most Rated</option>
+                                        <option value="date" <?= $current_sort == 'date' ? 'selected' : '' ?>>Date</option>
+                                        <option value="price-low" <?= $current_sort == 'price-low' ? 'selected' : '' ?>>Price Low to High</option>
+                                        <option value="price-high" <?= $current_sort == 'price-high' ? 'selected' : '' ?>>Price High to Low</option>
                                     </select>
                                 </div>
                             </div><!-- End .toolbox-sort -->
-                            
                         </div><!-- End .toolbox-right -->
                     </div><!-- End .toolbox -->
                     

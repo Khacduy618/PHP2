@@ -21,6 +21,15 @@ class CategoryModel extends Model
         return $this->pdo_query_one($sql, [$id]);
     }
 
+    public function list() {
+        $sql = "SELECT c.*,
+                (SELECT COUNT(*) FROM products WHERE product_cat = c.$this->contents AND product_status = 1) as product_count
+                FROM $this->table c WHERE c.$this->status = 1
+                ORDER BY 
+                    IF(c.parent_id = 0, c.$this->contents, c.parent_id),
+                    c.$this->contents";
+        return $this->pdo_query_all($sql);
+    }
     
 }
 

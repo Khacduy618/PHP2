@@ -3,7 +3,7 @@
 <div class="cardBox">
     <div class="card">
         <div>
-            <div class="numbers"></div>
+            <div class="numbers"><?=$total_user?></div>
             <div class="cardName">Users</div>
         </div>
 
@@ -14,7 +14,7 @@
 
     <div class="card">
         <div>
-            <div class="numbers"></div>
+            <div class="numbers"><?=$total_dh?></div>
             <div class="cardName">Bills</div>
         </div>
 
@@ -25,7 +25,7 @@
 
     <div class="card">
         <div>
-            <div class="numbers"></div>
+            <div class="numbers"><?=$total_blogs?></div>
             <div class="cardName">Blogs</div>
         </div>
 
@@ -37,7 +37,7 @@
     <div class="card">
         <div>
 
-            <div class="numbers">đ</div>
+            <div class="numbers"><?=number_format($revenue,0,",",".")?>đ</div>
             <div class="cardName">Revenue</div>
         </div>
 
@@ -49,7 +49,7 @@
 
 <!-- ================ Charts ================= -->
 
-<?php $this->render('dashboard/chart'); ?>
+<?php require_once 'chart.php'; ?>
 
 <!-- ================ Order Details List ================= -->
 <div class="details">
@@ -68,18 +68,24 @@
             </thead>
 
             <tbody>
-                
+                <?php
+                    foreach ($product_top_5 as $pr) {
+                        extract($pr);
+                    ?>
                 <tr>
-                    <td></td>
+                    <td><?=$product_name?></td>
                     <td>
                         <div class="img">
-                            <img src="../uploaded/" alt="">
+                            <img src="<?=_WEB_ROOT?>/public/uploads/products/<?=$product_img?>" alt="">
                         </div>
                     </td>
-                    <td> đ</td>
-                    <td></td>
+                    <td><?=number_format($product_price,0,",",".")?> đ</td>
+                    <td><?=$total_sold?></td>
                 </tr>
 
+                <?php
+                            }
+                    ?>
             </tbody>
         </table>
         <table class="all-table">
@@ -93,19 +99,24 @@
             </thead>
 
             <tbody>
-               
+                <?php
+                    foreach ($product_top as $pr) {
+                        extract($pr);
+                    ?>
                 <tr>
-                    <td></td>
+                    <td><?=$product_name?></td>
                     <td>
                         <div class="img">
-                            <img src="../uploaded/" alt="">
+                            <img src="<?=_WEB_ROOT?>/public/uploads/products/<?=$product_img?>" alt="">
                         </div>
                     </td>
-                    <td>đ</td>
-                    <td></td>
+                    <td><?=number_format($product_price,0,",",".")?> đ</td>
+                    <td><?=$total_sold?></td>
                 </tr>
 
-                
+                <?php
+                            }
+                    ?>
             </tbody>
         </table>
         <button id="onViewAll-table" class="btn btn-danger">View All</button>
@@ -128,19 +139,24 @@
             </thead>
 
             <tbody>
-               
+                <?php
+                    foreach ($product_nonSell_5 as $pr) {
+                        extract($pr);
+                    ?>
                 <tr>
-                    <td></td>
+                    <td><?=$product_name?></td>
                     <td>
                         <div class="img">
-                            <img src="../uploaded/" alt="">
+                            <img src="<?=_WEB_ROOT?>/public/uploads/products/<?=$product_img?>" alt="">
                         </div>
                     </td>
-                    <td> đ</td>
-                    <td></td>
+                    <td><?=number_format($product_price,0,",",".")?> đ</td>
+                    <td><?=$product_count?></td>
                 </tr>
 
-                
+                <?php
+                            }
+                    ?>
             </tbody>
         </table>
         <table class="all">
@@ -154,19 +170,24 @@
             </thead>
 
             <tbody>
-                
+                <?php
+                    foreach ($product_nonSell as $pr) {
+                        extract($pr);
+                    ?>
                 <tr>
-                    <td></td>
+                    <td><?=$product_name?></td>
                     <td>
                         <div class="img">
-                            <img src="../uploaded/" alt="">
+                            <img src="<?=_WEB_ROOT?>/public/uploads/products/<?=$product_img?>" alt="">
                         </div>
                     </td>
-                    <td>đ</td>
-                    <td></td>
+                    <td><?=number_format($product_price,0,",",".")?> đ</td>
+                    <td><?=$product_count?></td>
                 </tr>
 
-               
+                <?php
+                            }
+                    ?>
             </tbody>
         </table>
         <button id="onViewAll" class="btn btn-danger">View All</button>

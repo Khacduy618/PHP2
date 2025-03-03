@@ -80,14 +80,26 @@
             <div class="header-center">
                 <div class="header-search header-search-extended header-search-visible d-none d-lg-block">
                     <a href="#" class="search-toggle" role="button"><i class="icon-search"></i></a>
-                    <form action="#" method="get">
+                    <form action="javascript:void(0);" onsubmit="handleSearch(event)">
                         <div class="header-search-wrapper search-wrapper-wide">
                             <label for="q" class="sr-only">Search</label>
                             <button class="btn btn-primary" type="submit"><i class="icon-search"></i></button>
-                            <input type="search" class="form-control" name="q" id="q" placeholder="Search product ..." required>
-                        </div><!-- End .header-search-wrapper -->
+                            <input type="search" class="form-control" name="q" id="q" 
+                                value="<?= isset($_SESSION['search_keyword']) ? $_SESSION['search_keyword'] : '' ?>" 
+                                placeholder="Search product ..." required>
+                        </div>
                     </form>
-                </div><!-- End .header-search -->
+                    <script>
+                        function handleSearch(e) {
+                            e.preventDefault();
+                            const searchTerm = document.getElementById('q').value;
+                            // Convert search term to URL-friendly format
+                            const urlFriendlySearch = searchTerm.trim().replace(/\s+/g, '-').toLowerCase();
+                            // Redirect to the route-based URL with correct path
+                            window.location.href = '<?= _WEB_ROOT ?>/product/0/' + (urlFriendlySearch || '') + '/popularity/12';
+                        }
+                    </script>
+                </div>
             </div>
 
             <div class="header-right">
@@ -119,78 +131,102 @@
                 </div><!-- End .compare-dropdown -->
 
                 <div class="wishlist">
-                    <a href="wishlist.html" title="Wishlist">
+                    <a href="#" title="Wishlist">
                         <div class="icon">
                             <i class="icon-heart-o"></i>
-                            <span class="wishlist-count badge">3</span>
+                            <?php
+                            if(isset($_SESSION['user'])) {
+                                require_once './app/models/FavoriteModel.php';
+                                $favorite = new FavoriteModel();
+                                $count = $favorite->countFavorites($_SESSION['user']['user_email']);
+                            
+                            ?>
+                            <span class="wishlist-count badge"><?= $count ?></span>
+                            <?php } else { ?>
+                            <span class="wishlist-count badge">0</span>
+                            <?php } ?>
                         </div>
                         <p>Wishlist</p>
                     </a>
                 </div><!-- End .compare-dropdown -->
 
                 <div class="dropdown cart-dropdown">
-                    <a href="<?=_WEB_ROOT?>/cart" class="dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-display="static">
+                <a href="#" class="dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true"
+                        aria-expanded="false" data-display="static">
                         <div class="icon">
                             <i class="icon-shopping-cart"></i>
-                            <span class="cart-count">2</span>
+                            <?php
+                            if(isset($_SESSION['user'])) {
+                                require_once './app/models/CartModel.php';
+                                $cart = new CartModel();
+                                $cartItems = $cart->getCartItems($_SESSION['user']['user_email']);
+                                $cartCount = count($cartItems);
+                            ?>
+                            <span class="cart-count"><?= $cartCount ?></span>
+                            <?php } else { ?>
+                            <span class="cart-count">0</span>
+                            <?php } ?>
                         </div>
                         <p>Cart</p>
                     </a>
 
                     <div class="dropdown-menu dropdown-menu-right">
                         <div class="dropdown-cart-products">
+                            <?php 
+                            if(isset($_SESSION['user']) && !empty($cartItems)) {
+                                $total = 0;
+                                foreach($cartItems as $item) {
+                                    $subtotal = $item['product_price'] * $item['quantity'];
+                                    $total += $subtotal;
+                            ?>
                             <div class="product">
                                 <div class="product-cart-details">
-                                    <!-- <h4 class="product-title">
-                                        <a href="product.html">Beige knitted elastic runner shoes</a>
+                                    <h4 class="product-title">
+                                        <a href="<?=_WEB_ROOT?>/product-detail/=<?=$item['pro_id']?>"><?=$item['product_name']?></a>
                                     </h4>
 
                                     <span class="cart-product-info">
-                                        <span class="cart-product-qty">1</span>
-                                        x $84.00
-                                    </span> -->
-                                </div><!-- End .product-cart-details -->
+                                        <span class="cart-product-qty"><?=$item['quantity']?></span>
+                                        x <?=number_format($item['product_price'],0,",",".")?> đ
+                                    </span>
+                                </div>
 
                                 <figure class="product-image-container">
-                                    <!-- <a href="product.html" class="product-image">
-                                        <img src="<?php echo _WEB_ROOT; ?>/public/assets/site/images/products/cart/product-1.jpg" alt="product">
-                                    </a> -->
+                                    <a href="?act=product&id=<?=$item['pro_id']?>" class="product-image">
+                                        <img src="<?=_WEB_ROOT?>/public/uploads/products/<?=$item['product_img']?>" alt="<?=$item['product_name']?>">
+                                    </a>
                                 </figure>
-                                <a href="#" class="btn-remove" title="Remove Product"><i class="icon-close"></i></a>
-                            </div><!-- End .product -->
-
-                            <div class="product">
-                                <div class="product-cart-details">
-                                    <!-- <h4 class="product-title">
-                                        <a href="product.html">Blue utility pinafore denim dress</a>
-                                    </h4>
-
-                                    <span class="cart-product-info">
-                                        <span class="cart-product-qty">1</span>
-                                        x $76.00
-                                    </span> -->
-                                </div><!-- End .product-cart-details -->
-
-                                <figure class="product-image-container">
-                                    <!-- <a href="product.html" class="product-image">
-                                        <img src="<?php echo _WEB_ROOT; ?>/public/assets/site/images/products/cart/product-2.jpg" alt="product">
-                                    </a> -->
-                                </figure>
-                                <a href="#" class="btn-remove" title="Remove Product"><i class="icon-close"></i></a>
-                            </div><!-- End .product -->
-                        </div><!-- End .cart-product -->
-
-                        <div class="dropdown-cart-total">
+                               
+                            </div>
+                            <?php
+                                }
+                            echo '<div class="dropdown-cart-total">
                             <span>Total</span>
+                            <span class="cart-total-price"> 
+                                
+                                    '.number_format($total,0,",",".").'đ
+                              
+                            </span>
+                            </div>';
 
-                            <span class="cart-total-price">$160.00</span>
-                        </div><!-- End .dropdown-cart-total -->
+                            } else {
+                            ?>
+                            <div class="text-center p-3">No products in cart</div>
+                            <?php } ?>
+                        </div>
+
+                        
 
                         <div class="dropdown-cart-action">
-                            <a href="<?=_WEB_ROOT?>/cart" class="btn btn-primary">View Cart</a>
-                            <a href="checkout.html" class="btn btn-outline-primary-2"><span>Checkout</span><i class="icon-long-arrow-right"></i></a>
-                        </div><!-- End .dropdown-cart-total -->
-                    </div><!-- End .dropdown-menu -->
+                            <?php if (isset($_SESSION['user'])) { ?>
+                            <a href="<?=_WEB_ROOT?>/order_history" class="btn btn-outline-primary-2">Order History</a>
+                            <?php } else { ?>
+                            <a class="btn disabled"></a>
+                            <?php } ?>
+
+                            <a href="<?=_WEB_ROOT?>/cart" class="btn btn-outline-primary-2 ms-auto">View Cart</a>
+                        </div>
+                    </div>
                 </div><!-- End .cart-dropdown -->
             </div><!-- End .header-right -->
         </div><!-- End .container -->
@@ -206,18 +242,12 @@
 
                     <div class="dropdown-menu">
                         <nav class="side-nav">
-                            <ul class="menu-vertical sf-arrows">
-                                <li class="item-lead"><a href="#">Daily offers</a></li>
-                                <li class="item-lead"><a href="#">Gift Ideas</a></li>
-                                <li><a href="#">Beds</a></li>
-                                <li><a href="#">Lighting</a></li>
-                                <li><a href="#">Sofas & Sleeper sofas</a></li>
-                                <li><a href="#">Storage</a></li>
-                                <li><a href="#">Armchairs & Chaises</a></li>
-                                <li><a href="#">Decoration </a></li>
-                                <li><a href="#">Kitchen Cabinets</a></li>
-                                <li><a href="#">Coffee & Tables</a></li>
-                                <li><a href="#">Outdoor Furniture </a></li>
+                            <ul class="category-menu">
+                            <?php
+                                require_once './app/controllers/Category.php';
+                                $category = new Category();
+                                echo $category->list_cat_home();
+                            ?>
                             </ul><!-- End .menu-vertical -->
                         </nav><!-- End .side-nav -->
                     </div><!-- End .dropdown-menu -->

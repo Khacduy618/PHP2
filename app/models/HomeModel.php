@@ -2,7 +2,7 @@
 class HomeModel extends Model{
     protected $table = 'products';
     public function getFeaturedProducts($limit = 0) {
-        $sql = "SELECT p.product_id, p.product_name, p.product_img, 
+        $sql = "SELECT p.product_id, p.product_name, p.product_img, p.product_cat,
                        p.product_price, p.product_discount, c.category_name,
                         (SELECT review_category 
                         FROM reviews r2 
@@ -25,7 +25,7 @@ class HomeModel extends Model{
     }
 
     public function getOnSaleProducts($limit = 0) {
-        $sql = "SELECT p.product_id, p.product_name, p.product_img, 
+        $sql = "SELECT p.product_id, p.product_name, p.product_img, p.product_cat,
                        p.product_price, p.product_discount, c.category_name,
                         (SELECT review_category 
                         FROM reviews r2 
@@ -48,7 +48,7 @@ class HomeModel extends Model{
     }
 
     public function getTopRatedProducts($limit = 0) {
-        $sql = "SELECT p.product_id, p.product_name, p.product_img, 
+        $sql = "SELECT p.product_id, p.product_name, p.product_img, p.product_cat,
                        p.product_price, p.product_discount, c.category_name,
                         (SELECT review_category 
                         FROM reviews r2 
@@ -74,7 +74,7 @@ class HomeModel extends Model{
     }
 
     public function getTopSellingAndOnSaleProducts($limit = 0) {
-        $sql = "SELECT p.product_id, p.product_name, p.product_img, 
+        $sql = "SELECT p.product_id, p.product_name, p.product_img, p.product_cat,
                    p.product_price, p.product_discount, c.category_name,
                    (SELECT review_category 
                         FROM reviews r2 
@@ -111,7 +111,7 @@ class HomeModel extends Model{
     }
     
     public function getTrendingProducts($parent_id) {
-        $sql = "SELECT p.product_id, p.product_name, p.product_img, 
+        $sql = "SELECT p.product_id, p.product_name, p.product_img, p.product_cat,
                        p.product_price, p.product_discount, c.category_name,
                         (SELECT review_category 
                         FROM reviews r2 
@@ -142,7 +142,7 @@ class HomeModel extends Model{
     }
 
     public function getTopSellingProductsByCategory($parent_id) {
-        $sql = "SELECT p.product_id, p.product_name, p.product_img, 
+        $sql = "SELECT p.product_id, p.product_name, p.product_img, p.product_cat,
                        p.product_price, p.product_discount, c.category_name,
                        (SELECT review_category 
                         FROM reviews r2 

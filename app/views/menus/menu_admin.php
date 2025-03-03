@@ -4,7 +4,7 @@
         <a href="#" class="nav-link">
             <span class="icon">
                 <div class="user">
-                    <img src="" alt="">
+                    <img src="<?=_WEB_ROOT?>/public/uploads/avatar/<?=$_SESSION['user']['user_images']?>" alt="Avatar">
                 </div>
             </span>
             <span class="title"></span>

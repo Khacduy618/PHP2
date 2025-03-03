@@ -69,33 +69,7 @@
     <script src="https://cdn.ckeditor.com/ckeditor5/44.0.0/ckeditor5.umd.js"></script>
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
-    <script>
-    const {
-        ClassicEditor,
-        Essentials,
-        Paragraph,
-        Bold,
-        Italic,
-        Font
-    } = CKEDITOR;
-    // Create a free account and get <YOUR_LICENSE_KEY>
-    // https://portal.ckeditor.com/checkout?plan=free
-    ClassicEditor
-        .create(document.querySelector('#editor'), {
-            licenseKey: 'eyJhbGciOiJFUzI1NiJ9.eyJleHAiOjE3MzQ3MzkxOTksImp0aSI6IjY1N2Y1MDRlLTc3MmItNDkzMi1hMDA2LTMyOWI3YWZmZTkxMyIsInVzYWdlRW5kcG9pbnQiOiJodHRwczovL3Byb3h5LWV2ZW50LmNrZWRpdG9yLmNvbSIsImRpc3RyaWJ1dGlvbkNoYW5uZWwiOlsiY2xvdWQiLCJkcnVwYWwiLCJzaCJdLCJ3aGl0ZUxhYmVsIjp0cnVlLCJsaWNlbnNlVHlwZSI6InRyaWFsIiwiZmVhdHVyZXMiOlsiKiJdLCJ2YyI6IjU3MjM4ZmE3In0.d76okmZCfuSScy7YBTtfCLObYhhJPcV32Hq96MWWBqoneZsEb7i5-xvFGGf5JIgAlUQzx8RPJ4nErg9j5gmzZg',
-            plugins: [Essentials, Paragraph, Bold, Italic, Font],
-            toolbar: [
-                'undo', 'redo', '|', 'bold', 'italic', '|',
-                'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor'
-            ]
-        })
-        .then(editor => {
-            window.editor = editor;
-        })
-        .catch(error => {
-            console.error(error);
-        });
-    </script>
+    
 
 </body>
 

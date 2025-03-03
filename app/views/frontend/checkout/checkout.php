@@ -1,11 +1,4 @@
-<?php
-echo '<pre style="display:none">';
-echo "Session Data:\n";
-print_r($_SESSION);
-echo "\nCart Items:\n";
-print_r($cartItems);
-echo '</pre>';
-?>
+
 
 <div class="page-header text-center" style="background-image: url('assets/images/page-header-bg.jpg')">
     <div class="container">
@@ -21,7 +14,23 @@ echo '</pre>';
         </ol>
     </div><!-- End .container -->
 </nav><!-- End .breadcrumb-nav -->
+<?php if(isset($_COOKIE['msg'])): ?>
+<div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+    <strong><?= $_COOKIE['msg'] ?></strong>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<?php endif; ?>
 
+<?php if(isset($_COOKIE['msg1'])): ?>
+<div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+    <strong><?= $_COOKIE['msg1'] ?></strong>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<?php endif; ?>
 <div class="page-content">
     <div class="checkout">
         <div class="container">
@@ -38,7 +47,7 @@ echo '</pre>';
             </label>
         </form>
         </div>
-            <form action="<?= _WEB_ROOT ?> '/checkout" id='form_thanhtoan' method="POST">
+            <form action="<?= _WEB_ROOT ?>/checkout" id='form_thanhtoan' method="POST">
                 
                 <div class="row">
                     <div class="col-lg-9">
@@ -46,27 +55,32 @@ echo '</pre>';
                         <div class="row">
                             <div class="col-sm-12">
                                 <label>Full Name *</label>
-                                <input type="text" class="form-control" 
+                                <input type="text" class="form-control" name="user_name"
                                     placeholder="<?=$_SESSION['user']['user_name']?>" value="<?=$_SESSION['user']['user_name']?>">
                             </div><!-- End .col-sm-6 -->
 
                         </div><!-- End .row -->
                         <label>Email address *</label>
-                        <input type="email" class="form-control" placeholder="<?=$_SESSION['user']['user_email']?>" value="<?=$_SESSION['user']['user_email']?>">
+                        <input type="email" class="form-control" name="user_email"
+                            placeholder="<?=$_SESSION['user']['user_email']?>" value="<?=$_SESSION['user']['user_email']?>">
                         <label for="phone">Phone *</label>
-                        <input type="text" class="form-control" name="phone"
+                        <input type="text" class="form-control" name="user_phone"
                             placeholder="<?=isset($_SESSION['user']['user_phone']) ? $_SESSION['user']['user_phone'] : ''?>" value="<?=isset($_SESSION['user']['user_phone']) ? $_SESSION['user']['user_phone'] : ''?>">
                         
                         <label>Address Name</label>
-                        <input type="text" class="form-control"
+                        <input type="text" class="form-control" name="address_name"
                             placeholder="<?=isset($address['address_name']) ? $address['address_name'] : ''?>" value="<?=isset($address['address_name']) ? $address['address_name'] : ''?>">
 
+                        <label>Province *</label>
+                        <input type="text" class="form-control" name="address_province"
+                            placeholder="<?=isset($address['address_province']) ? $address['address_province'] : ''?>" value="<?=isset($address['address_province']) ? $address['address_province'] : ''?>">
+
                         <label>City *</label>
-                        <input type="text" class="form-control"
+                        <input type="text" class="form-control" name="address_city"
                             placeholder="<?=isset($address['address_city']) ? $address['address_city'] : ''?>" value="<?=isset($address['address_city']) ? $address['address_city'] : ''?>">
 
                         <label>Street address *</label>
-                        <input type="text" class="form-control"
+                        <input type="text" class="form-control" name="address_street"
                             placeholder="<?=isset($address['address_street']) ? $address['address_street'] :''?>" value="<?=isset($address['address_street']) ? $address['address_street'] :''?>">
                         <?php if(!isset($_SESSION['user'])) {
                         ?>
@@ -76,9 +90,7 @@ echo '</pre>';
                         <?php }
                         ?>
 
-                        <label>Order notes (optional)</label>
-                        <textarea class="form-control" cols="30" rows="4" name="order_notes"
-                            placeholder="Notes about your order, e.g. special notes for delivery"></textarea>
+                       
                     </div><!-- End .col-lg-9 -->
                     <aside class="col-lg-3">
                         <div class="summary">
@@ -97,6 +109,7 @@ echo '</pre>';
                                     <?php
                                     $tong = 0;
                                     $_SESSION['cart_items'] = $cartItems;
+                                    var_dump($_SESSION['cart_items']);
                                     if (!empty($cartItems) && is_array($cartItems)) {
                                         foreach ($cartItems as $item) {
                                             // Đảm bảo các key tồn tại

@@ -42,7 +42,10 @@ $routes['apply-coupon'] = 'cart/apply_coupon';
 
 //checkout
 $routes['check-info'] = 'bill/check_info';
-$routes['checkout'] = 'bill/checkout';
+$routes['checkout'] = 'bill/save_order';
+$routes['checkout_complete'] = 'bill/checkout_completed';
+$routes['order_history'] = 'bill/order_history';
+$routes['order_detail'] = 'bill/order_detail';
 
 
 
@@ -76,4 +79,12 @@ $routes['delete-address'] = 'address/delete';
 $routes['edit-address'] = 'address/edit';
 $routes['update-address'] = 'address/update';
 $routes['add-new-address'] = 'address/add_new';
+//bill
+$routes['bill'] = 'bill/listBills';
+$routes['detail-bill'] = 'bill/detail';
+$routes['delete-bill'] = 'bill/deleteBill';
+$routes['archivedBill'] = 'bill/status';
+$routes['restoreBillArchived-bill'] = 'bill/restoreBillArchived';
+$routes['archivedBills-bill'] = 'bill/archivedBills';
+$routes['status']= 'bill/status';
 ?>

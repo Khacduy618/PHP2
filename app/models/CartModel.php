@@ -107,15 +107,27 @@ class CartModel extends Model
             return false;
         }
 
-        $placeholders = str_repeat('?,', count($selectedItemIds) - 1) . '?';
-        $sql = "DELETE FROM cart_item 
-                WHERE cart_id = (SELECT cart_id FROM cart WHERE cart_userEmail = ?) 
-                AND cart_item_id IN ($placeholders)";
-        
-        // Thêm userEmail vào đầu mảng params
-        array_unshift($selectedItemIds, $userEmail);
-        
-        return $this->pdo_execute($sql, ...$selectedItemIds);
+        try {
+            // Tạo mảng params với userEmail là phần tử đầu tiên
+            $params = array_merge([$userEmail], $selectedItemIds);
+            
+            // Tạo placeholders cho IN clause
+            $placeholders = str_repeat('?,', count($selectedItemIds) - 1) . '?';
+            
+            $sql = "DELETE FROM cart_item 
+                    WHERE cart_id = (SELECT cart_id FROM cart WHERE cart_userEmail = ?) 
+                    AND cart_item_id IN ($placeholders)";
+            
+            // Debug
+            error_log("SQL: " . $sql);
+            error_log("Params: " . print_r($params, true));
+            
+            return $this->pdo_execute($sql, $params);
+            
+        } catch (Exception $e) {
+            error_log("Error in deleteSelectedCartItems: " . $e->getMessage());
+            throw new Exception("Không thể xóa các mục đã chọn: " . $e->getMessage());
+        }
     }
 
     public function coupon_by_id($coupon_id) {

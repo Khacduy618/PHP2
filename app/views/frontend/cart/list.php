@@ -19,7 +19,23 @@ echo '</pre>';
         </ol>
     </div>
 </nav>
+<?php if(isset($_COOKIE['msg'])): ?>
+<div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+    <strong><?= $_COOKIE['msg'] ?></strong>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<?php endif; ?>
 
+<?php if(isset($_COOKIE['msg1'])): ?>
+<div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+    <strong><?= $_COOKIE['msg1'] ?></strong>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<?php endif; ?>
 
 
 <div class="page-content">
@@ -194,7 +210,7 @@ echo '</pre>';
                         <input type="hidden" name="selected_items" value='<?= json_encode($selectedItems) ?>'>
                         <input type="hidden" name="total" value="<?=$total?>">
                         <input type="hidden" name="shipping" value="<?=$shipping?>">
-                        <button type='submit' class="btn btn-outline-primary-2 btn-order btn-block">
+                        <button type='submit' id='btn-order' class="btn btn-outline-primary-2 btn-order btn-block">
                             PROCEED TO CHECKOUT
                         </button>
                         </form>
