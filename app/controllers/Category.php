@@ -13,10 +13,39 @@ class Category extends Controller
     }
 
     public function list_category() {
-        $title = 'Category List';
-        $this->data['sub_content']['category_list'] = $this->category_model->getCategoryLists();
+        // Get URL parts
+        $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+        $path_parts = explode('/', trim($path, '/'));
+        
+        // Remove 'php2' and 'category' from parts if they exist
+        if(isset($path_parts[0]) && $path_parts[0] == 'php2') {
+            array_shift($path_parts);
+        }
+        if(isset($path_parts[0]) && $path_parts[0] == 'category') {
+            array_shift($path_parts);
+        }
+        
+        // Get search and status parameters
+        $search = isset($path_parts[0]) && $path_parts[0] !== '' ? urldecode($path_parts[0]) : '';
+        $status = isset($path_parts[1]) ? $path_parts[1] : 'all';
+        
+        // Convert URL-friendly search term back to normal
+        $search = str_replace('-', ' ', $search);
+        
+        // Store search keyword in session if not empty
+        if (!empty($search)) {
+            $_SESSION['search_keyword'] = $search;
+        } else {
+            unset($_SESSION['search_keyword']);
+        }
+
+        $title = 'Category Management';
         $this->data['sub_content']['title'] = $title;
         $this->data['page_title'] = $title;
+        
+        // Get filtered categories
+        $this->data['sub_content']['category_list'] = $this->category_model->getCategoryLists($search, $status);
+        
         $this->data['content'] = 'backend/categories/list';
         $this->render('layouts/admin_layout', $this->data);
     }

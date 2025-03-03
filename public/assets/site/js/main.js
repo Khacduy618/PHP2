@@ -910,7 +910,13 @@ $(document).ready(function () {
         // Enable/disable nút checkout dựa trên items được chọn
         $('#btn-order').prop('disabled', $checkedItems.length === 0);
     }
-
+    $('.quantity-in').on('change', function() {
+        const $input = $(this);
+        const quantity = parseInt($input.val());
+        if (quantity < 1) $input.val(1);
+        if (quantity > 10) $input.val(10);
+    });
+    
     // Xử lý sự kiện thay đổi số lượng
     $('.quantity-input').on('change', function() {
         const $input = $(this);

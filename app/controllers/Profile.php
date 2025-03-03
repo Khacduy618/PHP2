@@ -77,9 +77,111 @@
                     setcookie('msg1', 'Có lỗi xảy ra khi upload file', time() + 5);
                 }
                 
-                header('Location: ' . _WEB_ROOT . '/profile_user');
+                header('Location: ' . _WEB_ROOT . '/profile');
                 exit();
             }
+        }
+
+
+        public function edit_profile() {
+            $user_email = $_SESSION['user']['user_email'];
+            $this->data['sub_content']['title'] = 'Sửa thông tin cá nhân';
+            $this->data['page_title'] = 'Sửa thông tin cá nhân';
+            $this->data['sub_content']['profile'] = $this->profile_model->getProfile($user_email);
+            $this->data['content'] = 'frontend/profile/edit_profile';
+            $this->render('layouts/client_layout', $this->data);
+        }
+
+        public function update_profile() {
+            if ($_SERVER['REQUEST_METHOD'] != 'POST') {
+                header('Location: ' . _WEB_ROOT . '/profile');
+                exit();
+            }
+
+            $user_email = $_SESSION['user']['user_email'];
+
+            // Validate input data
+            $user_name = trim($_POST['user_name']);
+            $user_phone = trim($_POST['user_phone']);
+            
+            // Validate name
+            if (strlen($user_name) < 2 || strlen($user_name) > 50) {
+                setcookie('msg1', 'Họ tên phải từ 2 đến 50 ký tự', time() + 5);
+                header('Location: ' . _WEB_ROOT . '/edit-profile');
+                exit();
+            }
+
+            // Validate phone
+            if (!preg_match('/^[0-9]{10,12}$/', $user_phone)) {
+                setcookie('msg1', 'Số điện thoại phải từ 10 đến 12 số', time() + 5);
+                header('Location: ' . _WEB_ROOT . '/edit-profile');
+                exit();
+            }
+
+            // Prepare user data
+            $user_data = [
+                'user_name' => $user_name,
+                'user_phone' => $user_phone
+            ];
+
+            // Prepare address data
+            $address_data = [
+                'address_name' => htmlspecialchars(trim($_POST['address_name'])),
+                'address_province' => htmlspecialchars(trim($_POST['address_province'])),
+                'address_city' => htmlspecialchars(trim($_POST['address_city'])),
+                'address_street' => htmlspecialchars(trim($_POST['address_street']))
+            ];
+
+            // Validate địa chỉ
+            if (empty($address_data['address_name']) || 
+                empty($address_data['address_province']) || 
+                empty($address_data['address_city']) || 
+                empty($address_data['address_street'])) {
+                setcookie('msg1', 'Vui lòng điền đầy đủ thông tin địa chỉ', time() + 5);
+                header('Location: ' . _WEB_ROOT . '/edit-profile');
+                exit();
+            }
+
+            // Handle image upload if exists
+            $image_data = null;
+            if (isset($_FILES['user_image']) && $_FILES['user_image']['error'] === 0) {
+                $file = $_FILES['user_image'];
+                $allowed = ['jpg', 'jpeg', 'png'];
+                $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+                
+                if (!in_array($ext, $allowed)) {
+                    setcookie('msg1', 'Chỉ chấp nhận file ảnh định dạng JPG, JPEG hoặc PNG', time() + 5);
+                    header('Location: ' . _WEB_ROOT . '/edit-profile');
+                    exit();
+                }
+
+                if ($file['size'] > 2 * 1024 * 1024) {
+                    setcookie('msg1', 'Kích thước ảnh không được vượt quá 2MB', time() + 5);
+                    header('Location: ' . _WEB_ROOT . '/edit-profile');
+                    exit();
+                }
+
+                $new_filename = uniqid() . '.' . $ext;
+                $base_path = str_replace('\\', '/', dirname(dirname(dirname(__FILE__))));
+                $upload_path = $base_path . '/public/uploads/avatar/';
+
+                if (move_uploaded_file($file['tmp_name'], $upload_path . $new_filename)) {
+                    $image_data = [
+                        'new_filename' => $new_filename,
+                        'upload_path' => $upload_path
+                    ];
+                }
+            }
+
+            // Update profile
+            if ($this->profile_model->update_profile($user_data, $address_data, $user_email, $image_data)) {
+                setcookie('msg', 'Cập nhật thông tin thành công', time() + 5);
+                header('Location: ' . _WEB_ROOT . '/profile');
+            } else {
+                setcookie('msg1', 'Có lỗi xảy ra khi cập nhật thông tin', time() + 5);
+                header('Location: ' . _WEB_ROOT . '/edit-profile');
+            }
+            exit();
         }
 
     }

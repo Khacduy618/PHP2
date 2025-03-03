@@ -27,18 +27,30 @@ class Account extends Controller
     {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $user_email = filter_var($_POST['user_email'], FILTER_SANITIZE_EMAIL);
-            $user_password = md5($_POST['user_password']);
-            if (($this->account_model->check_account($user_email)) == false) {
-                setcookie('msg1', 'Email không chính xác', time() + 5, '/');
+            $password = $_POST['user_password'];
+
+            // Validate email
+            if (!filter_var($user_email, FILTER_VALIDATE_EMAIL)) {
+                setcookie('msg1', 'Email không hợp lệ', time() + 5, '/');
                 header('Location: ' . _WEB_ROOT . '/dang-nhap');
                 exit();
             }
-            if(strlen($_POST['user_password']) < 8){
+
+            // Validate password length
+            if(strlen($password) < 8){
                 setcookie('msg1', 'Mật khẩu tối thiểu 8 kí tự', time() + 5, '/');
                 header('Location: ' . _WEB_ROOT . '/dang-nhap');
                 exit();
             }
-            // die($user_password);
+
+            // Check if email exists
+            if (!$this->account_model->check_account($user_email)) {
+                setcookie('msg1', 'Email không chính xác!', time() + 5, '/');
+                header('Location: ' . _WEB_ROOT . '/dang-nhap');
+                exit();
+            }
+
+            $user_password = md5($password);
             $login = $this->account_model->login_action($user_email, $user_password);
 
             if ($login) {
@@ -64,37 +76,61 @@ class Account extends Controller
 
     function register_action() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $email = $_POST['user_email'];
+            $email = filter_var($_POST['user_email'], FILTER_SANITIZE_EMAIL);
+            $name = trim($_POST['user_name']);
+            $password = $_POST['user_password'];
+            $check_password = $_POST['check_password'];
             
-            // Kiểm tra email đã tồn tại
-            if ($this->account_model->check_account($email)) {
-                setcookie('msg1', 'Email đã tồn tại trong hệ thống', time() + 5, '/');
+            // Validate email format
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                setcookie('msg1', 'Email không hợp lệ', time() + 5, '/');
                 header('Location: ' . _WEB_ROOT . '/dang-nhap');
                 exit();
             }
 
-            // Kiểm tra độ dài mật khẩu
-            if (strlen($_POST['user_password']) < 8) {
+            // Validate email exists
+            if ($this->account_model->check_account($email)) {
+                setcookie('msg1', 'Email đã tài khoản sử dụng!', time() + 5, '/');
+                header('Location: ' . _WEB_ROOT . '/dang-nhap');
+                exit();
+            }
+
+            // Validate name
+            if (strlen($name) < 2 || strlen($name) > 50) {
+                setcookie('msg1', 'Tên phải từ 2 đến 50 ký tự', time() + 5, '/');
+                header('Location: ' . _WEB_ROOT . '/dang-nhap');
+                exit();
+            }
+
+            // Validate password length
+            if (strlen($password) < 8) {
                 setcookie('msg1', 'Mật khẩu phải có ít nhất 8 ký tự', time() + 5, '/');
                 header('Location: ' . _WEB_ROOT . '/dang-nhap');
                 exit();
             }
 
-            // Kiểm tra mật khẩu xác nhận
-            if ($_POST['user_password'] != $_POST['check_password']) {
+            // Validate password strength
+            if (!preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/', $password)) {
+                setcookie('msg1', 'Mật khẩu phải chứa ít nhất 1 chữ hoa, 1 chữ thường và 1 số', time() + 5, '/');
+                header('Location: ' . _WEB_ROOT . '/dang-nhap');
+                exit();
+            }
+
+            // Validate password confirmation
+            if ($password !== $check_password) {
                 setcookie('msg1', 'Mật khẩu xác nhận không khớp', time() + 5, '/');
                 header('Location: ' . _WEB_ROOT . '/dang-nhap');
                 exit();
             }
 
             $data = array(
-                'user_name' =>    $_POST['user_name'],
-                'user_password' => md5($_POST['user_password']),
-                'user_email'  =>   $email,
+                'user_name' => $name,
+                'user_password' => md5($password),
+                'user_email' => $email,
                 'user_images' => 'user.png',
             );
             
-            // Xử lý ký tự đặc biệt
+            // Sanitize special characters
             foreach ($data as $key => $value) {
                 if (strpos($value, "'") != false) {
                     $value = str_replace("'", "\'", $value);
@@ -243,33 +279,39 @@ class Account extends Controller
 
     public function change_password($access_token = '')
     {
-       
-        // Kiểm tra access token
         if (!$access_token || !$this->account_model->getAccessToken($access_token)) {
             setcookie('msg1', 'Link đặt lại mật khẩu không hợp lệ hoặc đã hết hạn', time() + 5, '/');
             header('Location: ' . _WEB_ROOT . '/check_email_form');
             exit();
         }
 
-        $new_password = $_POST['new_password'];
-        $confirm_password = $_POST['confirm_password'];
+        $new_password = trim($_POST['new_password']);
+        $confirm_password = trim($_POST['confirm_password']);
         $email = $this->account_model->getAccessToken($access_token);
-        // Kiểm tra độ dài mật khẩu
+
+        // Validate password length
         if (strlen($new_password) < 8) {
             setcookie('msg1', 'Mật khẩu phải có ít nhất 8 ký tự', time() + 5, '/');
             header('Location: ' . _WEB_ROOT . '/change_password_form/' . $access_token);
             exit();
         }
+
+        // Validate password strength (optional)
+        if (!preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/', $new_password)) {
+            setcookie('msg1', 'Mật khẩu phải chứa ít nhất 1 chữ hoa, 1 chữ thường và 1 số', time() + 5, '/');
+            header('Location: ' . _WEB_ROOT . '/change_password_form/' . $access_token);
+            exit();
+        }
         
+        // Validate password confirmation
         if ($new_password !== $confirm_password) {
             setcookie('msg1', 'Mật khẩu xác nhận không khớp', time() + 5, '/');
             header('Location: ' . _WEB_ROOT . '/change_password_form/' . $access_token);
             exit();
         }
 
-        // Cập nhật mật khẩu mới
+        // Update password
         if ($this->account_model->updatePassword($access_token, md5($new_password))) {
-            // Xóa access token
             $access_token = NULL;
             $this->account_model->accessToken($access_token, $email);
             

@@ -124,7 +124,7 @@
                                 <form action="<?=_WEB_ROOT?>/add-to-cart" class="w-100" method="post">
                                 <label for="qty">Qty:</label>
                                 <div class="product-details-quantity">
-                                    <input type="number" id="qty" name="quantity" class="form-control" value="1" min="1" max="10" step="1" data-decimals="0" required>
+                                    <input type="number" id="qty" name="quantity" class="form-control quantity-in" value="1" min="1" max="10" step="1" data-decimals="0" required>
                                 </div><!-- End .product-details-quantity -->
                             </div><!-- End .details-filter-row -->
 
@@ -376,7 +376,8 @@
                                             <form action="<?=_WEB_ROOT?>/add-to-cart" class="w-100" method="post">
                                                 
                                                 <input type="hidden" name="product_id" value="<?php echo $product_id?>">
-                                                <input type="hidden" name="quantity" value="1">
+                                                <input type="hidden" name="quantity" min="1"
+                                                max="10" step="1"  value="1">
                                                 
                                                 <button type="submit" class="btn-product btn-cart "><span>add to cart</span></button>
                                                 

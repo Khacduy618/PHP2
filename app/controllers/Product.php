@@ -12,26 +12,20 @@ class Product extends Controller
     }
 
     public function list_product($category_id = 0, $search = '', $sort = 'popularity', $perpage = 12) {
-        // Valid sort options
-        $valid_sorts = ['price-high', 'price-low', 'popularity', 'rating', 'date'];
+        
+        $valid_sorts = ['price-high', 'price-low', 'popularity', 'rating', 'date', 'active', 'inactive'];
 
-        // Get the full URL path
         $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
         $path_parts = explode('/', trim($path, '/'));
         
-        // Remove the first part (usually 'php2' and 'product')
-        array_shift($path_parts); // remove 'php2'
-        array_shift($path_parts); // remove 'product'
+        array_shift($path_parts); 
+        array_shift($path_parts); 
         
-        // Step 1: Handle category_id (first parameter)
         $category_id = (empty($path_parts[0]) || $path_parts[0] === '0') ? 0 : intval($path_parts[0]);
         
-        // Step 2: Check for double slash and handle parameters
         if (strpos($path, '//') !== false) {
-            // If URL has double slash, search should be empty
             $search = '';
-            
-            // Look for sort parameter in remaining parts
+
             foreach ($path_parts as $part) {
                 if (!empty($part) && in_array($part, $valid_sorts)) {
                     $sort = $part;
@@ -39,17 +33,15 @@ class Product extends Controller
                 }
             }
         } else {
-            // Normal URL case
+           
             $search = isset($path_parts[1]) ? $path_parts[1] : '';
             
-            // Check if third parameter exists and is a valid sort option
             if (isset($path_parts[2]) && in_array($path_parts[2], $valid_sorts)) {
                 $sort = $path_parts[2];
             }
         }
 
-        // Step 3: Handle perpage (last numeric value)
-        $perpage = 12; // default value
+        $perpage = 12; 
         foreach (array_reverse($path_parts) as $part) {
             if (is_numeric($part)) {
                 $perpage = intval($part);
@@ -57,7 +49,6 @@ class Product extends Controller
             }
         }
 
-        // Ensure sort is valid
         if (!in_array($sort, $valid_sorts)) {
             $sort = 'popularity';
         }
@@ -68,7 +59,7 @@ class Product extends Controller
         // echo "search: " . ($search === '' ? '(empty)' : $search) . "\n";
         // echo "sort: $sort\n";
         // echo "perpage: $perpage\n";
-
+        $this->data['sub_content']['category_list'] = $this->category_model->getCatFill();
         if(isset($_SESSION['isLogin_Admin'])) {
             $title = 'Product Management';
             $this->data['sub_content']['title'] = $title;
@@ -82,11 +73,9 @@ class Product extends Controller
             $this->data['sub_content']['title'] = $title;
             $this->data['page_title'] = $title;
             
-            // Get products with filters
             $dataProduct = $this->product_model->getProductLists($search, $category_id, $sort, $perpage);
             $this->data['sub_content']['product_list'] = $dataProduct;
             
-            // Get total products for pagination
             $total_products = $this->product_model->getTotalProducts($search, $category_id);
             $this->data['sub_content']['total_products'] = $total_products;
             
@@ -110,83 +99,102 @@ class Product extends Controller
 
     public function store() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            if (empty($_POST['product_name']) || empty($_POST['product_price']) || empty($_POST['product_cat']) || empty($_FILES['product_img']['name']))  {
-                $_SESSION['msg'] = 'Fill in all required fields!';
+            // Validate required fields
+            if (empty($_POST['product_name']) || empty($_POST['product_price']) || 
+                empty($_POST['product_cat']) || empty($_FILES['product_img']['name'])) {
+                $_SESSION['msg1'] = 'Vui lòng điền đầy đủ thông tin bắt buộc!';
                 header('Location: ' . _WEB_ROOT . '/add-new-product');
-                exit;
-            }
-            $file = $_FILES['product_img'];
-            $product_img = $file['name'];
-            $tmp_name = $file['tmp_name'];
-            $allowed = ['jpg', 'jpeg', 'png'];
-            $ext = strtolower(pathinfo($product_img, PATHINFO_EXTENSION));
-            if (in_array($ext, $allowed) && $file["size"] < 2 * 1024 * 1024) {
-                // Tạo tên file mới
-                $new_filename = uniqid() . '.' . $ext;
-                // Tạo đường dẫn đầy đủ đến thư mục uploads
-                $base_path = str_replace('\\', '/', dirname(dirname(dirname(__FILE__))));
-                $upload_path = $base_path . '/public/uploads/products/';
-                $this->handleUpload($base_path,$upload_path,$tmp_name,$new_filename);
-            }else{
-                $_SESSION['msg'] = 'Định dạng file không hợp lệ (chỉ chấp nhận: jpg, jpeg, png - Dung lượng dưới 2MB)';
-                header('Location: ' . _WEB_ROOT . '/add-new-product');
-                exit;
-            }
-                $name = $_POST['product_name'];
-                $price = $_POST['product_price'];
-                $discount = $_POST['product_discount'];
-                $count = $_POST['product_count'];
-                $cat = $_POST['product_cat'];
-                $status = isset($_POST['product_status']) ? 1 : 0;
-                $screen_cam = isset($_POST['screen_cam']) ? $_POST['screen_cam'] : '';
-                $os = isset($_POST['os']) ? $_POST['os'] : '';
-                $gpu = isset($_POST['gpu']) ? $_POST['gpu'] : '';
-                $cpu = isset($_POST['cpu']) ? $_POST['cpu'] : '';
-                $pin = isset($_POST['pin']) ? $_POST['pin'] : '';
-                $colors = isset($_POST['colors']) ? $_POST['colors'] : '';
-                $sizes = isset($_POST['sizes']) ? $_POST['sizes'] : '';
-                $ram = isset($_POST['ram']) ? $_POST['ram'] : '';
-                $rom = isset($_POST['rom']) ? $_POST['rom'] : '';
-                $bluetooth = isset($_POST['bluetooth']) ? $_POST['bluetooth'] : '';
-                
-                $data = array(
-                    'product_name' => $name,
-                    'product_price' => $price,
-                    'product_discount' => $discount,
-                    'product_count'  =>   $count,
-                    'product_cat'  =>   $cat,
-                    'product_status'  =>   $status,
-                    'screen_cam'  =>   $screen_cam,
-                    'os'  =>   $os,
-                    'gpu'  =>   $gpu,
-                    'pin'  =>   $pin,
-                    'cpu'  =>   $cpu,
-                    'colors'  =>   $colors,
-                    'sizes'  =>   $sizes,
-                    'ram'  =>   $ram,
-                    'rom'  =>   $rom,
-                    'bluetooth'  =>   $bluetooth,
-                    'product_img'  =>   $new_filename
-                );
-                
-                // Xử lý ký tự đặc biệt
-                foreach ($data as $key => $value) {
-                    if (strpos($value, "'") != false) {
-                        $value = str_replace("'", "\'", $value);
-                        $data[$key] = $value;
-                    }
-                }
-                $status = $this->product_model->store($data);
-            
-                if ($status) {
-                    $_SESSION['msg'] = 'Product added successfully!';
-                    header('Location: '._WEB_ROOT.'/product');
-                } else {
-                    setcookie('msg1', 'Failed to add product!', time() + 5, '/');
-                    header('Location: ' . _WEB_ROOT . '/add-new-product');
-                }
                 exit();
+            }
+
+            // Validate product name
+            if(strlen($_POST['product_name']) < 5 || strlen($_POST['product_name']) > 100) {
+                $_SESSION['msg1'] = 'Tên sản phẩm phải từ 5-100 ký tự!';
+                header('Location: ' . _WEB_ROOT . '/add-new-product');
+                exit();
+            }
+
+            // Validate price
+            if(!is_numeric($_POST['product_price']) || $_POST['product_price'] <= 0) {
+                $_SESSION['msg1'] = 'Giá sản phẩm phải là số dương!';
+                header('Location: ' . _WEB_ROOT . '/add-new-product');
+                exit();
+            }
+
+           
+
+            // Validate stock quantity
+            if(!is_numeric($_POST['product_count']) || $_POST['product_count'] < 0) {
+                $_SESSION['msg1'] = 'Số lượng tồn kho không hợp lệ!';
+                header('Location: ' . _WEB_ROOT . '/add-new-product');
+                exit();
+            }
+
+            // Validate image
+            $file = $_FILES['product_img'];
+            $allowed = ['jpg', 'jpeg', 'png'];
+            $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
             
+            if (!in_array($ext, $allowed)) {
+                $_SESSION['msg1'] = 'Chỉ chấp nhận file ảnh định dạng: jpg, jpeg, png!';
+                header('Location: ' . _WEB_ROOT . '/add-new-product');
+                exit();
+            }
+
+            if ($file['size'] > 2 * 1024 * 1024) {
+                $_SESSION['msg1'] = 'Kích thước file không được vượt quá 2MB!';
+                header('Location: ' . _WEB_ROOT . '/add-new-product');
+                exit();
+            }
+
+            // Process image upload
+            $new_filename = uniqid() . '.' . $ext;
+            $base_path = str_replace('\\', '/', dirname(dirname(dirname(__FILE__))));
+            $upload_path = $base_path . '/public/uploads/products/';
+            
+            if (!$this->handleUpload($base_path, $upload_path, $file['tmp_name'], $new_filename)) {
+                $_SESSION['msg1'] = 'Không thể tải lên file ảnh!';
+                header('Location: ' . _WEB_ROOT . '/add-new-product');
+                exit();
+            }
+
+            // Prepare data
+            $data = array(
+                'product_name' => trim($_POST['product_name']),
+                'product_price' => (float)$_POST['product_price'],
+                'product_discount' => (int)$_POST['product_discount'],
+                'product_count' => (int)$_POST['product_count'],
+                'product_cat' => (int)$_POST['product_cat'],
+                'product_status' => isset($_POST['product_status']) ? 1 : 0,
+                'screen_cam' => trim($_POST['screen_cam'] ?? ''),
+                'os' => trim($_POST['os'] ?? ''),
+                'gpu' => trim($_POST['gpu'] ?? ''),
+                'cpu' => trim($_POST['cpu'] ?? ''),
+                'pin' => trim($_POST['pin'] ?? ''),
+                'colors' => trim($_POST['colors'] ?? ''),
+                'sizes' => trim($_POST['sizes'] ?? ''),
+                'ram' => trim($_POST['ram'] ?? ''),
+                'rom' => trim($_POST['rom'] ?? ''),
+                'bluetooth' => trim($_POST['bluetooth'] ?? ''),
+                'product_img' => $new_filename
+            );
+
+            // Handle special characters
+            foreach ($data as $key => $value) {
+                if (is_string($value) && strpos($value, "'") !== false) {
+                    $data[$key] = str_replace("'", "\'", $value);
+                }
+            }
+
+            // Store product
+            if ($this->product_model->store($data)) {
+                $_SESSION['msg'] = 'Thêm sản phẩm thành công!';
+                header('Location: ' . _WEB_ROOT . '/product');
+            } else {
+                $_SESSION['msg1'] = 'Thêm sản phẩm thất bại!';
+                header('Location: ' . _WEB_ROOT . '/add-new-product');
+            }
+            exit();
         }
     }
 
@@ -214,7 +222,8 @@ class Product extends Controller
             $_SESSION['msg'] = 'Product deleted successfully!';
             header('Location: '._WEB_ROOT.'/product');
         }else{
-            setcookie('msg1', 'Failed to delete product!', time() + 5, '/');
+            $_SESSION['msg1'] = 'Failed to delete product!';
+
             header('Location: ' . _WEB_ROOT . '/product');
         }
         exit();
@@ -235,86 +244,108 @@ class Product extends Controller
     }
 
     public function update() {
-        
-        $id = $_POST['product_id'];
-        $name = $_POST['product_name'];
-        $price = $_POST['product_price'];
-        $discount = $_POST['product_discount'];
-        $count = $_POST['product_count'];
-        $cat = $_POST['product_cat'];
-        $status = isset($_POST['product_status']) ? 1 : 0;
-        $screen_cam = isset($_POST['screen_cam']) ? $_POST['screen_cam'] : '';
-        $os = isset($_POST['os']) ? $_POST['os'] : '';
-        $gpu = isset($_POST['gpu']) ? $_POST['gpu'] : '';
-        $cpu = isset($_POST['cpu']) ? $_POST['cpu'] : '';
-        $pin = isset($_POST['pin']) ? $_POST['pin'] : '';
-        $colors = isset($_POST['colors']) ? $_POST['colors'] : '';
-        $sizes = isset($_POST['sizes']) ? $_POST['sizes'] : '';
-        $ram = isset($_POST['ram']) ? $_POST['ram'] : '';
-        $rom = isset($_POST['rom']) ? $_POST['rom'] : '';
-        $bluetooth = isset($_POST['bluetooth']) ? $_POST['bluetooth'] : '';
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $id = $_POST['product_id'];
 
-        if (!empty($_FILES['product_img']['name'])) {
-            //check img
-            $file = $_FILES['product_img'];
-            $product_img = $file['name'];
-            $tmp_name = $file['tmp_name'];
-            $allowed = ['jpg', 'jpeg', 'png'];
-            $ext = strtolower(pathinfo($product_img, PATHINFO_EXTENSION));
-            if (in_array($ext, $allowed) && $file["size"] < 2 * 1024 * 1024) {
-                // Tạo tên file mới
+            // Validate required fields
+            if (empty($_POST['product_name']) || empty($_POST['product_price']) || empty($_POST['product_cat'])) {
+                $_SESSION['msg1'] = 'Vui lòng điền đầy đủ thông tin bắt buộc!';
+                header('Location: ' . _WEB_ROOT . '/edit-product/' . $id);
+                exit();
+            }
+
+            // Validate product name
+            if(strlen($_POST['product_name']) < 5 || strlen($_POST['product_name']) > 100) {
+                $_SESSION['msg1'] = 'Tên sản phẩm phải từ 5-100 ký tự!';
+                header('Location: ' . _WEB_ROOT . '/edit-product/' . $id);
+                exit();
+            }
+
+            // Validate price
+            if(!is_numeric($_POST['product_price']) || $_POST['product_price'] <= 0) {
+                $_SESSION['msg1'] = 'Giá sản phẩm phải là số dương!';
+                header('Location: ' . _WEB_ROOT . '/edit-product/' . $id);
+                exit();
+            }
+
+            
+
+            // Validate stock quantity
+            if(!is_numeric($_POST['product_count']) || $_POST['product_count'] < 0) {
+                $_SESSION['msg1'] = 'Số lượng tồn kho không hợp lệ!';
+                header('Location: ' . _WEB_ROOT . '/edit-product/' . $id);
+                exit();
+            }
+
+            // Handle image if uploaded
+            if (!empty($_FILES['product_img']['name'])) {
+                $file = $_FILES['product_img'];
+                $allowed = ['jpg', 'jpeg', 'png'];
+                $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+                
+                if (!in_array($ext, $allowed)) {
+                    $_SESSION['msg1'] = 'Chỉ chấp nhận file ảnh định dạng: jpg, jpeg, png!';
+                    header('Location: ' . _WEB_ROOT . '/edit-product/' . $id);
+                    exit();
+                }
+
+                if ($file['size'] > 2 * 1024 * 1024) {
+                    $_SESSION['msg1'] = 'Kích thước file không được vượt quá 2MB!';
+                    header('Location: ' . _WEB_ROOT . '/edit-product/' . $id);
+                    exit();
+                }
+
                 $new_filename = uniqid() . '.' . $ext;
-                // Tạo đường dẫn đầy đủ đến thư mục uploads
                 $base_path = str_replace('\\', '/', dirname(dirname(dirname(__FILE__))));
                 $upload_path = $base_path . '/public/uploads/products/';
-                $this->handleUpload($base_path,$upload_path,$tmp_name,$new_filename);
-            }else{
-                $_SESSION['msg'] = 'Định dạng file không hợp lệ (chỉ chấp nhận: jpg, jpeg, png - Dung lượng dưới 2MB)';
-                header('Location: ' . _WEB_ROOT . '/edit-product' . '/'.$id);
-                exit;
+                
+                if (!$this->handleUpload($base_path, $upload_path, $file['tmp_name'], $new_filename)) {
+                    $_SESSION['msg1'] = 'Không thể tải lên file ảnh!';
+                    header('Location: ' . _WEB_ROOT . '/edit-product/' . $id);
+                    exit();
+                }
+            } else {
+                $current_product = $this->product_model->findbyId($id);
+                $new_filename = $current_product['product_img'];
             }
-        } else {
-            $current_product = $this->product_model->findbyId($id);
-            $new_filename = $current_product['product_img'];
-        }
-        
-        $data = array(
-            'product_name' => $name,
-            'product_price' => $price,
-            'product_discount' => $discount,
-            'product_count'  =>   $count,
-            'product_cat'  =>   $cat,
-            'product_status'  =>   $status,
-            'screen_cam'  =>   $screen_cam,
-            'os'  =>   $os,
-            'gpu'  =>   $gpu,
-            'pin'  =>   $pin,
-            'cpu'  =>   $cpu,
-            'colors'  =>   $colors,
-            'sizes'  =>   $sizes,
-            'ram'  =>   $ram,
-            'rom'  =>   $rom,
-            'bluetooth'  =>   $bluetooth,
-            'product_img'  =>   $new_filename
-        );
-        
-        // Xử lý ký tự đặc biệt
-        foreach ($data as $key => $value) {
-            if (strpos($value, "'") != false) {
-                $value = str_replace("'", "\'", $value);
-                $data[$key] = $value;
-            }
-        }
-        $status = $this->product_model->update($data, $id);
-            
-        if ($status) {
-            $_SESSION['msg'] = 'Product updated successfully!';
-            header('Location: '._WEB_ROOT.'/product');
-        } else {
-            setcookie('msg1', 'Failed to update product!', time() + 5, '/');
-            header('Location: ' . _WEB_ROOT . '/edit-product');
-        }
-        exit();
 
+            // Prepare data
+            $data = array(
+                'product_name' => trim($_POST['product_name']),
+                'product_price' => (float)$_POST['product_price'],
+                'product_discount' => (int)$_POST['product_discount'],
+                'product_count' => (int)$_POST['product_count'],
+                'product_cat' => (int)$_POST['product_cat'],
+                'product_status' => isset($_POST['product_status']) ? 1 : 0,
+                'screen_cam' => trim($_POST['screen_cam'] ?? ''),
+                'os' => trim($_POST['os'] ?? ''),
+                'gpu' => trim($_POST['gpu'] ?? ''),
+                'cpu' => trim($_POST['cpu'] ?? ''),
+                'pin' => trim($_POST['pin'] ?? ''),
+                'colors' => trim($_POST['colors'] ?? ''),
+                'sizes' => trim($_POST['sizes'] ?? ''),
+                'ram' => trim($_POST['ram'] ?? ''),
+                'rom' => trim($_POST['rom'] ?? ''),
+                'bluetooth' => trim($_POST['bluetooth'] ?? ''),
+                'product_img' => $new_filename
+            );
+
+            // Handle special characters
+            foreach ($data as $key => $value) {
+                if (is_string($value) && strpos($value, "'") !== false) {
+                    $data[$key] = str_replace("'", "\'", $value);
+                }
+            }
+
+            // Update product
+            if ($this->product_model->update($data, $id)) {
+                $_SESSION['msg'] = 'Cập nhật sản phẩm thành công!';
+                header('Location: ' . _WEB_ROOT . '/product');
+            } else {
+                $_SESSION['msg1'] = 'Cập nhật sản phẩm thất bại!';
+                header('Location: ' . _WEB_ROOT . '/edit-product/' . $id);
+            }
+            exit();
+        }
     }
 }

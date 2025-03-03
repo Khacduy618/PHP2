@@ -6,39 +6,61 @@
 
     <!-- Search and Filter Section -->
     <div class="row gap-3 mb-4">
+        <!-- Search Form -->
         <div class="col-md-4">
-            <form action="" method="get">
+            <form action="javascript:void(0);" onsubmit="handleSearch(event)">
                 <div class="input-group">
-                    <span class="input-group-text"><i class="bi bi-search"></i></span>
-                    <input type="hidden" name="mod" value="product">
-                    <input type="hidden" name="act" value="list">
-                    <input type="text" class="form-control" name="keyword" placeholder="Search products...">
+                    <span class="input-group-text" onclick="resetSearch()" style="cursor: pointer;" title="Reset search">
+                        <i class="bi bi-search"></i>
+                    </span>
+                    <input type="search" class="form-control" name="q" id="q" 
+                           value="<?= isset($_SESSION['search_keyword']) ? $_SESSION['search_keyword'] : '' ?>" 
+                           placeholder="Search product ...">
                 </div>
             </form>
         </div>
         
+        <!-- Category Filter -->
         <div class="col-md-2">
-            <select name="category" id="category" class="form-control" onchange="this.options[this.selectedIndex].value && (window.location = this.options[this.selectedIndex].value);">
-                <option value="?mod=product&act=list&status=<?= $status ?>&per_page=<?= $_GET['per_page'] ?? 12 ?>&page=<?= $_GET['page'] ?? 1 ?>&field=<?= $_GET['field'] ?? '' ?>&sort=<?= $_GET['sort'] ?? '' ?>">All categories</option>
-                <?php foreach($categorie_list as $category): extract($category); ?>
-                    <option value="?mod=product&act=list&product_cat=<?= $category_id ?? 0 ?>&status=<?= $status ?>&per_page=<?= $_GET['per_page'] ?? 12 ?>&page=<?= $_GET['page'] ?? 1 ?>&field=<?= $_GET['field'] ?? '' ?>&sort=<?= $_GET['sort'] ?? '' ?>"
-                        <?= (isset($_GET['product_cat']) && $_GET['product_cat'] == $category_id) ? 'selected' : '' ?>>
-                        <?= $category_name?>
+            <?php
+            $current_url = $_SERVER['REQUEST_URI'];
+            $url_parts = explode('/', trim($current_url, '/'));
+            
+            // Remove 'php2' from parts if it exists
+            if(isset($url_parts[0]) && $url_parts[0] == 'php2') {
+                array_shift($url_parts);
+            }
+            
+            // Get current parameters
+            $category_id = isset($url_parts[1]) ? $url_parts[1] : '0';
+            $search = isset($url_parts[2]) ? $url_parts[2] : '';
+            $sort = isset($url_parts[3]) ? $url_parts[3] : 'popularity';
+            $perpage = isset($url_parts[4]) ? $url_parts[4] : '12';
+            ?>
+            <select name="category" id="category" class="form-select" 
+                    onchange="window.location.href='<?=_WEB_ROOT?>/product/' + this.value + '/<?=$search?>/<?=$sort?>/<?=$perpage?>'">
+                <option value="0">All categories</option>
+                <?php foreach($category_list as $category): ?>
+                    <option value="<?=$category['category_id']?>" 
+                            <?= $category_id == $category['category_id'] ? 'selected' : '' ?>>
+                        <?=$category['category_name']?>
                     </option>
                 <?php endforeach; ?>
             </select>
         </div>
 
+        <!-- Sort Filter -->
         <div class="col-md-2">
-            <select name="status" id="status" class="form-control" onchange="this.options[this.selectedIndex].value && (window.location = this.options[this.selectedIndex].value);">
-                <option value="?mod=product&act=list&keyword=<?= $_GET['keyword'] ?? '' ?>&product_cat=<?= $_GET['product_cat'] ?? 0 ?>&per_page=<?= $_GET['per_page'] ?? 12 ?>&page=<?= $_GET['page'] ?? 1 ?>&field=<?= $_GET['field'] ?? '' ?>&sort=<?= $_GET['sort'] ?? '' ?>">All status</option>
-                <option value="?mod=product&keyword=<?= $_GET['keyword'] ?? '' ?>&product_cat=<?= $_GET['product_cat'] ?? 0 ?>&status=1&per_page=<?= $_GET['per_page'] ?? 12 ?>&page=<?= $_GET['page'] ?? 1 ?>&field=<?= $_GET['field'] ?? '' ?>&sort=<?= $_GET['sort'] ?? '' ?>"
-                                        <?= (isset($_GET['status']) && $_GET['status'] == 1) ? 'selected' : '' ?>> Active</option>
-                <option value="?mod=product&keyword=<?= $_GET['keyword'] ?? '' ?>&product_cat=<?= $_GET['product_cat'] ?? 0 ?>&status=0&per_page=<?= $_GET['per_page'] ?? 12 ?>&page=<?= $_GET['page'] ?? 1 ?>&field=<?= $_GET['field'] ?? '' ?>&sort=<?= $_GET['sort'] ?? '' ?>"
-                                        <?= (isset($_GET['status']) && $_GET['status'] == 0) ? 'selected' : '' ?>>Inactive</option>
+            <select name="sortby" id="sortby" class="form-select" 
+                    onchange="window.location.href='<?=_WEB_ROOT?>/product/<?=$category_id?>/<?=$search?>/' + this.value + '/<?=$perpage?>'">
+                <option value="popularity" <?= $sort == 'popularity' ? 'selected' : '' ?>>Most Popular</option>
+                <option value="active" <?= $sort == 'active' ? 'selected' : '' ?>>Active</option>
+                <option value="inactive" <?= $sort == 'inactive' ? 'selected' : '' ?>>Inactive</option>
+                <option value="date" <?= $sort == 'date' ? 'selected' : '' ?>>Date</option>
             </select>
         </div>
         
+        <!-- Add New Product Button -->
         <div class="col-md-3 text-end ms-auto">
             <a class="btn btn-success shadow-sm" href="<?=_WEB_ROOT?>/add-new-product">
                 <i class="bi bi-plus-circle me-2"></i>Add new product
@@ -47,25 +69,17 @@
     </div>
 
     <!-- Alert Messages -->
-    <div class="messages">
-        <?php
-        if(!empty($_GET['msg'])){
-            $msg = unserialize(urldecode($_GET['msg']));
-            foreach($msg as $key => $value){
-                echo '<div class="alert alert-info alert-dismissible fade show" role="alert">
-                        '.$value.'
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                      </div>';
-            }
-        }
-        if(!empty($_SESSION['msg'])){
-            echo '<div class="alert alert-info alert-dismissible fade show" role="alert">
-                    '.$_SESSION['msg'].'
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                  </div>';
-            unset($_SESSION['msg']);
-        }
-        ?>
+    <?php if(isset($_SESSION['msg'])): ?>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <?=$_SESSION['msg']?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <?php unset($_SESSION['msg']); ?>
+    <?php endif; ?>
+
+    <!-- Products Count -->
+    <div class="mb-3">
+        <span class="text-muted">Showing <?= count($product_list) ?> of <?= $total_products ?? count($product_list) ?> Products</span>
     </div>
 
     <!-- Table Section -->
@@ -125,99 +139,97 @@
             </table>
         </div>
     </div>
-</div>
-<div class="modal fade" id="productDetailsModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Technical Specifications</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body" id="productDetailsContent">
-                <!-- Nội dung chi tiết sản phẩm sẽ được load vào đây -->
-            </div>
-        </div>
-    </div>
-</div>
-    <!-- Pagination Section -->
-    <?php
-// Retrieve current sorting parameters
-$field = isset($_GET['field']) ? $_GET['field'] : '';
-$sort = isset($_GET['sort']) ? $_GET['sort'] : '';
-$status = isset($_GET['status']) ? $_GET['status'] : '';
-$product_cat = isset($_GET['product_cat']) ? $_GET['product_cat'] : 0;
-$per_page = isset($orderdata['itemPerPage']) ? $orderdata['itemPerPage'] : 12; // Default to 12 if not set
 
-if (isset($orderdata['totalRecord']) && $orderdata['totalRecord'] > 12) {
-?>
-<nav aria-label="Page navigation">
-    <ul class="pagination justify-content-center">
-        <?php
-            // Link to first page
-            if ($orderdata['currentPage'] > 2) {
-                $first_page = 1;
-                ?>
-        <li class="page-item"><a class="page-link"
-                href="?mod=product&act=list&keyword=<?= $_GET['keyword'] ?? '' ?>&product_cat=<?= $_GET['product_cat'] ?? 0 ?>&status=<?= $status ?>&per_page=<?= $per_page ?>&page=<?= $first_page ?>&field=<?= $field ?>&sort=<?= $sort ?>">First</a>
-        </li>
-        <?php
-            }
-            // Link to previous page
-            if ($orderdata['currentPage'] > 1) {
-                $prev_page = $orderdata['currentPage'] - 1;
-                ?>
-        <li class="page-item"><a class="page-link page-link-prev"
-                href="?mod=product&act=list&keyword=<?= $_GET['keyword'] ?? '' ?>&product_cat=<?= $_GET['product_cat'] ?? 0 ?>&status=<?= $status ?>&per_page=<?= $per_page ?>&page=<?= $prev_page ?>&field=<?= $field ?>&sort=<?= $sort ?>"><i
-                    class="icon-long-arrow-left"></i>Prev</a></li>
-        <?php }
-        // Numbered page links
-        for ($num = 1; $num <= $orderdata['totalPages']; $num++) {
-            if ($num != $orderdata['currentPage']) {
-                if ($num > $orderdata['currentPage'] - 3 && $num < $orderdata['currentPage'] + 3) {
-                    ?>
-        <li class="page-item"><a class="page-link"
-                href="?mod=product&act=list&keyword=<?= $_GET['keyword'] ?? '' ?>&product_cat=<?= $_GET['product_cat'] ?? 0 ?>&status=<?= $status ?>&per_page=<?= $per_page ?>&page=<?= $num ?>&field=<?= $field ?>&sort=<?= $sort ?>"><?= $num ?></a>
-        </li>
-        <?php 
-                }
-            } else { ?>
-        <li class="page-item active"><a class="page-link"><?= $num ?></a></li>
-        <?php }
-        }
-        // Link to next page
-        if ($orderdata['currentPage'] < $orderdata['totalPages']) {
-            $next_page = $orderdata['currentPage'] + 1;
-            ?>
-        <li class="page-item"><a class="page-link page-link-next"
-                href="?mod=product&act=list&keyword=<?= $_GET['keyword'] ?? '' ?>&product_cat=<?= $_GET['product_cat'] ?? 0 ?>&status=<?= $status ?>&per_page=<?= $per_page ?>&page=<?= $next_page ?>&field=<?= $field ?>&sort=<?= $sort ?>">Next<span><i
-                        class="icon-long-arrow-right"></i></span></a></li>
-        <?php
-        }
-        // Link to last page
-        if ($orderdata['currentPage'] < $orderdata['totalPages'] - 2) {
-            $end_page = $orderdata['totalPages'];
-            ?>
-        <li class="page-item"><a class="page-link"
-                href="?mod=product&act=list&keyword=<?= $_GET['keyword'] ?? '' ?>&product_cat=<?= $_GET['product_cat'] ?? 0 ?>&status=<?= $status ?>&per_page=<?= $per_page ?>&page=<?= $end_page ?>&field=<?= $field ?>&sort=<?= $sort ?>">Last</a>
-        </li>
-        <?php
-        }
-        ?>
-    </ul>
-</nav>
-<?php } ?>
-<!-- <script>
-function showProductDetails(productId) {
-    $.ajax({
-        url: '?mod=product&act=details&id=' + productId,
-        type: 'GET',
-        success: function(response) {
-            $('#productDetailsContent').html(response);
-            $('#productDetailsModal').modal('show');
-        },
-        error: function() {
-            alert('Có lỗi xảy ra khi tải thông tin sản phẩm');
-        }
-    });
+    <!-- Pagination -->
+    <?php if (isset($orderdata['totalRecord']) && $orderdata['totalRecord'] > 12): ?>
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+            <?php
+            // First page
+            if ($orderdata['currentPage'] > 2): ?>
+                <li class="page-item">
+                    <a class="page-link" href="<?=_WEB_ROOT?>/product/<?=$category_id?>/<?=$search?>/<?=$sort?>/<?=$perpage?>/1">First</a>
+                </li>
+            <?php endif; ?>
+
+            <!-- Previous page -->
+            <?php if ($orderdata['currentPage'] > 1): ?>
+                <li class="page-item">
+                    <a class="page-link" href="<?=_WEB_ROOT?>/product/<?=$category_id?>/<?=$search?>/<?=$sort?>/<?=$perpage?>/<?=$orderdata['currentPage']-1?>">
+                        <i class="bi bi-chevron-left"></i>
+                    </a>
+                </li>
+            <?php endif; ?>
+
+            <!-- Page numbers -->
+            <?php for($i = max(1, $orderdata['currentPage']-2); $i <= min($orderdata['totalPages'], $orderdata['currentPage']+2); $i++): ?>
+                <li class="page-item <?=$i == $orderdata['currentPage'] ? 'active' : ''?>">
+                    <a class="page-link" href="<?=_WEB_ROOT?>/product/<?=$category_id?>/<?=$search?>/<?=$sort?>/<?=$perpage?>/<?=$i?>"><?=$i?></a>
+                </li>
+            <?php endfor; ?>
+
+            <!-- Next page -->
+            <?php if ($orderdata['currentPage'] < $orderdata['totalPages']): ?>
+                <li class="page-item">
+                    <a class="page-link" href="<?=_WEB_ROOT?>/product/<?=$category_id?>/<?=$search?>/<?=$sort?>/<?=$perpage?>/<?=$orderdata['currentPage']+1?>">
+                        <i class="bi bi-chevron-right"></i>
+                    </a>
+                </li>
+            <?php endif; ?>
+
+            <!-- Last page -->
+            <?php if ($orderdata['currentPage'] < $orderdata['totalPages'] - 1): ?>
+                <li class="page-item">
+                    <a class="page-link" href="<?=_WEB_ROOT?>/product/<?=$category_id?>/<?=$search?>/<?=$sort?>/<?=$perpage?>/<?=$orderdata['totalPages']?>">Last</a>
+                </li>
+            <?php endif; ?>
+        </ul>
+    </nav>
+    <?php endif; ?>
+</div>
+
+<script>
+function handleSearch(e) {
+    e.preventDefault();
+    const searchTerm = document.getElementById('q').value;
+    // Convert search term to URL-friendly format
+    const urlFriendlySearch = searchTerm.trim().replace(/\s+/g, '-').toLowerCase();
+    // Redirect to the route-based URL with correct path
+    window.location.href = '<?=_WEB_ROOT?>/product/0/' + (urlFriendlySearch || '') + '/popularity/12';
 }
-</script> -->
+
+function resetSearch() {
+    // Reset input value
+    document.getElementById('q').value = '';
+    // Redirect to product page without search parameters
+    window.location.href = '<?=_WEB_ROOT?>/product/0//popularity/12';
+}
+
+// Thêm hiệu ứng hover cho icon search
+document.querySelector('.input-group-text').addEventListener('mouseover', function() {
+    this.style.backgroundColor = '#e9ecef';
+});
+
+document.querySelector('.input-group-text').addEventListener('mouseout', function() {
+    this.style.backgroundColor = '';
+});
+</script>
+
+<style>
+/* Thêm style cho icon search */
+.input-group-text {
+    transition: background-color 0.3s ease;
+}
+
+.input-group-text:hover {
+    background-color: #e9ecef;
+}
+
+.input-group-text i {
+    transition: transform 0.3s ease;
+}
+
+.input-group-text:hover i {
+    transform: scale(1.1);
+}
+</style>

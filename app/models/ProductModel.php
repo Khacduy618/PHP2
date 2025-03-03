@@ -45,6 +45,12 @@ class ProductModel extends Model{
 
         // Add sorting conditions
         switch(strtolower($sort)) {
+            case 'active':
+                $sql .= " AND p.product_status = 1";
+                break;
+            case 'inactive':
+                $sql .= " AND p.product_status = 0";
+                break;
             case 'price-high':
                 $sql .= " ORDER BY p.product_price DESC";
                 break;

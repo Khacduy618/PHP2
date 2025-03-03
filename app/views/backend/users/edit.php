@@ -8,7 +8,23 @@ $avatar = !empty($user_images)
     <div class="row frmtitle">
         <h1><?=$title?></h1>
     </div>
+    <?php if(isset($_COOKIE['msg'])): ?>
+<div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+    <strong><?= $_COOKIE['msg'] ?></strong>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<?php endif; ?>
 
+<?php if(isset($_COOKIE['msg1'])): ?>
+<div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+    <strong><?= $_COOKIE['msg1'] ?></strong>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<?php endif; ?>
     <div class="row mb-4 frmcontent">
         <?php
             if (isset($user) && is_array($user)) {
@@ -33,13 +49,14 @@ $avatar = !empty($user_images)
                         <i class="fas fa-upload"></i> Upload New Image
                     </button>
                 </div>
+                <a href="<?= _WEB_ROOT?>/user" class="btn btn-outline-secondary px-4 py-2 shadow ms-auto">Back to list</a>
             </div>
             <input type="file" id="user_images" name="user_images" accept="image/*" class="d-none" onchange="updateImagePreview(event)">
 
             <!-- Trường thông tin người dùng -->
             <div class="mb-3">
                 <label for="user_name" class="form-label fw-bold">Full Name</label>
-                <input type="text" id="user_name" name="user_name" class="form-control shadow-sm" value="<?= $user_name?>" required>
+                <input type="text" id="user_name" name="user_name" class="form-control shadow-sm" value="<?= $user_name?>" >
             </div>
 
             <div class="mb-3">
@@ -49,7 +66,7 @@ $avatar = !empty($user_images)
 
             <div class="mb-3">
                 <label for="user_phone" class="form-label fw-bold">Phone Number</label>
-                <input type="text" id="user_phone" name="user_phone" class="form-control shadow-sm" value="<?= $user_phone ?>" required>
+                <input type="text" id="user_phone" name="user_phone" class="form-control shadow-sm" value="<?= $user_phone ?>" >
             </div>
 
 
@@ -73,7 +90,6 @@ $avatar = !empty($user_images)
             <!-- Nút hành động -->
             <div class="mt-4">
                 <button type="submit" class="btn btn-success px-4 py-2 shadow">Update</button>
-                <a href="?mod=user&act=list" class="btn btn-outline-secondary px-4 py-2 shadow ms-2">Cancel</a>
             </div>
         </form>
         <?php

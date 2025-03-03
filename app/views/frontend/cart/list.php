@@ -124,8 +124,7 @@ echo '</pre>';
                                                     <input type="number" 
                                                            class="form-control quantity-input" 
                                                            value="<?= htmlspecialchars($value['quantity']) ?>" 
-                                                           min="1" 
-                                                           max="10"
+                                                            min="1" max="10" step="1" 
                                                            data-product-id="<?= $value['pro_id'] ?>">
                                                 </div>
                                             </td>

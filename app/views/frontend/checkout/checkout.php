@@ -69,19 +69,19 @@
                         
                         <label>Address Name</label>
                         <input type="text" class="form-control" name="address_name"
-                            placeholder="<?=isset($address['address_name']) ? $address['address_name'] : ''?>" value="<?=isset($address['address_name']) ? $address['address_name'] : ''?>">
+                            placeholder="<?=isset($address['address_name']) ? $address['address_name'] : ''?>" value="<?=isset($address['address_name']) ? $address['address_name'] : ''?>" required>
 
                         <label>Province *</label>
                         <input type="text" class="form-control" name="address_province"
-                            placeholder="<?=isset($address['address_province']) ? $address['address_province'] : ''?>" value="<?=isset($address['address_province']) ? $address['address_province'] : ''?>">
+                            placeholder="<?=isset($address['address_province']) ? $address['address_province'] : ''?>" value="<?=isset($address['address_province']) ? $address['address_province'] : ''?>" required>
 
                         <label>City *</label>
                         <input type="text" class="form-control" name="address_city"
-                            placeholder="<?=isset($address['address_city']) ? $address['address_city'] : ''?>" value="<?=isset($address['address_city']) ? $address['address_city'] : ''?>">
+                            placeholder="<?=isset($address['address_city']) ? $address['address_city'] : ''?>" value="<?=isset($address['address_city']) ? $address['address_city'] : ''?>" required>
 
                         <label>Street address *</label>
                         <input type="text" class="form-control" name="address_street"
-                            placeholder="<?=isset($address['address_street']) ? $address['address_street'] :''?>" value="<?=isset($address['address_street']) ? $address['address_street'] :''?>">
+                            placeholder="<?=isset($address['address_street']) ? $address['address_street'] :''?>" value="<?=isset($address['address_street']) ? $address['address_street'] :''?>" required>
                         <?php if(!isset($_SESSION['user'])) {
                         ?>
                         <div class="custom-control custom-checkbox">

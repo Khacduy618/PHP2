@@ -2,6 +2,23 @@
     <div class="row frmtitle">
         <h1><?=$title?></h1>
     </div>
+    <?php if(isset($_COOKIE['msg'])): ?>
+<div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+    <strong><?= $_COOKIE['msg'] ?></strong>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<?php endif; ?>
+
+<?php if(isset($_COOKIE['msg1'])): ?>
+<div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+    <strong><?= $_COOKIE['msg1'] ?></strong>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<?php endif; ?>
     <div class="row mb-3 gap-3 justify-content-around">
         <!-- Search -->
         <div class="col-md-4">

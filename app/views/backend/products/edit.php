@@ -1,29 +1,27 @@
-
 <div class="container-fluid py-4">
-<div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="m-0 font-weight-bold"><?=$title?></h2>
     </div>
-    <div class="messages mb-4">
-        <?php
-        if(!empty($_GET['msg'])){
-            $msg = unserialize(urldecode($_GET['msg']));
-            foreach($msg as $key => $value){
-                echo '<div class="alert alert-info alert-dismissible fade show" role="alert">
-                        '.$value.'
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                      </div>';
-            }
-        }
-        if(!empty($_SESSION['msg'])){
-            echo '<div class="alert alert-info alert-dismissible fade show" role="alert">
-                    '.$_SESSION['msg'].'
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                  </div>';
-            unset($_SESSION['msg']);
-        }
-        ?>
-    </div>
     
+    <!-- Messages section -->
+    <div class="messages mb-4">
+        <?php if(isset($_SESSION['msg'])): ?>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong><i class="fas fa-check-circle me-2"></i><?= $_SESSION['msg'] ?></strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <?php unset($_SESSION['msg']); ?>
+        <?php endif; ?>
+
+        <?php if(isset($_SESSION['msg1'])): ?>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong><i class="fas fa-exclamation-circle me-2"></i><?= $_SESSION['msg1'] ?></strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <?php unset($_SESSION['msg1']); ?>
+        <?php endif; ?>
+    </div>
+
     <div class="card shadow">
         <div class="card-body">
             <?php
@@ -54,19 +52,25 @@
                     <!-- Product Price -->
                     <div class="col-md-5 mb-3">
                         <label for="product_price" class="form-label">Price (VND) <span class="text-danger">*</span></label>
-                        <input type="number" class="form-control" id="product_price" name="product_price" min="0" value="<?=$product_price?>" required>
+                        <input type="number" class="form-control" id="product_price" name="product_price" value="<?=$product_price?>"  min="0" 
+                               max="999999999" 
+                               oninput="this.value = this.value > 999999999 ? 999999999 : Math.max(0, this.value)">
                     </div>
 
                     <!-- Product Discount -->
                     <div class="col-md-5 mb-3">
                         <label for="product_discount" class="form-label">Discount (%)</label>
-                        <input type="number" class="form-control" id="product_discount" name="product_discount" min="0" max="100" value="<?=$product_discount?>">
+                        <input type="number" class="form-control" id="product_discount" name="product_discount" min="0" 
+                               max="100" 
+                               oninput="this.value = this.value > 100 ? 100 : Math.max(0, this.value)" value="<?=$product_discount?>">
                     </div>
 
                     <!-- Product Stock -->
                     <div class="col-md-5 mb-3">
                         <label for="product_count" class="form-label">Stock Quantity</label>
-                        <input type="number" class="form-control" id="product_count" name="product_count" min="0" value="<?=$product_count?>">
+                        <input type="number" class="form-control" id="product_count" name="product_count" min="0" 
+                               max="999999" 
+                               oninput="this.value = this.value > 999999 ? 999999 : Math.max(0, this.value)" value="<?=$product_count?>">
                     </div>
 
                     <!-- Product Category -->

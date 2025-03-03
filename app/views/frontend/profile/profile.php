@@ -1,7 +1,7 @@
 <div class="container mt-2">
     <div class="row">
         <div class="col-md-12">
-            <h2 class="text-center mb-4">Thông tin cá nhân</h2>
+            <h2 class="text-center mb-4"><?=$title?></h2>
             <?php
             if (isset($_COOKIE['msg'])) {
                 echo '<div class="alert alert-success">' . $_COOKIE['msg'] . '</div>';
@@ -69,8 +69,12 @@
                             <h4>Địa chỉ</h4>
                             <table class="table">
                                 <tr>
-                                    <th>Tên người nhận:</th>
+                                    <th>Tên địa chỉ</th>
                                     <td><?php echo $address_name ?? 'Chưa cập nhật'; ?></td>
+                                </tr>
+                                <tr>
+                                    <th>Tỉnh:</th>
+                                    <td><?php echo $address_province ?? 'Chưa cập nhật'; ?></td>
                                 </tr>
                                 <tr>
                                     <th>Thành phố:</th>
@@ -80,6 +84,7 @@
                                     <th>Địa chỉ:</th>
                                     <td><?php echo $address_street ?? 'Chưa cập nhật'; ?></td>
                                 </tr>
+                                
                             </table>
                         </div>
                     </div>

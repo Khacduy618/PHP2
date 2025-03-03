@@ -85,4 +85,33 @@ $(document).ready(function () {
     $('#limit-table').hide();
     $('#onViewAll-table').hide();
   });
+
+  
+
+  $('#product_discount').on('input change', function() {
+    const $input = $(this);
+    let value = parseInt($input.val());
+    
+    if (isNaN(value) || value < 0) {
+      $input.val(0);
+    } else if (value > 100) {
+      $input.val(100);
+    }
+  });
+  $('#product_count').on('input change', function() {
+    const $input = $(this);
+    let value = parseInt($input.val());
+    
+    if (isNaN(value) || value < 0) {
+      $input.val(0);
+    }
+  });
+  $('#product_price').on('input change', function() {
+    const $input = $(this);
+    let value = parseInt($input.val());
+    
+    if (isNaN(value) || value < 0) {
+      $input.val(0);
+    }
+  });
 });

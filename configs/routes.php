@@ -8,6 +8,8 @@ $routes['default_controller'] = 'home';
 //profiles
 $routes['profile'] = 'profile';
 $routes['update_avatar'] = 'profile/update_avatar';
+$routes['edit-profile'] = 'profile/edit_profile';
+$routes['update-profile'] = 'profile/update_profile';
 //home
 $routes['trang-chu'] = 'home';
 $routes['trending'] = 'home/getProductsByCategory';

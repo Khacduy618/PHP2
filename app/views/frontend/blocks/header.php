@@ -86,7 +86,7 @@
                             <button class="btn btn-primary" type="submit"><i class="icon-search"></i></button>
                             <input type="search" class="form-control" name="q" id="q" 
                                 value="<?= isset($_SESSION['search_keyword']) ? $_SESSION['search_keyword'] : '' ?>" 
-                                placeholder="Search product ..." required>
+                                placeholder="Search product ..." >
                         </div>
                     </form>
                     <script>

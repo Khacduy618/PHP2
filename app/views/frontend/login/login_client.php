@@ -35,14 +35,14 @@
                 <div class="form-tab">
                     <ul class="nav nav-pills nav-fill" role="tablist">
                         <li class="nav-item">
-                            <a class="nav-link" id="signin-tab-2" data-toggle="tab" href="#signin-2" role="tab" aria-controls="signin-2" aria-selected="false">Sign In</a>
+                            <a class="nav-link active" id="signin-tab-2" data-toggle="tab" href="#signin-2" role="tab" aria-controls="signin-2" aria-selected="true">Sign In</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active" id="register-tab-2" data-toggle="tab" href="#register-2" role="tab" aria-controls="register-2" aria-selected="true">Register</a>
+                            <a class="nav-link " id="register-tab-2" data-toggle="tab" href="#register-2" role="tab" aria-controls="register-2" aria-selected="false">Register</a>
                         </li>
                     </ul>
                     <div class="tab-content">
-                        <div class="tab-pane fade" id="signin-2" role="tabpanel" aria-labelledby="signin-tab-2">
+                        <div class="tab-pane fade show active" id="signin-2" role="tabpanel" aria-labelledby="signin-tab-2">
                             <form action="<?php echo _WEB_ROOT; ?>/account/login_action" method="POST">
                                 <div class="form-group">
                                     <label for="singin-email-2">Email address *</label>
@@ -86,7 +86,7 @@
                                 </div><!-- End .row -->
                             </div><!-- End .form-choice -->
                         </div><!-- .End .tab-pane -->
-                        <div class="tab-pane fade show active" id="register-2" role="tabpanel" aria-labelledby="register-tab-2">
+                        <div class="tab-pane fade " id="register-2" role="tabpanel" aria-labelledby="register-tab-2">
                             <form action="<?php echo _WEB_ROOT; ?>/account/register_action" method="POST">
                                 <div class="form-group">
                                     <label for="register-email-2">Your email address *</label>
