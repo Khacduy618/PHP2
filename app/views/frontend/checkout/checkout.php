@@ -109,7 +109,6 @@
                                     <?php
                                     $tong = 0;
                                     $_SESSION['cart_items'] = $cartItems;
-                                    var_dump($_SESSION['cart_items']);
                                     if (!empty($cartItems) && is_array($cartItems)) {
                                         foreach ($cartItems as $item) {
                                             // Đảm bảo các key tồn tại

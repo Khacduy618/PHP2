@@ -4,12 +4,15 @@ class CartModel extends Model
 {
 
         
-    public function getCartItems($userEmail) {
+    public function getCartItems($userEmail,$limit = 0) {
         $sql = "SELECT ci.*, p.product_name, p.product_price, p.product_img, p.product_discount 
                 FROM cart_item ci
                 JOIN cart c ON ci.cart_id = c.cart_id
                 JOIN products p ON ci.pro_id = p.product_id
                 WHERE c.cart_userEmail = ?";
+        if ($limit > 0) {
+            $sql.= " LIMIT ". $limit;
+        }
         return $this->pdo_query_all($sql, [$userEmail]);
     }
 

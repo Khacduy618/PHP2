@@ -57,7 +57,7 @@
         <div class="cardHeader">
             <h4>Product Best Selling</h4>
         </div>
-        <table id="limit-table">
+        <table id="limit-table" class="mb-2">
             <thead>
                 <tr>
                     <td>Name</td>

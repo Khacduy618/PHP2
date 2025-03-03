@@ -159,7 +159,7 @@
                             if(isset($_SESSION['user'])) {
                                 require_once './app/models/CartModel.php';
                                 $cart = new CartModel();
-                                $cartItems = $cart->getCartItems($_SESSION['user']['user_email']);
+                                $cartItems = $cart->getCartItems($_SESSION['user']['user_email'],4);
                                 $cartCount = count($cartItems);
                             ?>
                             <span class="cart-count"><?= $cartCount ?></span>
