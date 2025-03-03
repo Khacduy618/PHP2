@@ -141,46 +141,53 @@
     </div>
 
     <!-- Pagination -->
-    <?php if (isset($orderdata['totalRecord']) && $orderdata['totalRecord'] > 12): ?>
+    <?php 
+    if (isset($pagination) && $pagination['total_pages'] > 1): 
+        $perpage = 12;
+        $page = $pagination['page'];
+        $total_pages = $pagination['total_pages'];
+        $category_id = $pagination['category_id'];
+        $search = $pagination['search'];
+        $sort = $pagination['sort'];
+    ?>
     <nav aria-label="Page navigation" class="mt-4">
         <ul class="pagination justify-content-center">
-            <?php
-            // First page
-            if ($orderdata['currentPage'] > 2): ?>
+            <!-- First page -->
+            <?php if ($page > 2): ?>
                 <li class="page-item">
                     <a class="page-link" href="<?=_WEB_ROOT?>/product/<?=$category_id?>/<?=$search?>/<?=$sort?>/<?=$perpage?>/1">First</a>
                 </li>
             <?php endif; ?>
 
             <!-- Previous page -->
-            <?php if ($orderdata['currentPage'] > 1): ?>
+            <?php if ($page > 1): ?>
                 <li class="page-item">
-                    <a class="page-link" href="<?=_WEB_ROOT?>/product/<?=$category_id?>/<?=$search?>/<?=$sort?>/<?=$perpage?>/<?=$orderdata['currentPage']-1?>">
+                    <a class="page-link" href="<?=_WEB_ROOT?>/product/<?=$category_id?>/<?=$search?>/<?=$sort?>/<?=$page-1?>">
                         <i class="bi bi-chevron-left"></i>
                     </a>
                 </li>
             <?php endif; ?>
 
             <!-- Page numbers -->
-            <?php for($i = max(1, $orderdata['currentPage']-2); $i <= min($orderdata['totalPages'], $orderdata['currentPage']+2); $i++): ?>
-                <li class="page-item <?=$i == $orderdata['currentPage'] ? 'active' : ''?>">
-                    <a class="page-link" href="<?=_WEB_ROOT?>/product/<?=$category_id?>/<?=$search?>/<?=$sort?>/<?=$perpage?>/<?=$i?>"><?=$i?></a>
+            <?php for($i = max(1, $page-2); $i <= min($total_pages, $page+2); $i++): ?>
+                <li class="page-item <?=$i == $page ? 'active' : ''?>">
+                    <a class="page-link" href="<?=_WEB_ROOT?>/product/<?=$category_id?>/<?=$search?>/<?=$sort?>/<?=$i?>"><?=$i?></a>
                 </li>
             <?php endfor; ?>
 
             <!-- Next page -->
-            <?php if ($orderdata['currentPage'] < $orderdata['totalPages']): ?>
+            <?php if ($page < $total_pages): ?>
                 <li class="page-item">
-                    <a class="page-link" href="<?=_WEB_ROOT?>/product/<?=$category_id?>/<?=$search?>/<?=$sort?>/<?=$perpage?>/<?=$orderdata['currentPage']+1?>">
+                    <a class="page-link" href="<?=_WEB_ROOT?>/product/<?=$category_id?>/<?=$search?>/<?=$sort?>/<?=$page+1?>">
                         <i class="bi bi-chevron-right"></i>
                     </a>
                 </li>
             <?php endif; ?>
 
             <!-- Last page -->
-            <?php if ($orderdata['currentPage'] < $orderdata['totalPages'] - 1): ?>
+            <?php if ($page < $total_pages - 1): ?>
                 <li class="page-item">
-                    <a class="page-link" href="<?=_WEB_ROOT?>/product/<?=$category_id?>/<?=$search?>/<?=$sort?>/<?=$perpage?>/<?=$orderdata['totalPages']?>">Last</a>
+                    <a class="page-link" href="<?=_WEB_ROOT?>/product/<?=$category_id?>/<?=$search?>/<?=$sort?>/<?=$total_pages?>">Last</a>
                 </li>
             <?php endif; ?>
         </ul>
@@ -202,7 +209,7 @@ function resetSearch() {
     // Reset input value
     document.getElementById('q').value = '';
     // Redirect to product page without search parameters
-    window.location.href = '<?=_WEB_ROOT?>/product/0//popularity/12';
+    window.location.href = '<?=_WEB_ROOT?>/product';
 }
 
 // Thêm hiệu ứng hover cho icon search

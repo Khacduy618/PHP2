@@ -1,94 +1,85 @@
 <?php
+namespace App\Controllers;
+use Core\Controller;
+
 class Product extends Controller
 {
     public $data =[];
     public $product_model;
     public $category_model;
+    public $auth;
 
     public function __construct()
     {
         $this->product_model = $this->model('ProductModel');
         $this->category_model = $this->model('CategoryModel');
+        $this->auth = new \App\Middleware\AuthMiddleWare();
     }
 
-    public function list_product($category_id = 0, $search = '', $sort = 'popularity', $perpage = 12) {
-        
+    public function list_product($category_id = 0, $search = '', $sort = 'popularity', $perpage = 12, $page = 1) {
         $valid_sorts = ['price-high', 'price-low', 'popularity', 'rating', 'date', 'active', 'inactive'];
+    
 
         $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
         $path_parts = explode('/', trim($path, '/'));
         
-        array_shift($path_parts); 
-        array_shift($path_parts); 
+        array_shift($path_parts); // Remove 'php2'
+        array_shift($path_parts); // Remove 'product'
         
+        // Get parameters from URL
         $category_id = (empty($path_parts[0]) || $path_parts[0] === '0') ? 0 : intval($path_parts[0]);
+        $search = isset($path_parts[1]) && $path_parts[1] !== '' ? urldecode($path_parts[1]) : '';
+        $sort = isset($path_parts[2]) && in_array($path_parts[2], $valid_sorts) ? $path_parts[2] : 'popularity';
+        $page = isset($path_parts[3]) ? max(1, intval($path_parts[3])) : 1;
         
-        if (strpos($path, '//') !== false) {
-            $search = '';
-
-            foreach ($path_parts as $part) {
-                if (!empty($part) && in_array($part, $valid_sorts)) {
-                    $sort = $part;
-                    break;
-                }
-            }
-        } else {
-           
-            $search = isset($path_parts[1]) ? $path_parts[1] : '';
-            
-            if (isset($path_parts[2]) && in_array($path_parts[2], $valid_sorts)) {
-                $sort = $path_parts[2];
-            }
+        // Convert URL-friendly search term back to normal
+        $search = str_replace('-', ' ', $search);
+        
+        if (!empty($search)) {
+            $_SESSION['search_keyword'] = $search;
         }
 
-        $perpage = 12; 
-        foreach (array_reverse($path_parts) as $part) {
-            if (is_numeric($part)) {
-                $perpage = intval($part);
-                break;
-            }
-        }
-
-        if (!in_array($sort, $valid_sorts)) {
-            $sort = 'popularity';
-        }
-
+        $total_products = $this->product_model->getTotalProducts($search, $category_id);
+        $total_pages = ceil($total_products / $perpage);
+        
+        // Ensure page is within valid range
+        $page = min($page, $total_pages);
+        $page = max(1, $page);
         // Debug output
         // echo "Final parameters:\n";
         // echo "category_id: $category_id\n";
         // echo "search: " . ($search === '' ? '(empty)' : $search) . "\n";
         // echo "sort: $sort\n";
         // echo "perpage: $perpage\n";
-        $this->data['sub_content']['category_list'] = $this->category_model->getCatFill();
+        // echo "page: $page\n";
         if(isset($_SESSION['isLogin_Admin'])) {
+            $this->auth->handleEmployeeAuth();
             $title = 'Product Management';
             $this->data['sub_content']['title'] = $title;
             $this->data['page_title'] = $title;
-            $dataProduct = $this->product_model->getProductLists($search, $category_id, $sort, $perpage);
-            $this->data['sub_content']['product_list'] = $dataProduct;
+            $this->data['sub_content']['category_list'] = $this->category_model->getCatFill();
+            $this->data['sub_content']['product_list'] = $this->product_model->getProductLists($search, $category_id, $sort, $page, $perpage);
+            $this->data['sub_content']['total_products'] = $total_products;
+            $this->data['sub_content']['current_page'] = $page;
+            $this->data['sub_content']['total_pages'] = $total_pages;
             $this->data['content'] = 'backend/products/list';
             $this->render('layouts/admin_layout', $this->data);
         } else {
             $title = 'Product List';
             $this->data['sub_content']['title'] = $title;
             $this->data['page_title'] = $title;
-            
-            $dataProduct = $this->product_model->getProductLists($search, $category_id, $sort, $perpage);
-            $this->data['sub_content']['product_list'] = $dataProduct;
-            
-            $total_products = $this->product_model->getTotalProducts($search, $category_id);
+            $this->data['sub_content']['product_list'] = $this->product_model->getProductLists($search, $category_id, $sort, $page, $perpage);
             $this->data['sub_content']['total_products'] = $total_products;
-            
+            $this->data['sub_content']['current_page'] = $page;
+            $this->data['sub_content']['total_pages'] = $total_pages;
             $this->data['content'] = 'frontend/products/list';
             $this->render('layouts/client_layout', $this->data);
         }
     }
 
     public function add_new() {
-        if (!isset($_SESSION['isLogin_Admin'])) {
-            header('Location: ' . _WEB_ROOT . '/dang-nhap');
-            exit();
-        }
+        $this->auth->handleEmployeeAuth();
+        
         $title = 'Add new a product';
         $this->data['sub_content']['title'] = $title;
         $this->data['page_title'] = $title;
@@ -98,6 +89,7 @@ class Product extends Controller
     }
 
     public function store() {
+        $this->auth->handleEmployeeAuth();
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // Validate required fields
             if (empty($_POST['product_name']) || empty($_POST['product_price']) || 
@@ -218,6 +210,7 @@ class Product extends Controller
     }
 
     public function delete($id=0) {
+        $this->auth->handleAdminAuth();
         if($this->product_model->delete($id)){
             $_SESSION['msg'] = 'Product deleted successfully!';
             header('Location: '._WEB_ROOT.'/product');
@@ -230,6 +223,7 @@ class Product extends Controller
     }
 
     public function edit($id=0) {
+        $this->auth->handleEmployeeAuth();
         if (!isset($_SESSION['isLogin_Admin'])) {
             header('Location: ' . _WEB_ROOT . '/dang-nhap');
             exit();
@@ -244,6 +238,7 @@ class Product extends Controller
     }
 
     public function update() {
+        $this->auth->handleEmployeeAuth();
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $id = $_POST['product_id'];
 

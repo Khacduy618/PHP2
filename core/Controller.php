@@ -1,17 +1,18 @@
 <?php
+namespace Core;
+
 class Controller {
     public function model($model) {
-        if(file_exists(_DIR_ROOT.'/app/models/'.$model.'.php')){
-            require_once _DIR_ROOT.'/app/models/'.$model.'.php';
-            if(class_exists($model)){
-                $model = new $model();
-                return $model;
-            }
+        $modelClass = "App\\Models\\" . $model;
+        
+        if(class_exists($modelClass)) {
+            return new $modelClass();
         }
+        
         return false;
     }
 
-    public function render($view, $data=[]){
+    public function render($view, $data=[]) {
         extract($data);
         if(file_exists(_DIR_ROOT.'/app/views/'.$view.'.php')){
             require_once _DIR_ROOT.'/app/views/'.$view.'.php';
@@ -30,5 +31,4 @@ class Controller {
         }
         return move_uploaded_file($tmp_name, $upload_path . $new_filename);
     }
-    
 }

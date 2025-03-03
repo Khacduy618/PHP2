@@ -1,8 +1,9 @@
 <?php
-
+namespace App\Controllers;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
+use Core\Controller;
 
 class Account extends Controller
 {

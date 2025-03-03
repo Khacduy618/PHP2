@@ -1,9 +1,13 @@
 <?php
+namespace App\Models;
+
+use Core\Model;
+
 class FavoriteModel extends Model
 {
-    protected $table ;
-    protected $status ;
-    protected $contents ;
+    protected $table;
+    protected $status;
+    protected $contents;
 
     public function __construct(){
         parent::__construct();
@@ -11,8 +15,6 @@ class FavoriteModel extends Model
         $this->status = "";
         $this->contents = "favorite_id";
     }
-
-
 
     function findByUser($userEmail){
         $sql = "SELECT f.favorite_id, f.favorite_userEmail, f.favorite_proid,
@@ -43,10 +45,11 @@ class FavoriteModel extends Model
         $result = $this->pdo_query_one($sql, [$userEmail]);
         return $result['total'];
     }
+
     function isProductFavorited($userEmail, $productId) {
-    $sql = "SELECT COUNT(*) as count FROM $this->table 
-            WHERE favorite_userEmail = ? AND favorite_proid = ?";
-    $result = $this->pdo_query_one($sql, [$userEmail, $productId]);
-    return $result['count'] > 0;
-}
+        $sql = "SELECT COUNT(*) as count FROM $this->table 
+                WHERE favorite_userEmail = ? AND favorite_proid = ?";
+        $result = $this->pdo_query_one($sql, [$userEmail, $productId]);
+        return $result['count'] > 0;
+    }
 }

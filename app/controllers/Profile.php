@@ -1,16 +1,18 @@
 <?php
+namespace App\Controllers;
+use Core\Controller;
+
     class Profile extends Controller
     {
         public $data =[];
         public $profile_model;
+        public $auth;
 
         public function __construct()
         {
-            // Kiểm tra đăng nhập trước khi cho phép truy cập profile
-            if (!isset($_SESSION['user'])) {
-                header('Location: ' . _WEB_ROOT . '/dang-nhap');
-                exit();
-            }
+            $this->auth = new \App\Middleware\AuthMiddleWare();
+            $this->auth->handleUserAuth(); // Yêu cầu đăng nhập cho mọi chức năng profile
+            
             $this->profile_model = $this->model('ProfileModel');
         }
 

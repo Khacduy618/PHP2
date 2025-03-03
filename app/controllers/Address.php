@@ -1,18 +1,24 @@
 <?php
+namespace App\Controllers;
+use Core\Controller;
+
 class Address extends Controller
 {
     public $data =[];
     public $user_model;
     public $address_model;
+    public $auth;
 
 
     public function __construct()
     {
+        $this->auth = new \App\Middleware\AuthMiddleWare();
         $this->user_model = $this->model('UserModel');
         $this->address_model = $this->model('AddressModel');
     }
 
     public function list_address($userEmail=''){
+        $this->auth->handleEmployeeAuth();
         $title = 'Address Management';
         $this->data['sub_content']['addresses'] = $this->address_model->getAllUserAddresses($userEmail);
         $this->data['sub_content']['title'] = $title;
@@ -22,6 +28,7 @@ class Address extends Controller
     }
 
     public function add_new($address_userEmail = '') {
+        $this->auth->handleEmployeeAuth();
         $title = 'Add new address';
         $this->data['sub_content']['title'] = $title;
         $this->data['page_title'] = $title;
@@ -106,6 +113,7 @@ class Address extends Controller
     }
 
     public function delete($id=0) {
+        $this->auth->handleAdminAuth();
         if($this->address_model->delete($id)){
             $_SESSION['msg'] = 'Address deleted successfully!';
             header('Location: '._WEB_ROOT.'/address');

@@ -1,5 +1,7 @@
 <?php
+namespace App\Models;
 
+use Core\Model;
 class BillModel extends Model
 {
     protected $table ;
@@ -78,6 +80,9 @@ class BillModel extends Model
 
     public function bill_insert_id($data) {
         try {
+            if (empty($data['bill_coupon'])) {
+                $data['bill_coupon'] = NULL; // Đặt là NULL nếu không có mã giảm giá
+            }
             // Tạo câu SQL với các placeholder
             $sql = "INSERT INTO bills (bill_var_id, bill_userEmail, bill_phone, bill_address, 
                                      bill_priceDelivery, bill_price, bill_totalPrice, 

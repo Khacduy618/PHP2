@@ -159,17 +159,70 @@
 
                     <nav aria-label="Page navigation">
                         <ul class="pagination justify-content-center">
-                            <li class="page-item disabled">
-                                <a class="page-link page-link-prev" href="#" aria-label="Previous" tabindex="-1" aria-disabled="true">
+                            <?php
+                            // Get current URL parameters
+                            $current_url = $_SERVER['REQUEST_URI'];
+                            $url_parts = explode('/', trim($current_url, '/'));
+                            
+                            // Remove 'php2' from parts if it exists
+                            if(isset($url_parts[0]) && $url_parts[0] == 'php2') {
+                                array_shift($url_parts);
+                            }
+                            
+                            // Get current parameters
+                            $category_id = isset($url_parts[1]) ? $url_parts[1] : '0';
+                            $search = isset($url_parts[2]) ? $url_parts[2] : '';
+                            $sort = isset($url_parts[3]) ? $url_parts[3] : 'popularity';
+                            $current_page = isset($url_parts[4]) ? intval($url_parts[4]) : 1;
+                            
+                            // Calculate total pages
+                            $total_pages = ceil($total_products / 12);
+                            
+                            // Previous page
+                            $prev_page = max(1, $current_page - 1);
+                            $prev_disabled = $current_page == 1 ? 'disabled' : '';
+                            ?>
+                            
+                            <!-- Previous button -->
+                            <li class="page-item <?= $prev_disabled ?>">
+                                <a class="page-link page-link-prev" 
+                                   href="<?= _WEB_ROOT ?>/product/<?= $category_id ?>/<?= $search ?>/<?= $sort ?>/<?= $prev_page ?>" 
+                                   aria-label="Previous" <?= $prev_disabled ? 'tabindex="-1" aria-disabled="true"' : '' ?>>
                                     <span aria-hidden="true"><i class="icon-long-arrow-left"></i></span>Prev
                                 </a>
                             </li>
-                            <li class="page-item active" aria-current="page"><a class="page-link" href="#">1</a></li>
-                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                            <li class="page-item-total">of 6</li>
-                            <li class="page-item">
-                                <a class="page-link page-link-next" href="#" aria-label="Next">
+
+                            <?php
+                            // Display page numbers
+                            $start_page = max(1, $current_page - 2);
+                            $end_page = min($total_pages, $start_page + 4);
+                            
+                            for($i = $start_page; $i <= $end_page; $i++):
+                                $active = $i == $current_page ? 'active' : '';
+                            ?>
+                                <li class="page-item <?= $active ?>" aria-current="page">
+                                    <a class="page-link" 
+                                       href="<?= _WEB_ROOT ?>/product/<?= $category_id ?>/<?= $search ?>/<?= $sort ?>/<?= $i ?>">
+                                        <?= $i ?>
+                                    </a>
+                                </li>
+                            <?php endfor; ?>
+
+                            <?php if($end_page < $total_pages): ?>
+                                <li class="page-item-total">of <?= $total_pages ?></li>
+                            <?php endif; ?>
+
+                            <?php
+                            // Next page
+                            $next_page = min($total_pages, $current_page + 1);
+                            $next_disabled = $current_page == $total_pages ? 'disabled' : '';
+                            ?>
+                            
+                            <!-- Next button -->
+                            <li class="page-item <?= $next_disabled ?>">
+                                <a class="page-link page-link-next" 
+                                   href="<?= _WEB_ROOT ?>/product/<?= $category_id ?>/<?= $search ?>/<?= $sort ?>/<?= $next_page ?>" 
+                                   aria-label="Next" <?= $next_disabled ? 'tabindex="-1" aria-disabled="true"' : '' ?>>
                                     Next <span aria-hidden="true"><i class="icon-long-arrow-right"></i></span>
                                 </a>
                             </li>

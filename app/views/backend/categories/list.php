@@ -154,7 +154,7 @@ function resetSearch() {
     // Get current status filter
     const status = document.getElementById('status').value;
     // Redirect to category page without search parameters
-    window.location.href = '<?=_WEB_ROOT?>/category//' + (status ? status : 'all');
+    window.location.href = '<?=_WEB_ROOT?>/category';
 }
 
 // Thêm hiệu ứng hover cho icon search

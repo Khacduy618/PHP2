@@ -1,33 +1,34 @@
 <?php
+
+
 $path = str_replace('\\', '/', __DIR__);
 define('_DIR_ROOT', $path);
 
-//xu ly http root 
-if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] =='on') {
-    $web_root = 'https://'.$_SERVER['HTTP_HOST'];
-
-}else{
-    $web_root = 'http://'.$_SERVER['HTTP_HOST'];
+// Xử lý http root 
+if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') {
+    $web_root = 'https://' . $_SERVER['HTTP_HOST'];
+} else {
+    $web_root = 'http://' . $_SERVER['HTTP_HOST'];
 }
 
 $folder = str_replace(strtolower($_SERVER['DOCUMENT_ROOT']), '', strtolower(_DIR_ROOT));
-
-$web_root = $web_root.$folder;
-
+$web_root = $web_root . $folder;
 define('_WEB_ROOT', $web_root);
 
-/**Tu dong load config */
+// Load composer autoloader first
+require_once _DIR_ROOT . '/vendor/autoload.php';
+
+// Load configs
 $configs_dir = scandir('configs');
 if (!empty($configs_dir)) {
     foreach ($configs_dir as $item) {
-        if ($item!='.' && $item!='..' && file_exists('configs/'.$item)) {
-            require_once 'configs/'.$item;
+        if ($item != '.' && $item != '..' && file_exists('configs/' . $item)) {
+            require_once 'configs/' . $item;
         }
     }
 }
 
-require_once 'core/Route.php';
-require_once 'app/App.php';
+
 
 //kiem tra config va load db
 if (!empty($config['database'])) {
@@ -35,7 +36,6 @@ if (!empty($config['database'])) {
     if (!empty($db_config)) {
         require_once 'core/Connection.php';
         require_once 'core/Database.php';
-        
     }
 }
 
@@ -43,5 +43,4 @@ if (!empty($config['database'])) {
 // print_r($db_config);
 // echo '</pre>';
 
-require_once 'core/Model.php';
-require_once 'core/Controller.php';
+

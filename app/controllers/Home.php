@@ -1,7 +1,11 @@
 <?php
-class Home extends Controller{
-    
-    public $data =[];
+namespace App\Controllers;
+
+use Core\Controller;
+
+class Home extends Controller
+{
+    public $data = [];
     public $home_model;
 
     public function __construct()
@@ -47,7 +51,6 @@ class Home extends Controller{
             exit;
         }
 
-        try {
             $categoryId = $_POST['category_id'];
             $products = $this->home_model->getTopSellingProductsByCategory($categoryId);
             
@@ -56,10 +59,7 @@ class Home extends Controller{
             error_log("Found " . count($products) . " products");
             
             echo json_encode($products);
-        } catch (Exception $e) {
-            error_log("Error in getTopSellingProducts: " . $e->getMessage());
-            echo json_encode(['error' => 'Internal server error']);
-        }
+       
         exit;
     }
 }

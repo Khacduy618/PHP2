@@ -16,8 +16,7 @@
                 <div class="widget-body">
                     <div class="filter-items filter-items-count">
                         <?php
-                            require_once './app/controllers/Category.php';
-                            $category = new Category();
+                           $category = new \App\Controllers\Category();
                             echo $category->list_cat();
                         ?>
                     </div><!-- End .filter-items -->

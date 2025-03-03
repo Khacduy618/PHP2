@@ -1,14 +1,17 @@
 <?php
+namespace App\Controllers;
+use Core\Controller;
 class Category extends Controller
 {
     public $data =[];
     public $category_model;
     private $productCounts = [];
+    public $auth;
 
     public function __construct()
     {
         $this->category_model = $this->model('CategoryModel');
-        
+        $this->auth = new \App\Middleware\AuthMiddleWare();
         
     }
 
@@ -51,6 +54,7 @@ class Category extends Controller
     }
 
     public function add_new() {
+        $this->auth->handleEmployeeAuth();
         $title = 'Add new a category';
         $this->data['sub_content']['title'] = $title;
         $this->data['page_title'] = $title;
@@ -60,6 +64,7 @@ class Category extends Controller
     }
 
     public function store() {
+        $this->auth->handleEmployeeAuth();
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if (empty($_POST['category_name']) || empty($_POST['category_desc']) || empty($_FILES['category_img']['name']))  {
                 $_SESSION['msg'] = 'Fill in all required fields!';
@@ -119,6 +124,7 @@ class Category extends Controller
     }
 
     public function edit($id=0) {
+        $this->auth->handleEmployeeAuth();
         $title = 'Update a category';
         $this->data['sub_content']['title'] = $title;
         $this->data['page_title'] = $title;
@@ -129,7 +135,7 @@ class Category extends Controller
     }
 
     public function update() {
-        
+        $this->auth->handleEmployeeAuth();
         $id = $_POST['category_id'];
         $category_name = $_POST['category_name'];
         $category_desc = $_POST['category_desc'];
@@ -189,6 +195,7 @@ class Category extends Controller
     }
 
     public function delete($id=0) {
+        $this->auth->handleEmployeeAuth();
         if($this->category_model->delete($id)){
             $_SESSION['msg'] = 'Category deleted successfully!';
             header('Location: '._WEB_ROOT.'/category');
@@ -200,6 +207,7 @@ class Category extends Controller
     }
     
     private function calculateTotalProducts($data, $category_id) {
+        
         // Nếu đã tính toán trước đó, trả về kết quả từ cache
         if (isset($this->productCounts[$category_id])) {
             return $this->productCounts[$category_id];

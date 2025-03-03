@@ -1,4 +1,6 @@
 <?php
+namespace App\Controllers;
+use Core\Controller;
 
 class Bill extends Controller
 {
@@ -6,6 +8,7 @@ class Bill extends Controller
     public $bill_model;
     public $cartModel;
     public $address_model;
+    public $auth;
 
 
     public function __construct()
@@ -14,6 +17,7 @@ class Bill extends Controller
             header('Location: ' . _WEB_ROOT . '/dang-nhap');
             exit();
         }
+        $this->auth = new \App\Middleware\AuthMiddleWare();
         $this->cartModel = $this->model('CartModel');
         $this->bill_model = $this->model('BillModel');
         $this->address_model = $this->model('AddressModel');
@@ -309,6 +313,7 @@ class Bill extends Controller
 
     public function listBills()
     {
+        $this->auth->handleEmployeeAuth();
         $bills = $this->bill_model->getAll();
         $this->data['sub_content']['title'] = 'Danh sách đơn hàng';
         $this->data['page_title'] = 'Danh sách đơn hàng';
@@ -319,6 +324,7 @@ class Bill extends Controller
 
     public function detail($billId = 0)
     {
+        $this->auth->handleEmployeeAuth();
         if ($billId) {
             $billDetails = $this->bill_model->details($billId);
             
@@ -364,6 +370,7 @@ class Bill extends Controller
 
     public function deleteBill($billId)
     {
+        $this->auth->handleAdminAuth();
         if ($billId) {
             $this->bill_model->softDelete($billId);
             header('Location:'._WEB_ROOT.'/bill');
@@ -385,7 +392,7 @@ class Bill extends Controller
 
     public function status($billId=0, $newStatus=0)
     {
-        
+        $this->auth->handleEmployeeAuth();
             $this->bill_model->updateStatus($billId, $newStatus);
 
             if ($newStatus == 8) {

@@ -1,4 +1,7 @@
 <?php
+namespace App\Models;
+
+use Core\Model;
     class AccountModel extends Model
     {
         protected $table = 'user';

@@ -136,8 +136,7 @@
                             <i class="icon-heart-o"></i>
                             <?php
                             if(isset($_SESSION['user'])) {
-                                require_once './app/models/FavoriteModel.php';
-                                $favorite = new FavoriteModel();
+                                $favorite = new \App\Models\FavoriteModel();
                                 $count = $favorite->countFavorites($_SESSION['user']['user_email']);
                             
                             ?>
@@ -157,8 +156,7 @@
                             <i class="icon-shopping-cart"></i>
                             <?php
                             if(isset($_SESSION['user'])) {
-                                require_once './app/models/CartModel.php';
-                                $cart = new CartModel();
+                                $cart = new \App\Models\CartModel();
                                 $cartItems = $cart->getCartItems($_SESSION['user']['user_email'],4);
                                 $cartCount = count($cartItems);
                             ?>
@@ -244,8 +242,7 @@
                         <nav class="side-nav">
                             <ul class="category-menu">
                             <?php
-                                require_once './app/controllers/Category.php';
-                                $category = new Category();
+                                $category = new \App\Controllers\Category();
                                 echo $category->list_cat_home();
                             ?>
                             </ul><!-- End .menu-vertical -->

@@ -1,5 +1,7 @@
 <?php
+namespace App\Models;
 
+use Core\Model;
 class ProductModel extends Model{
     
     protected $table ;
@@ -14,7 +16,9 @@ class ProductModel extends Model{
     }
 
    
-    public function getProductLists($keyword = "", $product_cat = 0, $sort = "popularity", $item_per_page = 12, $offset = 0) {
+    public function getProductLists($keyword = "", $product_cat = 0, $sort = "popularity", $page = 1, $item_per_page = 12) {
+        $offset = ($page - 1) * $item_per_page;
+        
         $sql = "SELECT p.*, 
                        c.category_name, 
                        c.category_id,
@@ -35,8 +39,7 @@ class ProductModel extends Model{
             $params[] = $product_cat;
         }
 
-
-        // Handle search - make sure to check for empty string properly
+        // Handle search
         if(!empty($keyword) && $keyword !== '/' && $keyword !== ''){
             $sql .= " AND (p.product_name LIKE ? OR c.category_name LIKE ?)";
             $params[] = "%$keyword%";
@@ -65,7 +68,7 @@ class ProductModel extends Model{
                 break;
             case 'popularity':
             default:
-            $sql .= " ORDER BY total_sold DESC";
+                $sql .= " ORDER BY total_sold DESC";
         }
         
         if($item_per_page > 0) {

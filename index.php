@@ -1,5 +1,6 @@
 <?php
 session_start();
-require_once __DIR__ . '/vendor/autoload.php';
 require_once 'bootstrap.php';
-$app = new App();
+
+// Khởi tạo ứng dụng
+$app = new App\App();

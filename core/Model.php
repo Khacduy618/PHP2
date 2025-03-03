@@ -1,4 +1,9 @@
 <?php
+namespace Core;
+
+use PDO;
+use PDOException;
+
 class Model extends Database{
     protected $db;
     protected $table;

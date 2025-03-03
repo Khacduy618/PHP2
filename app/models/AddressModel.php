@@ -1,4 +1,7 @@
 <?php
+namespace App\Models;
+
+use Core\Model;
 class AddressModel extends Model
 {
     protected $table ;

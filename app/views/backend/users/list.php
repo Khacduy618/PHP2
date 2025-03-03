@@ -22,40 +22,38 @@
     <div class="row mb-3 gap-3 justify-content-around">
         <!-- Search -->
         <div class="col-md-4">
-            <div class="input-group">
-                <span class="input-group-text"><i class="bi bi-search"></i></span>
-                <input type="text" class="form-control" 
-                       name="search" 
-                       value="<?= isset($_GET['search']) ? htmlspecialchars($_GET['search']) : '' ?>" 
-                       placeholder="Search customer..."
-                       onchange="this.form.submit()"
-                       form="searchForm">
-            </div>
-            <form id="searchForm" action="" method="GET">
-                <input type="hidden" name="mod" value="user">
-                <input type="hidden" name="act" value="list">
-                <?php if (isset($_GET['status'])): ?>
-                    <input type="hidden" name="status" value="<?= htmlspecialchars($_GET['status']) ?>">
-                <?php endif; ?>
+            <form action="javascript:void(0);" onsubmit="handleSearch(event)">
+                <div class="input-group">
+                    <span class="input-group-text" onclick="resetSearch()" style="cursor: pointer;" title="Reset search">
+                        <i class="bi bi-search"></i>
+                    </span>
+                    <input type="search" class="form-control" name="q" id="q" 
+                           value="<?= isset($_SESSION['search_keyword']) ? $_SESSION['search_keyword'] : '' ?>" 
+                           placeholder="Search user...">
+                </div>
             </form>
         </div>
 
-
         <!-- Status Filter -->
         <div class="col-md-2">
-            <select class="form-select" onchange="filterStatus(this.value)">
+            <select name="status" id="status" class="form-select" 
+                    onchange="window.location.href='<?=_WEB_ROOT?>/user/<?=$pagination['search'] ?? ''?>/' + this.value + '/1'">
                 <option value="">All Status</option>
-                <option value="1" <?= isset($_GET['status']) && $_GET['status'] == '1' ? 'selected' : '' ?>>Active</option>
-                <option value="0" <?= isset($_GET['status']) && $_GET['status'] == '0' ? 'selected' : '' ?>>Inactive</option>
+                <option value="1" <?= isset($pagination['status']) && $pagination['status'] == '1' ? 'selected' : '' ?>>Active</option>
+                <option value="0" <?= isset($pagination['status']) && $pagination['status'] == '0' ? 'selected' : '' ?>>Inactive</option>
             </select>
         </div>
-
 
         <div class="col-md-3 text-end ms-auto">
             <a class="btn btn-success shadow-sm" href="<?=_WEB_ROOT?>/add-new-user">
                 <i class="bi bi-plus-circle me-2"></i>Add new user
             </a>
         </div>
+    </div>
+
+    <!-- Users Count -->
+    <div class="mb-3">
+        <span class="text-muted">Showing <?= count($users) ?> of <?= $total_users ?? count($users) ?> Users</span>
     </div>
 
     <div class="row frmcontent">
@@ -122,42 +120,97 @@
         </form>
     </div>
 </div>
- <!-- Pagination -->
- <div class="d-flex justify-content-center mt-4">
-            <nav aria-label="Page navigation">
-                <ul class="pagination">
-                    <?php if ($pagination['current_page'] > 1): ?>
-                        <li class="page-item">
-                            <a class="page-link" href="?mod=user&act=list&page=<?= $pagination['current_page'] - 1 ?><?= isset($_GET['search']) ? '&search=' . htmlspecialchars($_GET['search']) : '' ?>" aria-label="Previous">&laquo;</a>
-                        </li>
-                    <?php endif; ?>
 
-                    <?php for ($i = 1; $i <= $pagination['total_pages']; $i++): ?>
-                        <li class="page-item <?= $i == $pagination['current_page'] ? 'active' : '' ?>">
-                            <a class="page-link" href="?mod=user&act=list&page=<?= $i ?>"><?= $i ?></a>
-                        </li>
-                    <?php endfor; ?>
+<!-- Pagination -->
+<?php if (isset($pagination) && $pagination['total_pages'] > 1): ?>
+<nav aria-label="Page navigation" class="mt-4">
+    <ul class="pagination justify-content-center">
+        <!-- First page -->
+        <?php if ($pagination['page'] > 2): ?>
+            <li class="page-item">
+                <a class="page-link" href="<?=_WEB_ROOT?>/user/<?=$pagination['search']?>/<?=$pagination['status']?>/1">First</a>
+            </li>
+        <?php endif; ?>
 
-                    <?php if ($pagination['current_page'] < $pagination['total_pages']): ?>
-                        <li class="page-item">
-                            <a class="page-link" href="?mod=user&act=list&page=<?= $pagination['current_page'] + 1 ?>" aria-label="Next">&raquo;</a>
-                        </li>
-                    <?php endif; ?>
-                </ul>
-            </nav>
-        </div>
-    </div>
-</div>
+        <!-- Previous page -->
+        <?php if ($pagination['page'] > 1): ?>
+            <li class="page-item">
+                <a class="page-link" href="<?=_WEB_ROOT?>/user/<?=$pagination['search']?>/<?=$pagination['status']?>/<?=$pagination['page']-1?>">
+                    <i class="bi bi-chevron-left"></i>
+                </a>
+            </li>
+        <?php endif; ?>
 
+        <!-- Page numbers -->
+        <?php for($i = max(1, $pagination['page']-2); $i <= min($pagination['total_pages'], $pagination['page']+2); $i++): ?>
+            <li class="page-item <?=$i == $pagination['page'] ? 'active' : ''?>">
+                <a class="page-link" href="<?=_WEB_ROOT?>/user/<?=$pagination['search']?>/<?=$pagination['status']?>/<?=$i?>"><?=$i?></a>
+            </li>
+        <?php endfor; ?>
+
+        <!-- Next page -->
+        <?php if ($pagination['page'] < $pagination['total_pages']): ?>
+            <li class="page-item">
+                <a class="page-link" href="<?=_WEB_ROOT?>/user/<?=$pagination['search']?>/<?=$pagination['status']?>/<?=$pagination['page']+1?>">
+                    <i class="bi bi-chevron-right"></i>
+                </a>
+            </li>
+        <?php endif; ?>
+
+        <!-- Last page -->
+        <?php if ($pagination['page'] < $pagination['total_pages'] - 1): ?>
+            <li class="page-item">
+                <a class="page-link" href="<?=_WEB_ROOT?>/user/<?=$pagination['search']?>/<?=$pagination['status']?>/<?=$pagination['total_pages']?>">Last</a>
+            </li>
+        <?php endif; ?>
+    </ul>
+</nav>
+<?php endif; ?>
+
+<!-- Add JavaScript for search functionality -->
 <script>
-function filterStatus(status) {
-    const url = new URL(window.location.href);
-    if (status) {
-        url.searchParams.set('status', status);
-    } else {
-        url.searchParams.delete('status');
-    }
-    url.searchParams.set('page', '1');
-    window.location.href = url.toString();
+function handleSearch(e) {
+    e.preventDefault();
+    const searchTerm = document.getElementById('q').value;
+    const currentStatus = document.getElementById('status').value;
+    // Convert search term to URL-friendly format
+    const urlFriendlySearch = searchTerm.trim().replace(/\s+/g, '-').toLowerCase();
+    // Redirect to the route-based URL with correct path
+    window.location.href = '<?=_WEB_ROOT?>/user/' + (urlFriendlySearch || '') + '/' + (currentStatus || '') + '/1';
 }
+
+function resetSearch() {
+    // Reset input value
+    document.getElementById('q').value = '';
+    const currentStatus = document.getElementById('status').value;
+    // Redirect to user page without search parameters but maintain status
+    window.location.href = '<?=_WEB_ROOT?>/user//' + (currentStatus || '') + '/1';
+}
+
+// Thêm hiệu ứng hover cho icon search
+document.querySelector('.input-group-text').addEventListener('mouseover', function() {
+    this.style.backgroundColor = '#e9ecef';
+});
+
+document.querySelector('.input-group-text').addEventListener('mouseout', function() {
+    this.style.backgroundColor = '';
+});
 </script>
+
+<style>
+.input-group-text {
+    transition: background-color 0.3s ease;
+}
+
+.input-group-text:hover {
+    background-color: #e9ecef;
+}
+
+.input-group-text i {
+    transition: transform 0.3s ease;
+}
+
+.input-group-text:hover i {
+    transform: scale(1.1);
+}
+</style>

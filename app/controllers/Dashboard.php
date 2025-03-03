@@ -1,4 +1,7 @@
 <?php
+namespace App\Controllers;
+use Core\Controller;
+
 class Dashboard extends Controller
 {
     public $data =[];

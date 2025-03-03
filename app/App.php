@@ -1,13 +1,14 @@
 <?php
+namespace App;
 
-class App{
 
+class App {
     private $__controller, $__action, $__params, $__routes;
+    
     public function __construct() {
-
         global $routes, $config;
 
-        $this->__routes = new Route();
+        $this->__routes = new \Core\Route();
 
         if (!empty($routes['default_controller'])) {
             $this->__controller = $routes['default_controller'];
@@ -20,7 +21,6 @@ class App{
         // echo '<pre>';
         // print_r($config);
         // echo '</pre>';
-
     }
 
     public function getUrl() {
@@ -33,9 +33,7 @@ class App{
     }
 
     public function handleurl() {
-
         $url = $this->getUrl();
-
         $url = $this->__routes->handleRoute($url);
         
         $urlArr = array_filter(explode('/',$url));
@@ -76,17 +74,15 @@ class App{
         }
 
         if (file_exists('app/controllers/'.($urlCheck).'.php')) {
-            require_once 'controllers/'.($urlCheck).'.php';
+            $controllerName = "App\\Controllers\\" . $this->__controller;
             
-            //kiemtra class ton tai
-            if (class_exists($this->__controller)) {
-                $this->__controller = new $this->__controller();
+            if (class_exists($controllerName)) {
+                $this->__controller = new $controllerName();
                 unset($urlArr[0]);
-            }else{
+            } else {
                 $this->loadError();
             }
-            
-        }else {
+        } else {
             $this->loadError();
         }
 
