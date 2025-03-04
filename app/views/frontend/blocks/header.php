@@ -48,7 +48,7 @@
                                     <div class="header-menu">
                                         <ul>
                                             <li><a href="<?php echo _WEB_ROOT?>/profile">My Account</a></li>
-                                            <li><a href="<?php echo _WEB_ROOT?>/log-out">Sign Out</a></li>
+                                            <li><a href="<?php echo _WEB_ROOT?>/log-out" onclick="return confirm('Bạn có chắc chắn muốn đăng xuất tài khoản này không?')">Sign Out</a></li>
                                         </ul>
                                     </div>
                                 </div>

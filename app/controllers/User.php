@@ -13,10 +13,6 @@ class User extends Controller
 
         public function __construct()
         {
-            // if (!isset($_SESSION['isLogin_Admin'])) {
-            //     header('Location: ' . _WEB_ROOT . '/dang-nhap');
-            //     exit();
-            // }
             $this->authMiddleware = new AuthMiddleWare();
             $this->authMiddleware->handleAdminAuth();
             $this->user_model = $this->model('UserModel');

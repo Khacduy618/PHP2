@@ -23,16 +23,15 @@ class Product extends Controller
         $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
         $path_parts = explode('/', trim($path, '/'));
         
-        array_shift($path_parts); // Remove 'php2'
-        array_shift($path_parts); // Remove 'product'
+        array_shift($path_parts); 
+        array_shift($path_parts); 
         
-        // Get parameters from URL
+        
         $category_id = (empty($path_parts[0]) || $path_parts[0] === '0') ? 0 : intval($path_parts[0]);
         $search = isset($path_parts[1]) && $path_parts[1] !== '' ? urldecode($path_parts[1]) : '';
         $sort = isset($path_parts[2]) && in_array($path_parts[2], $valid_sorts) ? $path_parts[2] : 'popularity';
         $page = isset($path_parts[3]) ? max(1, intval($path_parts[3])) : 1;
         
-        // Convert URL-friendly search term back to normal
         $search = str_replace('-', ' ', $search);
         
         if (!empty($search)) {
@@ -42,7 +41,6 @@ class Product extends Controller
         $total_products = $this->product_model->getTotalProducts($search, $category_id);
         $total_pages = ceil($total_products / $perpage);
         
-        // Ensure page is within valid range
         $page = min($page, $total_pages);
         $page = max(1, $page);
         // Debug output

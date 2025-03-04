@@ -7,18 +7,20 @@ class Cart extends Controller
     public $data =[];
     public $cart_model;
     public $address_model;
+    public $auth;
 
     public function __construct()
     {
-        if (!isset($_SESSION['user'])) {
-            header('Location: ' . _WEB_ROOT . '/dang-nhap');
-            exit();
-        }
+        
         $this->cart_model = $this->model('CartModel');
         $this->address_model = $this->model('AddressModel');
+        $this->auth = new \App\Middleware\AuthMiddleWare();
+
     }
 
     public function list_cart(){
+
+        $this->auth->handleUserAuth();
         $title = 'Cart';
         
         // Add debug
@@ -54,8 +56,10 @@ class Cart extends Controller
     }
 
     public function add_cart()
+    
     {
-        // Kiểm tra dữ liệu đầu vào
+        $this->auth->handleUserAuth();
+        
         if (!isset($_POST['product_id']) || !is_numeric($_POST['product_id']) || !isset($_POST['quantity']) || !is_numeric($_POST['quantity'])) {
             header('location:' . _WEB_ROOT.'/product');
             exit;
@@ -68,7 +72,7 @@ class Cart extends Controller
             header('location:' . _WEB_ROOT.'/product-detail/'. $productId);
             exit;
         }
-        // Thêm sản phẩm vào giỏ hàng
+        
         $status = $this->cart_model->addToCart($userEmail, $productId, $quantity);
         
         if ($status) {
@@ -83,6 +87,7 @@ class Cart extends Controller
 
     public function update_cart()
     {
+        $this->auth->handleUserAuth();
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if (!isset($_POST['product_id']) || !is_numeric($_POST['product_id']) || 
                 !isset($_POST['quantity']) || !is_numeric($_POST['quantity'])) {
@@ -107,6 +112,7 @@ class Cart extends Controller
 
     public function delete_cart($productId=0)
     {
+        $this->auth->handleUserAuth();
         $userEmail = $_SESSION['user']['user_email'];
         $status = $this->cart_model->removeFromCart($userEmail, $productId);
         

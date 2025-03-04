@@ -30,21 +30,18 @@ class Account extends Controller
             $user_email = filter_var($_POST['user_email'], FILTER_SANITIZE_EMAIL);
             $password = $_POST['user_password'];
 
-            // Validate email
             if (!filter_var($user_email, FILTER_VALIDATE_EMAIL)) {
                 setcookie('msg1', 'Email không hợp lệ', time() + 5, '/');
                 header('Location: ' . _WEB_ROOT . '/dang-nhap');
                 exit();
             }
 
-            // Validate password length
             if(strlen($password) < 8){
                 setcookie('msg1', 'Mật khẩu tối thiểu 8 kí tự', time() + 5, '/');
                 header('Location: ' . _WEB_ROOT . '/dang-nhap');
                 exit();
             }
 
-            // Check if email exists
             if (!$this->account_model->check_account($user_email)) {
                 setcookie('msg1', 'Email không chính xác!', time() + 5, '/');
                 header('Location: ' . _WEB_ROOT . '/dang-nhap');
@@ -55,7 +52,6 @@ class Account extends Controller
             $login = $this->account_model->login_action($user_email, $user_password);
 
             if ($login) {
-                // Lưu thông tin user vào session
                 $_SESSION['user'] = $login;
                 
                 if ($login['user_role'] == 1) {
@@ -82,42 +78,37 @@ class Account extends Controller
             $password = $_POST['user_password'];
             $check_password = $_POST['check_password'];
             
-            // Validate email format
+            
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 setcookie('msg1', 'Email không hợp lệ', time() + 5, '/');
                 header('Location: ' . _WEB_ROOT . '/dang-nhap');
                 exit();
             }
 
-            // Validate email exists
             if ($this->account_model->check_account($email)) {
                 setcookie('msg1', 'Email đã tài khoản sử dụng!', time() + 5, '/');
                 header('Location: ' . _WEB_ROOT . '/dang-nhap');
                 exit();
             }
 
-            // Validate name
             if (strlen($name) < 2 || strlen($name) > 50) {
                 setcookie('msg1', 'Tên phải từ 2 đến 50 ký tự', time() + 5, '/');
                 header('Location: ' . _WEB_ROOT . '/dang-nhap');
                 exit();
             }
 
-            // Validate password length
             if (strlen($password) < 8) {
                 setcookie('msg1', 'Mật khẩu phải có ít nhất 8 ký tự', time() + 5, '/');
                 header('Location: ' . _WEB_ROOT . '/dang-nhap');
                 exit();
             }
 
-            // Validate password strength
             if (!preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/', $password)) {
                 setcookie('msg1', 'Mật khẩu phải chứa ít nhất 1 chữ hoa, 1 chữ thường và 1 số', time() + 5, '/');
                 header('Location: ' . _WEB_ROOT . '/dang-nhap');
                 exit();
             }
 
-            // Validate password confirmation
             if ($password !== $check_password) {
                 setcookie('msg1', 'Mật khẩu xác nhận không khớp', time() + 5, '/');
                 header('Location: ' . _WEB_ROOT . '/dang-nhap');
@@ -131,7 +122,6 @@ class Account extends Controller
                 'user_images' => 'user.png',
             );
             
-            // Sanitize special characters
             foreach ($data as $key => $value) {
                 if (strpos($value, "'") != false) {
                     $value = str_replace("'", "\'", $value);

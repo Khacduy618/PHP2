@@ -32,7 +32,9 @@ class ProductModel extends Model{
                 WHERE 1";
         
         $params = [];
-        
+        if(!isset($_SESSION['isLogin_Admin'])){
+            $sql.= " AND p.product_status = 1";
+        }
         // Handle category filter
         if($product_cat > 0){
             $sql .= " AND p.product_cat = ?";
@@ -87,8 +89,15 @@ class ProductModel extends Model{
                 FROM $this->table p
                 LEFT JOIN categories c ON c.category_id = p.product_cat
                 WHERE 1";
+                
         
         $params = [];
+        
+
+        if(!isset($_SESSION['isLogin_Admin'])){
+            $sql.= " AND p.product_status = 1";
+        }
+
         
         if($product_cat > 0){
             $sql .= " AND p.product_cat = ?";

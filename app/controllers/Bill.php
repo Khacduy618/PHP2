@@ -1,6 +1,7 @@
 <?php
 namespace App\Controllers;
 use Core\Controller;
+use Exception;
 
 class Bill extends Controller
 {
@@ -13,10 +14,6 @@ class Bill extends Controller
 
     public function __construct()
     {
-        if (!isset($_SESSION['user'])) {
-            header('Location: ' . _WEB_ROOT . '/dang-nhap');
-            exit();
-        }
         $this->auth = new \App\Middleware\AuthMiddleWare();
         $this->cartModel = $this->model('CartModel');
         $this->bill_model = $this->model('BillModel');

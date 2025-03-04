@@ -2,6 +2,8 @@
 namespace App\Models;
 
 use Core\Model;
+use Exception;
+
     class ProfileModel extends Model
     {
         protected $table = 'user';

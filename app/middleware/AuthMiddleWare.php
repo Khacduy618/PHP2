@@ -16,7 +16,7 @@ class AuthMiddleWare extends Controller
         }
 
         // Kiểm tra role admin (giả sử role 1 là admin)
-        if ($_SESSION['user_role'] != 1 ) {
+        if ($_SESSION['user']['user_role'] > 1 ) {
             setcookie('msg1', 'Bạn không có quyền truy cập trang này!', time() + 5, '/');
             header('Location: ' . _WEB_ROOT . '/');
             exit();
@@ -43,8 +43,8 @@ class AuthMiddleWare extends Controller
             exit();
         }
 
-        // Kiểm tra role employee (giả sử role 2 là employee)
-        if ($_SESSION['user_role'] != 1 ) {
+        // Kiểm tra role employee (giả sử role 2, 3, 4 là employee)
+        if ($_SESSION['user']['user_role'] = 0 ) {
             setcookie('msg1', 'Bạn không có quyền truy cập trang này!', time() + 5, '/');
             header('Location: ' . _WEB_ROOT . '/');
             exit();
@@ -67,11 +67,11 @@ class AuthMiddleWare extends Controller
 
     public function isAdmin()
     {
-        return isset($_SESSION['isLogin_Admin']) && $_SESSION['user_role'] == 1;
+        return isset($_SESSION['isLogin_Admin']) && $_SESSION['user']['user_role'] == 1;
     }
 
     public function isEmployee()
     {
-        return isset($_SESSION['isLogin_Admin']) && ($_SESSION['user_role'] == 2 || $_SESSION['user_role'] == 1);
+        return isset($_SESSION['isLogin_Admin']) && ($_SESSION['user']['user_role'] > 1);
     }
 }

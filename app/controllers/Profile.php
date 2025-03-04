@@ -102,31 +102,27 @@ use Core\Controller;
 
             $user_email = $_SESSION['user']['user_email'];
 
-            // Validate input data
             $user_name = trim($_POST['user_name']);
             $user_phone = trim($_POST['user_phone']);
             
-            // Validate name
             if (strlen($user_name) < 2 || strlen($user_name) > 50) {
                 setcookie('msg1', 'Họ tên phải từ 2 đến 50 ký tự', time() + 5);
                 header('Location: ' . _WEB_ROOT . '/edit-profile');
                 exit();
             }
 
-            // Validate phone
             if (!preg_match('/^[0-9]{10,12}$/', $user_phone)) {
                 setcookie('msg1', 'Số điện thoại phải từ 10 đến 12 số', time() + 5);
                 header('Location: ' . _WEB_ROOT . '/edit-profile');
                 exit();
             }
 
-            // Prepare user data
+           
             $user_data = [
                 'user_name' => $user_name,
                 'user_phone' => $user_phone
             ];
 
-            // Prepare address data
             $address_data = [
                 'address_name' => htmlspecialchars(trim($_POST['address_name'])),
                 'address_province' => htmlspecialchars(trim($_POST['address_province'])),
@@ -134,7 +130,6 @@ use Core\Controller;
                 'address_street' => htmlspecialchars(trim($_POST['address_street']))
             ];
 
-            // Validate địa chỉ
             if (empty($address_data['address_name']) || 
                 empty($address_data['address_province']) || 
                 empty($address_data['address_city']) || 
@@ -144,7 +139,6 @@ use Core\Controller;
                 exit();
             }
 
-            // Handle image upload if exists
             $image_data = null;
             if (isset($_FILES['user_image']) && $_FILES['user_image']['error'] === 0) {
                 $file = $_FILES['user_image'];

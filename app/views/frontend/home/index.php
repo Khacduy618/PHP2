@@ -1,3 +1,20 @@
+<?php if(isset($_COOKIE['msg'])): ?>
+            <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+                <strong><?= $_COOKIE['msg'] ?></strong>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <?php endif; ?>
+
+            <?php if(isset($_COOKIE['msg1'])): ?>
+            <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+                <strong><?= $_COOKIE['msg1'] ?></strong>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <?php endif; ?>
 <main class="main">
     <div class="intro-section pt-3 pb-3 mb-2">
         <div class="container">

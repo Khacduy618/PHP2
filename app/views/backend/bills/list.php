@@ -72,7 +72,7 @@
                                class="btn btn-primary btn-sm">Bill details</a>
                             <?php if ($bill['bill_status'] == 7): ?>
                                 <a href="<?=_WEB_ROOT?>/archivedBill/<?= $bill['bill_id']; ?>/8"
-                                   class="btn btn-warning btn-sm">Archive</a>
+                                   class="btn btn-warning btn-sm" onclick="return confirm('Bạn có chắc chắn muốn lưu trữ đơn hàng này không?')">Archive</a> 
                             <?php endif; ?>
                         </td>
                     </tr>
